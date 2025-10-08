@@ -31,7 +31,7 @@ ui/build
 electron/dist
 
 # Processed block data
-public/data
+ui/public/data
 
 # Build version data
 ui/src/version.json
