@@ -7,6 +7,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.Chunke
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerItemStackIdentifierType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.PreservedIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerBlockType;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerCustomBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockState;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerItemType;
@@ -302,8 +303,14 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
         if (preservedAsChunker.isPresent() && preservedAsChunker.get().getIdentifier() instanceof ChunkerBlockIdentifier blockIdentifier) {
             Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(blockIdentifier.getPresentStates());
 
-            // Apply the input states
-            states.putAll(blockIdentifier.getPresentStates());
+            // Apply the input states (original no mapping) which aren't custom
+            if (input.getIdentifier() instanceof ChunkerBlockIdentifier inputBlockIdentifier) {
+                for (Map.Entry<BlockState<?>, BlockStateValue> state : inputBlockIdentifier.getPresentStates().entrySet()) {
+                    // Custom states can get forwarded by resolveFrom(..) and we don't want to duplicate the preserved ones
+                    if (state.getValue() instanceof ChunkerCustomBlockType.CustomBlockStateValue<?>) continue;
+                    states.put(state.getKey(), state.getValue());
+                }
+            }
 
             // Make a new copy with the preserved identifier + the states as a hashmap
             ChunkerItemStack merged = new ChunkerItemStack(
