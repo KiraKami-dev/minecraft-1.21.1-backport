@@ -13,6 +13,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.i
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerVanillaItemType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
@@ -265,7 +266,11 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
         if (mappingsFileResolvers == null) return output; // No mappings
 
         // Convert the item (using the inverse mappings if it's the writer)
-        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertItem(input);
+        boolean mapAsItem = output.isPresent();
+        MappingsFile mappings = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings());
+
+        // Only use the block mappings as a fallback if there is an output (as it can be processed through BlockIdentifierResolver)
+        Optional<Identifier> mappedIdentifier = mappings.convertItem(input, mapAsItem);
         if (mappedIdentifier.isEmpty()) return output; // No custom mapping for this block
 
         // Attach the preserved identifier (the custom mapping for the output)

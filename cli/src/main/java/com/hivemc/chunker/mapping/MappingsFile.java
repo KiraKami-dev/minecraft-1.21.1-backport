@@ -168,18 +168,29 @@ public class MappingsFile {
      * Convert an input item identifier using this mappings file.
      *
      * @param inputItem the input item identifier.
+     * @param fallback  whether the block mappings should be tested if the item is not found.
      * @return empty if there is no mapping found otherwise an output identifier based on the mappings.
      */
-    public Optional<Identifier> convertItem(Identifier inputItem) {
+    public Optional<Identifier> convertItem(Identifier inputItem, boolean fallback) {
         Optional<Identifier> itemResult = convert(itemIdentifierLookup, inputItem);
 
         // If the result is present return it
-        if (itemResult.isPresent()) {
+        if (!fallback || itemResult.isPresent()) {
             return itemResult;
         }
 
         // Fallback to blocks
         return convertBlock(inputItem);
+    }
+
+    /**
+     * Convert an input item identifier using this mappings file with the block mappings as a fallback.
+     *
+     * @param inputItem the input item identifier.
+     * @return empty if there is no mapping found otherwise an output identifier based on the mappings.
+     */
+    public Optional<Identifier> convertItem(Identifier inputItem) {
+        return convertItem(inputItem, true);
     }
 
     /**
