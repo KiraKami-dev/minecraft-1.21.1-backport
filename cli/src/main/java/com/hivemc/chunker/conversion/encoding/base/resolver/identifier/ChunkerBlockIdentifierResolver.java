@@ -334,8 +334,12 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         if (preservedAsChunker.isPresent()) {
             Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(preservedAsChunker.get().getPresentStates());
 
-            // Apply the input states
-            states.putAll(input.getPresentStates());
+            // Apply the input states (original no mapping) which aren't custom
+            for (Map.Entry<BlockState<?>, BlockStateValue> state : input.getPresentStates().entrySet()) {
+                // Custom states can get forwarded by resolveFrom(..) and we don't want to duplicate the preserved ones
+                if (state.getValue() instanceof ChunkerCustomBlockType.CustomBlockStateValue<?>) continue;
+                states.put(state.getKey(), state.getValue());
+            }
 
             // Make a new copy with the preserved identifier + the states as a hashmap
             ChunkerBlockIdentifier merged = new ChunkerBlockIdentifier(

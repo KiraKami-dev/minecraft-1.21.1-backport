@@ -7,12 +7,14 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.Chunke
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerItemStackIdentifierType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.PreservedIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerBlockType;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerCustomBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockState;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerItemType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerVanillaItemType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
@@ -265,7 +267,11 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
         if (mappingsFileResolvers == null) return output; // No mappings
 
         // Convert the item (using the inverse mappings if it's the writer)
-        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertItem(input);
+        boolean mapAsItem = output.isPresent();
+        MappingsFile mappings = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings());
+
+        // Only use the block mappings as a fallback if there is an output (as it can be processed through BlockIdentifierResolver)
+        Optional<Identifier> mappedIdentifier = mappings.convertItem(input, mapAsItem);
         if (mappedIdentifier.isEmpty()) return output; // No custom mapping for this block
 
         // Attach the preserved identifier (the custom mapping for the output)
@@ -297,8 +303,14 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
         if (preservedAsChunker.isPresent() && preservedAsChunker.get().getIdentifier() instanceof ChunkerBlockIdentifier blockIdentifier) {
             Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(blockIdentifier.getPresentStates());
 
-            // Apply the input states
-            states.putAll(blockIdentifier.getPresentStates());
+            // Apply the input states (original no mapping) which aren't custom
+            if (input.getIdentifier() instanceof ChunkerBlockIdentifier inputBlockIdentifier) {
+                for (Map.Entry<BlockState<?>, BlockStateValue> state : inputBlockIdentifier.getPresentStates().entrySet()) {
+                    // Custom states can get forwarded by resolveFrom(..) and we don't want to duplicate the preserved ones
+                    if (state.getValue() instanceof ChunkerCustomBlockType.CustomBlockStateValue<?>) continue;
+                    states.put(state.getKey(), state.getValue());
+                }
+            }
 
             // Make a new copy with the preserved identifier + the states as a hashmap
             ChunkerItemStack merged = new ChunkerItemStack(
