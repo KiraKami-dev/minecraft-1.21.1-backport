@@ -517,7 +517,9 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
             @Override
             public Optional<ChunkerHornInstrument> read(@NotNull CompoundTag value) {
                 return value.getOptional("components", CompoundTag.class)
-                        .flatMap(tag -> tag.getOptionalValue("minecraft:instrument", String.class))
+                        .flatMap(tag -> tag.getOptional("minecraft:instrument", Tag.class))
+                        // Only allow string instruments (as we don't currently support other types of instrument)
+                        .flatMap(tag -> Optional.ofNullable(tag instanceof StringTag stringTag ? stringTag.getBoxedValue() : null))
                         .map(resolvers::readHornInstrument);
             }
 
