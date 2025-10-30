@@ -29,6 +29,7 @@ import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
+import com.hivemc.chunker.nbt.tags.array.IntArrayTag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
 import com.hivemc.chunker.nbt.tags.primitive.IntTag;
@@ -44,6 +45,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 /**
  * Resolver for converting Java component NBT to the Chunker ItemStack and resolving all the properties of the item.
@@ -682,17 +684,33 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
                                 .flatMap(ChunkerFireworkShape::getByName)
                                 .orElse(ChunkerFireworkShape.SMALL_BALL);
 
-                        // Parse colors
-                        int[] colorsRGB = explosionTag.getIntArray("colors", null);
-                        List<Color> colors = colorsRGB == null ? Collections.emptyList() : IntStream.of(colorsRGB)
-                                .mapToObj(Color::new)
-                                .toList();
+                        // Parse colors (ListTags on 1.21.5 and newer)
+                        Tag<?> colorsTag = explosionTag.get("colors");
+                        List<Color> colors = Collections.emptyList();
+                        if (colorsTag instanceof ListTag<?, ?> colorsTagList) {
+                            colors = StreamSupport.stream(colorsTagList.spliterator(), false)
+                                    .mapToInt(colorsTagInt -> (int) colorsTagInt.getBoxedValue())
+                                    .mapToObj(Color::new)
+                                    .toList();
+                        } else if (colorsTag instanceof IntArrayTag colorsArrayTag) {
+                            colors = IntStream.of(colorsArrayTag.getBoxedValue())
+                                    .mapToObj(Color::new)
+                                    .toList();
+                        }
 
-                        // Parse fade colors
-                        int[] fadeColorsRGB = explosionTag.getIntArray("fade_colors", null);
-                        List<Color> fadeColors = fadeColorsRGB == null ? Collections.emptyList() : IntStream.of(fadeColorsRGB)
-                                .mapToObj(Color::new)
-                                .toList();
+                        // Parse fade colors (ListTags on 1.21.5 and newer)
+                        Tag<?> fadeColorsTag = explosionTag.get("fade_colors");
+                        List<Color> fadeColors = Collections.emptyList();
+                        if (fadeColorsTag instanceof ListTag<?, ?> fadeColorsTagList) {
+                            fadeColors = StreamSupport.stream(fadeColorsTagList.spliterator(), false)
+                                    .mapToInt(colorsTagInt -> (int) colorsTagInt.getBoxedValue())
+                                    .mapToObj(Color::new)
+                                    .toList();
+                        } else if (fadeColorsTag instanceof IntArrayTag fadeColorsArrayTag) {
+                            fadeColors = IntStream.of(fadeColorsArrayTag.getBoxedValue())
+                                    .mapToObj(Color::new)
+                                    .toList();
+                        }
 
                         // Parse trail / twinkle
                         boolean trail = explosionTag.getByte("has_trail", (byte) 0) == (byte) 1;
@@ -728,14 +746,29 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
                     for (ChunkerFireworkExplosion chunkerFireworkExplosion : chunkerFireworks.getExplosions()) {
                         CompoundTag explosion = new CompoundTag(5);
                         explosion.put("shape", chunkerFireworkExplosion.getShape().getName());
-                        explosion.put("colors", chunkerFireworkExplosion.getColors().stream()
-                                .mapToInt(Color::getRGB)
-                                .toArray()
-                        );
-                        explosion.put("fade_colors", chunkerFireworkExplosion.getFadeColors().stream()
-                                .mapToInt(Color::getRGB)
-                                .toArray()
-                        );
+
+                        // 1.21.5 uses ListTags for these instead of IntArrayTags
+                        if (resolvers.dataVersion().getVersion().isGreaterThanOrEqual(1, 21, 5)) {
+                            explosion.put("colors", new ListTag<>(TagType.INT,
+                                    chunkerFireworkExplosion.getColors().stream()
+                                            .map(color -> new IntTag(color.getRGB()))
+                                            .toList()
+                            ));
+                            explosion.put("fade_colors", new ListTag<>(TagType.INT,
+                                    chunkerFireworkExplosion.getFadeColors().stream()
+                                            .map(color -> new IntTag(color.getRGB()))
+                                            .toList()
+                            ));
+                        } else {
+                            explosion.put("colors", chunkerFireworkExplosion.getColors().stream()
+                                    .mapToInt(Color::getRGB)
+                                    .toArray()
+                            );
+                            explosion.put("fade_colors", chunkerFireworkExplosion.getFadeColors().stream()
+                                    .mapToInt(Color::getRGB)
+                                    .toArray()
+                            );
+                        }
                         explosion.put("has_trail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
                         explosion.put("has_twinkle", chunkerFireworkExplosion.isTwinkle() ? (byte) 1 : (byte) 0);
                         explosions.add(explosion);
