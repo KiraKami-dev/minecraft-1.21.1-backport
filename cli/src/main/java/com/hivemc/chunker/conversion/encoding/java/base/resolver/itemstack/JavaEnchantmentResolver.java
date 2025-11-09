@@ -87,6 +87,10 @@ public class JavaEnchantmentResolver implements Resolver<String, ChunkerEnchantm
             mapping.put(ChunkerEnchantmentType.DENSITY, "minecraft:density");
             mapping.put(ChunkerEnchantmentType.BREACH, "minecraft:breach");
         }
+
+        if (javaVersion.isGreaterThanOrEqual(1, 21, 11)) {
+            mapping.put(ChunkerEnchantmentType.LUNGE, "minecraft:lunge");
+        }
     }
 
     @Override

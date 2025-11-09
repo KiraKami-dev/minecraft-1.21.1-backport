@@ -60,6 +60,9 @@ public class BedrockEffectIDResolver implements Resolver<Integer, ChunkerEffectT
             mapping.put(ChunkerEffectType.INFESTED, 35);
             mapping.put(ChunkerEffectType.RAID_OMEN, 36);
         }
+        if (bedrockVersion.isGreaterThanOrEqual(1, 21, 130)) {
+            mapping.put(ChunkerEffectType.BREATH_OF_THE_NAUTILUS, 37);
+        }
     }
 
     @Override

@@ -197,6 +197,12 @@ public class BedrockEntityTypeIDResolver implements Resolver<Integer, ChunkerEnt
         if (bedrockVersion.isGreaterThanOrEqual(1, 21, 100)) {
             mapping.put(ChunkerVanillaEntityType.COPPER_GOLEM, 148);
         }
+        if (bedrockVersion.isGreaterThanOrEqual(1, 21, 130)) {
+            mapping.put(ChunkerVanillaEntityType.NAUTILUS, 149);
+            mapping.put(ChunkerVanillaEntityType.ZOMBIE_NAUTILUS, 150);
+            mapping.put(ChunkerVanillaEntityType.PARCHED, 151);
+            mapping.put(ChunkerVanillaEntityType.CAMEL_HUSK, 152);
+        }
     }
 
     @Override
