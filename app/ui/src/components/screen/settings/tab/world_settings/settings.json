@@ -235,7 +235,7 @@
       "display": "Mob Griefing",
       "description": "Whether mobs are allowed to grief the world."
     },
-    "naturalgeneration": {
+    "naturalregeneration": {
       "display": "Natural Regeneration",
       "description": "Whether players can regenerate health naturally if hunger is full."
     },

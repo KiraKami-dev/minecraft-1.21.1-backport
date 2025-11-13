@@ -279,7 +279,7 @@ public class ChunkerLevelSettings {
     @Bedrock
     @Java("GameRules.naturalRegeneration")
     @Category(Category.Type.GAME_RULES)
-    public boolean naturalgeneration = true;
+    public boolean naturalregeneration = true;
 
     @Bedrock
     @Category(Category.Type.WORLD_SETTINGS)
@@ -870,7 +870,7 @@ public class ChunkerLevelSettings {
                 ", mobgriefing=" + mobgriefing +
                 ", MultiplayerGame=" + MultiplayerGame +
                 ", MultiplayerGameIntent=" + MultiplayerGameIntent +
-                ", naturalgeneration=" + naturalgeneration +
+                ", naturalregeneration=" + naturalregeneration +
                 ", NetherScale=" + NetherScale +
                 ", rainLevel=" + rainLevel +
                 ", rainTime=" + rainTime +

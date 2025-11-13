@@ -484,7 +484,7 @@
                 false
             ]
         },
-        "naturalgeneration": {
+        "naturalregeneration": {
             "type": "boolean",
             "title": "Natural Regeneration",
             "description": "Whether players can regenerate health naturally if hunger is full.",
