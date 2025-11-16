@@ -11,6 +11,7 @@ import com.hivemc.chunker.conversion.intermediate.column.blockentity.BlockEntity
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerVanillaItemType;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerDyeColor;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemDisplay;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
@@ -429,26 +430,22 @@ public class BedrockLegacyItemStackResolver extends ItemStackResolver<BedrockRes
                     explosions = new ArrayList<>(explosionsTag.size());
                     for (CompoundTag explosionTag : explosionsTag) {
                         // Parse the explosion properties
-                        ChunkerFireworkShape shape = explosionTag.getOptionalValue("Type", Byte.class)
+                        ChunkerFireworkShape shape = explosionTag.getOptionalValue("FireworkType", Byte.class)
                                 .map(Byte::intValue)
                                 .flatMap(ChunkerFireworkShape::getByID)
                                 .orElse(ChunkerFireworkShape.SMALL_BALL);
 
                         // Parse colors
-                        int[] colorsRGB = explosionTag.getIntArray("Colors", null);
-                        List<Color> colors = colorsRGB == null ? Collections.emptyList() : IntStream.of(colorsRGB)
-                                .mapToObj(Color::new)
-                                .toList();
+                        byte[] colorsRGB = explosionTag.getByteArray("FireworkColor", null);
+                        List<Color> colors = colorsRGB == null ? Collections.emptyList() : mapFireworkColors(colorsRGB);
 
                         // Parse fade colors
-                        int[] fadeColorsRGB = explosionTag.getIntArray("FadeColors", null);
-                        List<Color> fadeColors = fadeColorsRGB == null ? Collections.emptyList() : IntStream.of(fadeColorsRGB)
-                                .mapToObj(Color::new)
-                                .toList();
+                        byte[] fadeColorsRGB = explosionTag.getByteArray("FireworkFade", null);
+                        List<Color> fadeColors = fadeColorsRGB == null ? Collections.emptyList() : mapFireworkColors(fadeColorsRGB);
 
                         // Parse trail / twinkle
-                        boolean trail = explosionTag.getByte("Trail", (byte) 0) == (byte) 1;
-                        boolean twinkle = explosionTag.getByte("Flicker", (byte) 0) == (byte) 1;
+                        boolean trail = explosionTag.getByte("FireworkTrail", (byte) 0) == (byte) 1;
+                        boolean twinkle = explosionTag.getByte("FireworkFlicker", (byte) 0) == (byte) 1;
 
                         explosions.add(new ChunkerFireworkExplosion(
                                 shape,
@@ -479,21 +476,64 @@ public class BedrockLegacyItemStackResolver extends ItemStackResolver<BedrockRes
                     ListTag<CompoundTag, Map<String, Tag<?>>> explosions = new ListTag<>(TagType.COMPOUND, chunkerFireworks.getExplosions().size());
                     for (ChunkerFireworkExplosion chunkerFireworkExplosion : chunkerFireworks.getExplosions()) {
                         CompoundTag explosion = new CompoundTag(5);
-                        explosion.put("Type", (byte) chunkerFireworkExplosion.getShape().getID());
-                        explosion.put("Colors", chunkerFireworkExplosion.getColors().stream()
-                                .mapToInt(Color::getRGB)
-                                .toArray()
-                        );
-                        explosion.put("FadeColors", chunkerFireworkExplosion.getFadeColors().stream()
-                                .mapToInt(Color::getRGB)
-                                .toArray()
-                        );
-                        explosion.put("Trail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
-                        explosion.put("Flicker", chunkerFireworkExplosion.isTwinkle() ? (byte) 1 : (byte) 0);
+                        explosion.put("FireworkType", (byte) chunkerFireworkExplosion.getShape().getID());
+                        explosion.put("FireworkColor", mapFireworkColors(chunkerFireworkExplosion.getColors(), true));
+                        explosion.put("FireworkFade", mapFireworkColors(chunkerFireworkExplosion.getFadeColors(), false));
+                        explosion.put("FireworkTrail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
+                        explosion.put("FireworkFlicker", chunkerFireworkExplosion.isTwinkle() ? (byte) 1 : (byte) 0);
                         explosions.add(explosion);
                     }
                     tag.put("Explosions", explosions);
                 }
+            }
+        });
+
+        // Firework Explosion
+        registerHandler(ChunkerItemProperty.FIREWORK_EXPLOSION, new PropertyHandler<>() {
+            @Override
+            public Optional<ChunkerFireworkExplosion> read(@NotNull CompoundTag value) {
+                Optional<CompoundTag> component = value.getOptional("tag", CompoundTag.class)
+                        .flatMap(tag -> tag.getOptional("FireworksItem", CompoundTag.class));
+                if (component.isEmpty()) return Optional.empty();
+
+                CompoundTag explosionTag = component.get();
+
+                // Parse the explosion properties
+                ChunkerFireworkShape shape = explosionTag.getOptionalValue("FireworkType", Byte.class)
+                        .map(Byte::intValue)
+                        .flatMap(ChunkerFireworkShape::getByID)
+                        .orElse(ChunkerFireworkShape.SMALL_BALL);
+
+                // Parse colors
+                byte[] colorsRGB = explosionTag.getByteArray("FireworkColor", null);
+                List<Color> colors = colorsRGB == null ? Collections.emptyList() : mapFireworkColors(colorsRGB);
+
+                // Parse fade colors
+                byte[] fadeColorsRGB = explosionTag.getByteArray("FireworkFade", null);
+                List<Color> fadeColors = fadeColorsRGB == null ? Collections.emptyList() : mapFireworkColors(fadeColorsRGB);
+
+                // Parse trail / twinkle
+                boolean trail = explosionTag.getByte("FireworkTrail", (byte) 0) == (byte) 1;
+                boolean twinkle = explosionTag.getByte("FireworkFlicker", (byte) 0) == (byte) 1;
+
+                return Optional.of(new ChunkerFireworkExplosion(
+                        shape,
+                        colors,
+                        fadeColors,
+                        trail,
+                        twinkle
+                ));
+            }
+
+            @Override
+            public void write(@NotNull CompoundTag value, @NotNull ChunkerFireworkExplosion chunkerFireworkExplosion) {
+                // Write the tag
+                CompoundTag explosion = value.getOrCreateCompound("tag").getOrCreateCompound("FireworksItem");
+                explosion.put("FireworkType", (byte) chunkerFireworkExplosion.getShape().getID());
+                explosion.put("FireworkColor", mapFireworkColors(chunkerFireworkExplosion.getColors(), true));
+                explosion.put("FireworkFade", mapFireworkColors(chunkerFireworkExplosion.getFadeColors(), false));
+                explosion.put("FireworkTrail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
+                explosion.put("FireworkFlicker", chunkerFireworkExplosion.isTwinkle() ? (byte) 1 : (byte) 0);
             }
         });
 
@@ -566,6 +606,48 @@ public class BedrockLegacyItemStackResolver extends ItemStackResolver<BedrockRes
                 }
             }
         });
+    }
+
+    /**
+     * Map firework colors from indexes into colors.
+     *
+     * @param colorIndexes the input indexes (based on reverse ChunkerDyeColors).
+     * @return a list of the colors (Java RGB).
+     */
+    public List<Color> mapFireworkColors(byte[] colorIndexes) {
+        List<Color> colors = new ArrayList<>(colorIndexes.length);
+
+        // Map the index to a dye color then to an RGB value
+        for (byte colorIndex : colorIndexes) {
+            ChunkerDyeColor dyeColor = ChunkerDyeColor.getColorByReversedID(colorIndex).orElseThrow();
+            colors.add(new Color(dyeColor.getJavaRGB()));
+        }
+        return colors;
+    }
+
+    /**
+     * Map firework colors into ChunkerDyeColor reverse indexes.
+     *
+     * @param colors       the input colors.
+     * @param defaultBlack whether it should return black if the colors array is empty.
+     * @return an array of the color indexes (uses the closest where not an exact match).
+     */
+    public byte[] mapFireworkColors(List<Color> colors, boolean defaultBlack) {
+        // Return just black if there are no colors, Bedrock doesn't seem to like having an empty array
+        if (defaultBlack && colors.isEmpty()) {
+            return new byte[]{
+                    (byte) ChunkerDyeColor.BLACK.getReversedID()
+            };
+        }
+
+        byte[] mapped = new byte[colors.size()];
+
+        // Find the closest dye color for each value
+        for (int i = 0; i < colors.size(); i++) {
+            ChunkerDyeColor dyeColor = ChunkerDyeColor.findClosestDyeColor(colors.get(i));
+            mapped[i] = (byte) dyeColor.getReversedID();
+        }
+        return mapped;
     }
 
     @Override

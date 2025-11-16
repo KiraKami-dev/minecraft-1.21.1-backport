@@ -6,6 +6,7 @@ import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.Comparabl
 import com.hivemc.chunker.conversion.intermediate.column.blockentity.BlockEntity;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.enchantment.ChunkerEnchantmentType;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkExplosion;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworks;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.horn.ChunkerHornInstrument;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.potion.ChunkerPotionType;
@@ -112,6 +113,13 @@ public class ChunkerItemProperty<V> extends Property<ChunkerItemStack, V> implem
     public static final ChunkerItemProperty<ChunkerFireworks> FIREWORKS = new ChunkerItemProperty<>(
             "fireworks",
             ChunkerFireworks.class
+    );
+    /**
+     * The firework effect used on a star.
+     */
+    public static final ChunkerItemProperty<ChunkerFireworkExplosion> FIREWORK_EXPLOSION = new ChunkerItemProperty<>(
+            "firework_explosion",
+            ChunkerFireworkExplosion.class
     );
     /**
      * The horn instrument to use.

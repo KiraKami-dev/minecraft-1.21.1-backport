@@ -751,21 +751,23 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
                         if (resolvers.dataVersion().getVersion().isGreaterThanOrEqual(1, 21, 5)) {
                             explosion.put("colors", new ListTag<>(TagType.INT,
                                     chunkerFireworkExplosion.getColors().stream()
-                                            .map(color -> new IntTag(color.getRGB()))
+                                            .map(color -> new IntTag(color.getRGB() & 0x00FFFFFF))
                                             .toList()
                             ));
                             explosion.put("fade_colors", new ListTag<>(TagType.INT,
                                     chunkerFireworkExplosion.getFadeColors().stream()
-                                            .map(color -> new IntTag(color.getRGB()))
+                                            .map(color -> new IntTag(color.getRGB() & 0x00FFFFFF))
                                             .toList()
                             ));
                         } else {
                             explosion.put("colors", chunkerFireworkExplosion.getColors().stream()
                                     .mapToInt(Color::getRGB)
+                                    .map(argb -> argb & 0x00FFFFFF)
                                     .toArray()
                             );
                             explosion.put("fade_colors", chunkerFireworkExplosion.getFadeColors().stream()
                                     .mapToInt(Color::getRGB)
+                                    .map(argb -> argb & 0x00FFFFFF)
                                     .toArray()
                             );
                         }
@@ -775,6 +777,98 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
                     }
                     tag.put("explosions", explosions);
                 }
+            }
+        });
+
+        // Fireworks
+        registerHandler(ChunkerItemProperty.FIREWORK_EXPLOSION, new PropertyHandler<>() {
+            @Override
+            public Optional<ChunkerFireworkExplosion> read(@NotNull CompoundTag value) {
+                Optional<CompoundTag> component = value.getOptional("components", CompoundTag.class)
+                        .flatMap(tag -> tag.getOptional("minecraft:firework_explosion", CompoundTag.class));
+                if (component.isEmpty()) return Optional.empty();
+
+                CompoundTag explosionTag = component.get();
+
+                // Parse the explosion properties
+                ChunkerFireworkShape shape = explosionTag.getOptionalValue("shape", String.class)
+                        .flatMap(ChunkerFireworkShape::getByName)
+                        .orElse(ChunkerFireworkShape.SMALL_BALL);
+
+                // Parse colors (ListTags on 1.21.5 and newer)
+                Tag<?> colorsTag = explosionTag.get("colors");
+                List<Color> colors = Collections.emptyList();
+                if (colorsTag instanceof ListTag<?, ?> colorsTagList) {
+                    colors = StreamSupport.stream(colorsTagList.spliterator(), false)
+                            .mapToInt(colorsTagInt -> (int) colorsTagInt.getBoxedValue())
+                            .mapToObj(Color::new)
+                            .toList();
+                } else if (colorsTag instanceof IntArrayTag colorsArrayTag) {
+                    colors = IntStream.of(colorsArrayTag.getBoxedValue())
+                            .mapToObj(Color::new)
+                            .toList();
+                }
+
+                // Parse fade colors (ListTags on 1.21.5 and newer)
+                Tag<?> fadeColorsTag = explosionTag.get("fade_colors");
+                List<Color> fadeColors = Collections.emptyList();
+                if (fadeColorsTag instanceof ListTag<?, ?> fadeColorsTagList) {
+                    fadeColors = StreamSupport.stream(fadeColorsTagList.spliterator(), false)
+                            .mapToInt(colorsTagInt -> (int) colorsTagInt.getBoxedValue())
+                            .mapToObj(Color::new)
+                            .toList();
+                } else if (fadeColorsTag instanceof IntArrayTag fadeColorsArrayTag) {
+                    fadeColors = IntStream.of(fadeColorsArrayTag.getBoxedValue())
+                            .mapToObj(Color::new)
+                            .toList();
+                }
+
+                // Parse trail / twinkle
+                boolean trail = explosionTag.getByte("has_trail", (byte) 0) == (byte) 1;
+                boolean twinkle = explosionTag.getByte("has_twinkle", (byte) 0) == (byte) 1;
+
+                // Create the explosion
+                return Optional.of(new ChunkerFireworkExplosion(
+                        shape,
+                        colors,
+                        fadeColors,
+                        trail,
+                        twinkle
+                ));
+            }
+
+            @Override
+            public void write(@NotNull CompoundTag value, @NotNull ChunkerFireworkExplosion chunkerFireworkExplosion) {
+                // Write the tag
+                CompoundTag explosion = value.getOrCreateCompound("components").getOrCreateCompound("minecraft:firework_explosion");
+                explosion.put("shape", chunkerFireworkExplosion.getShape().getName());
+
+                // 1.21.5 uses ListTags for these instead of IntArrayTags
+                if (resolvers.dataVersion().getVersion().isGreaterThanOrEqual(1, 21, 5)) {
+                    explosion.put("colors", new ListTag<>(TagType.INT,
+                            chunkerFireworkExplosion.getColors().stream()
+                                    .map(color -> new IntTag(color.getRGB() & 0x00FFFFFF))
+                                    .toList()
+                    ));
+                    explosion.put("fade_colors", new ListTag<>(TagType.INT,
+                            chunkerFireworkExplosion.getFadeColors().stream()
+                                    .map(color -> new IntTag(color.getRGB() & 0x00FFFFFF))
+                                    .toList()
+                    ));
+                } else {
+                    explosion.put("colors", chunkerFireworkExplosion.getColors().stream()
+                            .mapToInt(Color::getRGB)
+                            .map(argb -> argb & 0x00FFFFFF)
+                            .toArray()
+                    );
+                    explosion.put("fade_colors", chunkerFireworkExplosion.getFadeColors().stream()
+                            .mapToInt(Color::getRGB)
+                            .map(argb -> argb & 0x00FFFFFF)
+                            .toArray()
+                    );
+                }
+                explosion.put("has_trail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
+                explosion.put("has_twinkle", chunkerFireworkExplosion.isTwinkle() ? (byte) 1 : (byte) 0);
             }
         });
 
