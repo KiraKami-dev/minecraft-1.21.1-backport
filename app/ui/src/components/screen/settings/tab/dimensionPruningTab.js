@@ -77,19 +77,20 @@ export class DimensionPruningTab extends Component {
 
                 return {dimensionMapping: dimensionMappingClone};
             });
-        } else if (name === "Enabled") {
+        } else if (name === "Pruning") {
             this.app.setState((prevState) => {
                 let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
 
-                if (value) {
+                if (value !== "OFF") {
                     pruningSettingsClone[tabIndex] = {
-                        include: true,
                         regions: [{
                             minChunkX: -10,
                             minChunkZ: -10,
                             maxChunkX: 10,
                             maxChunkZ: 10
-                        }]
+                        }],
+                        ...pruningSettingsClone[tabIndex],
+                        include: value === "INCLUDE"
                     };
                 } else {
                     pruningSettingsClone[tabIndex] = null;
@@ -181,13 +182,31 @@ export class DimensionPruningTab extends Component {
         let enabled = !!(this.app.state.pruningSettings[dimensionIndex]
             && this.app.state.pruningSettings[dimensionIndex].regions
             && this.app.state.pruningSettings[dimensionIndex].regions.length > 0);
+        let pruningSetting = enabled ? (this.app.state.pruningSettings[dimensionIndex].include ? "INCLUDE" : "EXCLUDE") : "OFF";
         let options = [
             {
-                "display": "Prune chunks outside of a region",
-                "name": "Enabled",
-                "description": "This will make it so other chunks outside a certain region are discarded.",
-                "type": "Boolean",
-                "value": enabled
+                "name": "Pruning",
+                "display": "Chunk Pruning",
+                "description": "Whether chunk pruning should include or exclude regions, off indicates no pruning.",
+                "type": "Radio",
+                "value": pruningSetting,
+                "options": [
+                    {
+                        "name": "Off",
+                        "color": "blue",
+                        "value": "OFF"
+                    },
+                    {
+                        "name": "Include",
+                        "color": "green",
+                        "value": "INCLUDE"
+                    },
+                    {
+                        "name": "Exclude",
+                        "color": "red",
+                        "value": "EXCLUDE"
+                    }
+                ]
             }
         ];
 
