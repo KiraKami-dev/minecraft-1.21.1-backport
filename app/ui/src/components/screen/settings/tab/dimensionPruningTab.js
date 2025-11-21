@@ -121,7 +121,19 @@ export class DimensionPruningTab extends Component {
                 let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
 
                 // Update settings
-                pruningSettingsClone[tabIndex].regions[setting.region][name] = parseInt(value);
+                if (name === "name") {
+                    // Check if name is equal to the default
+                    if (value !== ("Region " + (setting.region + 1))) {
+                        pruningSettingsClone[tabIndex].regions[setting.region][name] = value;
+                    } else {
+                        // Delete the name
+                        delete pruningSettingsClone[tabIndex].regions[setting.region][name];
+                    }
+                } else {
+                    // Parse as int
+                    pruningSettingsClone[tabIndex].regions[setting.region][name] = parseInt(value);
+                }
+
 
                 // Return the new state
                 return {pruningSettings: pruningSettingsClone};
@@ -182,7 +194,7 @@ export class DimensionPruningTab extends Component {
         if (this.app.state.pruningSettings[dimensionIndex] && this.app.state.pruningSettings[dimensionIndex].regions) {
             this.app.state.pruningSettings[dimensionIndex].regions.forEach((region, index) => {
                 options = options.concat([{
-                    "display": "Region " + (index + 1),
+                    "display": ("Region " + (index + 1)),
                     "name": "removeRegion",
                     "description": "Remove this region",
                     "header": true,
@@ -192,6 +204,14 @@ export class DimensionPruningTab extends Component {
                 }]);
                 // Add settings for dimension pruning
                 options = options.concat([
+                    {
+                        "display": "Region Name",
+                        "name": "name",
+                        "description": "The internal name used for this region, useful for if you're exporting your Chunker settings.",
+                        "type": "String",
+                        "value": region.name ?? ("Region " + (index + 1)),
+                        "region": index
+                    },
                     {
                         "display": "Start Chunk X",
                         "name": "minChunkX",
