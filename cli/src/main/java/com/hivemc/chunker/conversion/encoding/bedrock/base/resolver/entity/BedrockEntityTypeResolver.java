@@ -203,6 +203,12 @@ public class BedrockEntityTypeResolver implements Resolver<String, ChunkerEntity
         if (bedrockVersion.isGreaterThanOrEqual(1, 21, 100)) {
             mapping.put(ChunkerVanillaEntityType.COPPER_GOLEM, "minecraft:copper_golem");
         }
+        if (bedrockVersion.isGreaterThanOrEqual(1, 21, 130)) {
+            mapping.put(ChunkerVanillaEntityType.CAMEL_HUSK, "minecraft:camel_husk");
+            mapping.put(ChunkerVanillaEntityType.NAUTILUS, "minecraft:nautilus");
+            mapping.put(ChunkerVanillaEntityType.PARCHED, "minecraft:parched");
+            mapping.put(ChunkerVanillaEntityType.ZOMBIE_NAUTILUS, "minecraft:zombie_nautilus");
+        }
     }
 
     @Override

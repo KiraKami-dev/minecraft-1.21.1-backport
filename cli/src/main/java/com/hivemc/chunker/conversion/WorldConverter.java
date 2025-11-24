@@ -355,17 +355,25 @@ public class WorldConverter implements Converter {
         ChunkCoordPair minRegionChunk = regionPair.getChunk(0, 0);
         ChunkCoordPair maxRegionChunk = regionPair.getChunk(31, 31);
 
-        // Find regions which overlap
         for (PruningRegion region : pruningConfig.getRegions()) {
-            if (maxRegionChunk.chunkX() >= region.getMinChunkX() &&
-                    minRegionChunk.chunkX() <= region.getMaxChunkX() &&
-                    maxRegionChunk.chunkZ() >= region.getMinChunkZ() &&
-                    minRegionChunk.chunkZ() <= region.getMaxChunkZ()) {
-                return pruningConfig.isInclude(); // Overlap
+            if (pruningConfig.isInclude()) {
+                // If the region overlaps then we should process the region
+                boolean overlap = maxRegionChunk.chunkX() >= region.getMinChunkX() &&
+                        minRegionChunk.chunkX() <= region.getMaxChunkX() &&
+                        maxRegionChunk.chunkZ() >= region.getMinChunkZ() &&
+                        minRegionChunk.chunkZ() <= region.getMaxChunkZ();
+                if (overlap) return true;
+            } else {
+                // Ensure the region is fully inside the exclusion zone before returning false
+                boolean fullyContained = minRegionChunk.chunkX() >= region.getMinChunkX() &&
+                        maxRegionChunk.chunkX() <= region.getMaxChunkX() &&
+                        minRegionChunk.chunkZ() >= region.getMinChunkZ() &&
+                        maxRegionChunk.chunkZ() <= region.getMaxChunkZ();
+                if (fullyContained) return false;
             }
         }
 
-        return !pruningConfig.isInclude(); // No overlap
+        return !pruningConfig.isInclude();
     }
 
     @Override

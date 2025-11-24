@@ -12,6 +12,7 @@
                     "include": true,
                     "regions": [
                         {
+                            "name": "Spawn",
                             "minChunkX": -10,
                             "minChunkZ": -10,
                             "maxChunkX": 10,
@@ -41,6 +42,7 @@
                         "include": true,
                         "regions": [
                             {
+                                "name": "Spawn",
                                 "minChunkX": -10,
                                 "minChunkZ": -10,
                                 "maxChunkX": 10,
@@ -64,6 +66,7 @@
                             "include": true,
                             "regions": [
                                 {
+                                    "name": "Spawn",
                                     "minChunkX": -10,
                                     "minChunkZ": -10,
                                     "maxChunkX": 10,
@@ -76,6 +79,7 @@
                                 "include": true,
                                 "regions": [
                                     {
+                                        "name": "Spawn",
                                         "minChunkX": -10,
                                         "minChunkZ": -10,
                                         "maxChunkX": 10,
@@ -162,6 +166,16 @@
                                                 "maxChunkZ"
                                             ],
                                             "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "title": "The name of the region",
+                                                    "description": "An internal name for the region shown in the Chunker user interface.",
+                                                    "default": true,
+                                                    "examples": [
+                                                        "Spawn", 
+                                                        "Region 1"
+                                                    ]
+                                                },
                                                 "minChunkX": {
                                                     "type": "integer",
                                                     "title": "Minimum Chunk X",

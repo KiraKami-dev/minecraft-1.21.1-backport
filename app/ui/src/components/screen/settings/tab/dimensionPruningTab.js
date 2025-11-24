@@ -77,19 +77,20 @@ export class DimensionPruningTab extends Component {
 
                 return {dimensionMapping: dimensionMappingClone};
             });
-        } else if (name === "Enabled") {
+        } else if (name === "Pruning") {
             this.app.setState((prevState) => {
                 let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
 
-                if (value) {
+                if (value !== "OFF") {
                     pruningSettingsClone[tabIndex] = {
-                        include: true,
                         regions: [{
                             minChunkX: -10,
                             minChunkZ: -10,
                             maxChunkX: 10,
                             maxChunkZ: 10
-                        }]
+                        }],
+                        ...pruningSettingsClone[tabIndex],
+                        include: value === "INCLUDE"
                     };
                 } else {
                     pruningSettingsClone[tabIndex] = null;
@@ -121,7 +122,19 @@ export class DimensionPruningTab extends Component {
                 let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
 
                 // Update settings
-                pruningSettingsClone[tabIndex].regions[setting.region][name] = parseInt(value);
+                if (name === "name") {
+                    // Check if name is equal to the default
+                    if (value !== ("Region " + (setting.region + 1))) {
+                        pruningSettingsClone[tabIndex].regions[setting.region][name] = value;
+                    } else {
+                        // Delete the name
+                        delete pruningSettingsClone[tabIndex].regions[setting.region][name];
+                    }
+                } else {
+                    // Parse as int
+                    pruningSettingsClone[tabIndex].regions[setting.region][name] = parseInt(value);
+                }
+
 
                 // Return the new state
                 return {pruningSettings: pruningSettingsClone};
@@ -169,20 +182,38 @@ export class DimensionPruningTab extends Component {
         let enabled = !!(this.app.state.pruningSettings[dimensionIndex]
             && this.app.state.pruningSettings[dimensionIndex].regions
             && this.app.state.pruningSettings[dimensionIndex].regions.length > 0);
+        let pruningSetting = enabled ? (this.app.state.pruningSettings[dimensionIndex].include ? "INCLUDE" : "EXCLUDE") : "OFF";
         let options = [
             {
-                "display": "Prune chunks outside of a region",
-                "name": "Enabled",
-                "description": "This will make it so other chunks outside a certain region are discarded.",
-                "type": "Boolean",
-                "value": enabled
+                "name": "Pruning",
+                "display": "Chunk Pruning",
+                "description": "Whether chunk pruning should include or exclude regions, off indicates no pruning.",
+                "type": "Radio",
+                "value": pruningSetting,
+                "options": [
+                    {
+                        "name": "Off",
+                        "color": "blue",
+                        "value": "OFF"
+                    },
+                    {
+                        "name": "Include",
+                        "color": "green",
+                        "value": "INCLUDE"
+                    },
+                    {
+                        "name": "Exclude",
+                        "color": "red",
+                        "value": "EXCLUDE"
+                    }
+                ]
             }
         ];
 
         if (this.app.state.pruningSettings[dimensionIndex] && this.app.state.pruningSettings[dimensionIndex].regions) {
             this.app.state.pruningSettings[dimensionIndex].regions.forEach((region, index) => {
                 options = options.concat([{
-                    "display": "Region " + (index + 1),
+                    "display": ("Region " + (index + 1)),
                     "name": "removeRegion",
                     "description": "Remove this region",
                     "header": true,
@@ -192,6 +223,14 @@ export class DimensionPruningTab extends Component {
                 }]);
                 // Add settings for dimension pruning
                 options = options.concat([
+                    {
+                        "display": "Region Name",
+                        "name": "name",
+                        "description": "The internal name used for this region, useful for if you're exporting your Chunker settings.",
+                        "type": "String",
+                        "value": region.name ?? ("Region " + (index + 1)),
+                        "region": index
+                    },
                     {
                         "display": "Start Chunk X",
                         "name": "minChunkX",

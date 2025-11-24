@@ -109,7 +109,13 @@ public class JavaBasicItemResolverTests {
 
                     // Autumn Drop
                     ChunkerVanillaEntityType.COPPER_GOLEM,
-                    ChunkerVanillaEntityType.MANNEQUIN
+                    ChunkerVanillaEntityType.MANNEQUIN,
+
+                    // Winter Drop
+                    ChunkerVanillaEntityType.CAMEL_HUSK,
+                    ChunkerVanillaEntityType.NAUTILUS,
+                    ChunkerVanillaEntityType.PARCHED,
+                    ChunkerVanillaEntityType.ZOMBIE_NAUTILUS
 
             ),
             ChunkerPotionType.class, Set.of(
@@ -138,7 +144,8 @@ public class JavaBasicItemResolverTests {
                     ChunkerEffectType.WEAVING,
                     ChunkerEffectType.OOZING,
                     ChunkerEffectType.INFESTED,
-                    ChunkerEffectType.RAID_OMEN
+                    ChunkerEffectType.RAID_OMEN,
+                    ChunkerEffectType.BREATH_OF_THE_NAUTILUS
             ),
             ChunkerTrimMaterial.class, Set.of(
                     ChunkerTrimMaterial.RESIN
@@ -321,6 +328,30 @@ public class JavaBasicItemResolverTests {
                             true,
                             true
                     ))),
+            };
+        } else if (asClass.equals(ChunkerFireworkExplosion.class)) {
+            return (T[]) new ChunkerFireworkExplosion[]{
+                    new ChunkerFireworkExplosion(
+                            ChunkerFireworkShape.SMALL_BALL,
+                            List.of(Color.RED, Color.GREEN),
+                            List.of(Color.RED, Color.GREEN),
+                            false,
+                            false
+                    ),
+                    new ChunkerFireworkExplosion(
+                            ChunkerFireworkShape.LARGE_BALL,
+                            List.of(Color.RED),
+                            List.of(Color.GREEN),
+                            true,
+                            true
+                    ),
+                    new ChunkerFireworkExplosion(
+                            ChunkerFireworkShape.CREEPER,
+                            List.of(),
+                            List.of(),
+                            true,
+                            true
+                    ),
             };
         } else if (asClass.equals(ChunkerTrim.class)) {
             Object[] patterns = generatePropertyValues(ChunkerTrimPattern.class, property);

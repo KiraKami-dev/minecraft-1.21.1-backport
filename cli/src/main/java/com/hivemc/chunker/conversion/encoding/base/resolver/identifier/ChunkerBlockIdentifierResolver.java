@@ -13,8 +13,11 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockState;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.Bool;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
+import com.hivemc.chunker.mapping.identifier.states.StateValueString;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.CollectionComparator;
@@ -400,6 +403,9 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         for (Map.Entry<BlockState<?>, BlockStateValue> entry : states.entrySet()) {
             if (entry.getValue() instanceof ChunkerCustomBlockType.CustomBlockStateValue<?> customBlockStateValue) {
                 newMap.put(entry.getKey().getName(), StateValue.fromBoxed(customBlockStateValue.getStateValue()));
+            } else if (entry.getKey() == VanillaBlockStates.WATERLOGGED && entry.getValue() == Bool.TRUE) {
+                // Write the waterlogged state if the custom block had it
+                newMap.put(entry.getKey().getName(), new StateValueString("true"));
             }
         }
 

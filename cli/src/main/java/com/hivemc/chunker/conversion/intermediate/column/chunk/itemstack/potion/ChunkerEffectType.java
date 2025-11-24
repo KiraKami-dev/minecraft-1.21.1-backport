@@ -43,5 +43,6 @@ public enum ChunkerEffectType {
     WEAVING,
     OOZING,
     INFESTED,
-    RAID_OMEN
+    RAID_OMEN,
+    BREATH_OF_THE_NAUTILUS
 }

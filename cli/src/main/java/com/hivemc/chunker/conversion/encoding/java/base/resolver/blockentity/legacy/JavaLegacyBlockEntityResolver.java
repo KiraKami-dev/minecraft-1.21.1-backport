@@ -16,6 +16,7 @@ import com.hivemc.chunker.conversion.intermediate.column.blockentity.end.EndPort
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerItemStackIdentifierType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
+import com.hivemc.chunker.util.InvertibleMap;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -27,33 +28,36 @@ public class JavaLegacyBlockEntityResolver extends BlockEntityResolver<JavaResol
     /**
      * The pre-1.11 IDs used the identifiers of the block entities.
      */
-    public static final ImmutableBiMap<String, String> OLD_TO_NEW_ID = ImmutableBiMap.<String, String>builder()
-            .put("Airportal", "minecraft:end_portal")
-            .put("Banner", "minecraft:banner")
-            .put("Bed", "minecraft:bed")
-            .put("Beacon", "minecraft:beacon")
-            .put("Cauldron", "minecraft:brewing_stand")
-            .put("Chest", "minecraft:chest")
-            .put("Comparator", "minecraft:comparator")
-            .put("Control", "minecraft:command_block")
-            .put("DLDetector", "minecraft:daylight_detector")
-            .put("Dropper", "minecraft:dropper")
-            .put("EnchantTable", "minecraft:enchanting_table")
-            .put("EndGateway", "minecraft:end_gateway")
-            .put("EnderChest", "minecraft:ender_chest")
-            .put("FlowerPot", "minecraft:flower_pot")
-            .put("Furnace", "minecraft:furnace")
-            .put("Hopper", "minecraft:hopper")
-            .put("MobSpawner", "minecraft:mob_spawner")
-            .put("Music", "minecraft:noteblock")
-            .put("Piston", "minecraft:piston")
-            .put("RecordPlayer", "minecraft:jukebox")
-            .put("Sign", "minecraft:sign")
-            .put("Skull", "minecraft:skull")
-            .put("Structure", "minecraft:structure_block")
-            .put("Trap", "minecraft:dispenser")
-            .put("Shulker", "minecraft:shulker_box")
-            .build();
+    public static final InvertibleMap<String, String> OLD_TO_NEW_ID = InvertibleMap.create();
+
+    static {
+        OLD_TO_NEW_ID.put("Airportal", "minecraft:end_portal");
+        OLD_TO_NEW_ID.put("Banner", "minecraft:banner");
+        OLD_TO_NEW_ID.put("Bed", "minecraft:bed");
+        OLD_TO_NEW_ID.put("Beacon", "minecraft:beacon");
+        OLD_TO_NEW_ID.put("Cauldron", "minecraft:brewing_stand");
+        OLD_TO_NEW_ID.put("TrappedChest", "minecraft:chest");
+        OLD_TO_NEW_ID.put("Chest", "minecraft:chest");
+        OLD_TO_NEW_ID.put("Comparator", "minecraft:comparator");
+        OLD_TO_NEW_ID.put("Control", "minecraft:command_block");
+        OLD_TO_NEW_ID.put("DLDetector", "minecraft:daylight_detector");
+        OLD_TO_NEW_ID.put("Dropper", "minecraft:dropper");
+        OLD_TO_NEW_ID.put("EnchantTable", "minecraft:enchanting_table");
+        OLD_TO_NEW_ID.put("EndGateway", "minecraft:end_gateway");
+        OLD_TO_NEW_ID.put("EnderChest", "minecraft:ender_chest");
+        OLD_TO_NEW_ID.put("FlowerPot", "minecraft:flower_pot");
+        OLD_TO_NEW_ID.put("Furnace", "minecraft:furnace");
+        OLD_TO_NEW_ID.put("Hopper", "minecraft:hopper");
+        OLD_TO_NEW_ID.put("MobSpawner", "minecraft:mob_spawner");
+        OLD_TO_NEW_ID.put("Music", "minecraft:noteblock");
+        OLD_TO_NEW_ID.put("Piston", "minecraft:piston");
+        OLD_TO_NEW_ID.put("RecordPlayer", "minecraft:jukebox");
+        OLD_TO_NEW_ID.put("Sign", "minecraft:sign");
+        OLD_TO_NEW_ID.put("Skull", "minecraft:skull");
+        OLD_TO_NEW_ID.put("Structure", "minecraft:structure_block");
+        OLD_TO_NEW_ID.put("Trap", "minecraft:dispenser");
+        OLD_TO_NEW_ID.put("Shulker", "minecraft:shulker_box");
+    }
 
     /**
      * Create a new legacy java block entity resolver.
@@ -120,7 +124,7 @@ public class JavaLegacyBlockEntityResolver extends BlockEntityResolver<JavaResol
 
         // Newer versions use a namespaced key
         if (version.isGreaterThanOrEqual(1, 11, 0)) {
-            key = Objects.requireNonNull(OLD_TO_NEW_ID.get(key));
+            key = Objects.requireNonNull(OLD_TO_NEW_ID.forward().get(key));
         }
         compoundTag.put("id", key);
         return compoundTag;

@@ -599,10 +599,12 @@ public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers
                         explosion.put("Type", (byte) chunkerFireworkExplosion.getShape().getID());
                         explosion.put("Colors", chunkerFireworkExplosion.getColors().stream()
                                 .mapToInt(Color::getRGB)
+                                .map(argb -> argb & 0x00FFFFFF)
                                 .toArray()
                         );
                         explosion.put("FadeColors", chunkerFireworkExplosion.getFadeColors().stream()
                                 .mapToInt(Color::getRGB)
+                                .map(argb -> argb & 0x00FFFFFF)
                                 .toArray()
                         );
                         explosion.put("Trail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
@@ -611,6 +613,67 @@ public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers
                     }
                     tag.put("Explosions", explosions);
                 }
+            }
+        });
+
+        // Firework Explosion
+        registerHandler(ChunkerItemProperty.FIREWORK_EXPLOSION, new PropertyHandler<>() {
+            @Override
+            public Optional<ChunkerFireworkExplosion> read(@NotNull CompoundTag value) {
+                Optional<CompoundTag> component = value.getOptional("tag", CompoundTag.class)
+                        .flatMap(tag -> tag.getOptional("Explosion", CompoundTag.class));
+                if (component.isEmpty()) return Optional.empty();
+
+                CompoundTag explosionTag = component.get();
+
+                // Parse the explosion properties
+                ChunkerFireworkShape shape = explosionTag.getOptionalValue("Type", Byte.class)
+                        .map(Byte::intValue)
+                        .flatMap(ChunkerFireworkShape::getByID)
+                        .orElse(ChunkerFireworkShape.SMALL_BALL);
+
+                // Parse colors
+                int[] colorsRGB = explosionTag.getIntArray("Colors", null);
+                List<Color> colors = colorsRGB == null ? Collections.emptyList() : IntStream.of(colorsRGB)
+                        .mapToObj(Color::new)
+                        .toList();
+
+                // Parse fade colors
+                int[] fadeColorsRGB = explosionTag.getIntArray("FadeColors", null);
+                List<Color> fadeColors = fadeColorsRGB == null ? Collections.emptyList() : IntStream.of(fadeColorsRGB)
+                        .mapToObj(Color::new)
+                        .toList();
+
+                // Parse trail / twinkle
+                boolean trail = explosionTag.getByte("Trail", (byte) 0) == (byte) 1;
+                boolean twinkle = explosionTag.getByte("Flicker", (byte) 0) == (byte) 1;
+
+                return Optional.of(new ChunkerFireworkExplosion(
+                        shape,
+                        colors,
+                        fadeColors,
+                        trail,
+                        twinkle
+                ));
+            }
+
+            @Override
+            public void write(@NotNull CompoundTag value, @NotNull ChunkerFireworkExplosion chunkerFireworkExplosion) {
+                // Write the tag
+                CompoundTag explosion = value.getOrCreateCompound("tag").getOrCreateCompound("Explosion");
+                explosion.put("Type", (byte) chunkerFireworkExplosion.getShape().getID());
+                explosion.put("Colors", chunkerFireworkExplosion.getColors().stream()
+                        .mapToInt(Color::getRGB)
+                        .map(argb -> argb & 0x00FFFFFF)
+                        .toArray()
+                );
+                explosion.put("FadeColors", chunkerFireworkExplosion.getFadeColors().stream()
+                        .mapToInt(Color::getRGB)
+                        .map(argb -> argb & 0x00FFFFFF)
+                        .toArray()
+                );
+                explosion.put("Trail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
+                explosion.put("Flicker", chunkerFireworkExplosion.isTwinkle() ? (byte) 1 : (byte) 0);
             }
         });
 

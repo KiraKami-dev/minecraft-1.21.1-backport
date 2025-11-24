@@ -76,6 +76,10 @@ public class BedrockEnchantmentIDResolver implements Resolver<Integer, ChunkerEn
             mapping.put(ChunkerEnchantmentType.DENSITY, 39);
             mapping.put(ChunkerEnchantmentType.BREACH, 40);
         }
+
+        if (bedrockVersion.isGreaterThanOrEqual(1, 21, 130)) {
+            mapping.put(ChunkerEnchantmentType.LUNGE, 41);
+        }
     }
 
     @Override

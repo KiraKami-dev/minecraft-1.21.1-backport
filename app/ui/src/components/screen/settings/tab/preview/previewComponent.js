@@ -161,6 +161,7 @@ export class Map extends Component {
 
             // Add new state
             pruningSettingsClone[dimensionIndex].regions[regionIndex] = {
+                ...pruningSettingsClone[dimensionIndex].regions[regionIndex], // Merge old settings
                 minChunkX: Math.floor(Math.min(minX, maxX)),
                 minChunkZ: Math.floor(Math.min(minZ, maxZ)),
                 maxChunkX: Math.ceil(Math.max(minX, maxX)) - 1,
@@ -208,9 +209,9 @@ export class Map extends Component {
                 region: true
             });
 
-            // Add a label for the region if there are multiple
-            if (pruningRegions.regions.length > 1) {
-                rect.bindTooltip("Region " + (index + 1), {
+            // Add a label for the region if there are multiple (or if it's named)
+            if (pruningRegions.regions.length > 1 || region.name) {
+                rect.bindTooltip(region.name ?? ("Region " + (index + 1)), {
                     direction: "center",
                     opacity: 0.8
                 });

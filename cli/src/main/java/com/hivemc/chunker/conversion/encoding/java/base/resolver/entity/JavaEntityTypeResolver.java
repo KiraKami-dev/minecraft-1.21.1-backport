@@ -245,6 +245,12 @@ public class JavaEntityTypeResolver implements Resolver<String, ChunkerEntityTyp
             mapping.put(ChunkerVanillaEntityType.COPPER_GOLEM, "minecraft:copper_golem");
             mapping.put(ChunkerVanillaEntityType.MANNEQUIN, "minecraft:mannequin");
         }
+        if (version.isGreaterThanOrEqual(1, 21, 11)) {
+            mapping.put(ChunkerVanillaEntityType.CAMEL_HUSK, "minecraft:camel_husk");
+            mapping.put(ChunkerVanillaEntityType.NAUTILUS, "minecraft:nautilus");
+            mapping.put(ChunkerVanillaEntityType.PARCHED, "minecraft:parched");
+            mapping.put(ChunkerVanillaEntityType.ZOMBIE_NAUTILUS, "minecraft:zombie_nautilus");
+        }
     }
 
     @Override

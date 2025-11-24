@@ -1,5 +1,6 @@
 package com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.blockentity.handlers;
 
+import com.google.gson.JsonElement;
 import com.hivemc.chunker.conversion.encoding.base.resolver.blockentity.BlockEntityHandler;
 import com.hivemc.chunker.conversion.encoding.base.resolver.blockentity.UpdateBeforeProcessBlockEntityHandler;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.BedrockResolvers;
@@ -9,10 +10,12 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.Chunke
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.Bool;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,9 +42,12 @@ public class BedrockLecternBlockEntityHandler extends BlockEntityHandler<Bedrock
         if (value.getBook() != null && !value.getBook().getIdentifier().isAir()) {
             Optional<CompoundTag> item = resolvers.writeItem(value.getBook());
             if (item.isPresent()) {
+                List<JsonElement> pages = value.getBook().get(ChunkerItemProperty.BOOK_PAGES);
+                int totalPages = pages == null ? 0 : pages.size();
+
                 output.put("hasBook", (byte) 1);
                 output.put("book", item.get());
-                output.put("totalPages", 0);
+                output.put("totalPages", totalPages);
                 return;
             }
         }

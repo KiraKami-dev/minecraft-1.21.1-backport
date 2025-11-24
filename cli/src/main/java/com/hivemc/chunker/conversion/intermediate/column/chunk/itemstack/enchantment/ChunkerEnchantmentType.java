@@ -45,5 +45,6 @@ public enum ChunkerEnchantmentType {
     VANISHING_CURSE,
     WIND_BURST,
     DENSITY,
-    BREACH
+    BREACH,
+    LUNGE
 }

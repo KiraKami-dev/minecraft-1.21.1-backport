@@ -1157,5 +1157,33 @@ public class BedrockItemIdentifierResolver extends ChunkerItemIdentifierResolver
             // New copper armor
             register(ItemMapping.of("minecraft:copper_horse_armor", ChunkerVanillaItemType.COPPER_HORSE_ARMOR));
         }
+
+        // R21U13
+        if (version.isGreaterThanOrEqual(1, 21, 130)) {
+            // New spears
+            register(ItemMapping.of("minecraft:wooden_spear", ChunkerVanillaItemType.WOODEN_SPEAR));
+            register(ItemMapping.of("minecraft:stone_spear", ChunkerVanillaItemType.STONE_SPEAR));
+            register(ItemMapping.of("minecraft:copper_spear", ChunkerVanillaItemType.COPPER_SPEAR));
+            register(ItemMapping.of("minecraft:iron_spear", ChunkerVanillaItemType.IRON_SPEAR));
+            register(ItemMapping.of("minecraft:golden_spear", ChunkerVanillaItemType.GOLDEN_SPEAR));
+            register(ItemMapping.of("minecraft:diamond_spear", ChunkerVanillaItemType.DIAMOND_SPEAR));
+            register(ItemMapping.of("minecraft:netherite_spear", ChunkerVanillaItemType.NETHERITE_SPEAR));
+
+            // New nautilus armor
+            register(ItemMapping.of("minecraft:copper_nautilus_armor", ChunkerVanillaItemType.COPPER_NAUTILUS_ARMOR));
+            register(ItemMapping.of("minecraft:iron_nautilus_armor", ChunkerVanillaItemType.IRON_NAUTILUS_ARMOR));
+            register(ItemMapping.of("minecraft:golden_nautilus_armor", ChunkerVanillaItemType.GOLDEN_NAUTILUS_ARMOR));
+            register(ItemMapping.of("minecraft:diamond_nautilus_armor", ChunkerVanillaItemType.DIAMOND_NAUTILUS_ARMOR));
+            register(ItemMapping.of("minecraft:netherite_nautilus_armor", ChunkerVanillaItemType.NETHERITE_NAUTILUS_ARMOR));
+
+            // New netherite horse armor
+            register(ItemMapping.of("minecraft:netherite_horse_armor", ChunkerVanillaItemType.NETHERITE_HORSE_ARMOR));
+
+            // New spawn eggs
+            register(ItemMapping.of("minecraft:camel_husk_spawn_egg", ChunkerVanillaItemType.SPAWN_EGG, ChunkerItemProperty.SPAWN_EGG_MOB, ChunkerVanillaEntityType.CAMEL_HUSK));
+            register(ItemMapping.of("minecraft:nautilus_spawn_egg", ChunkerVanillaItemType.SPAWN_EGG, ChunkerItemProperty.SPAWN_EGG_MOB, ChunkerVanillaEntityType.NAUTILUS));
+            register(ItemMapping.of("minecraft:parched_spawn_egg", ChunkerVanillaItemType.SPAWN_EGG, ChunkerItemProperty.SPAWN_EGG_MOB, ChunkerVanillaEntityType.PARCHED));
+            register(ItemMapping.of("minecraft:zombie_nautilus_spawn_egg", ChunkerVanillaItemType.SPAWN_EGG, ChunkerItemProperty.SPAWN_EGG_MOB, ChunkerVanillaEntityType.ZOMBIE_NAUTILUS));
+        }
     }
 }

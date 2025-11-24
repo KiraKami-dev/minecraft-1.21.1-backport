@@ -69,6 +69,9 @@ public class JavaEffectResolver implements Resolver<String, ChunkerEffectType> {
             mapping.put(ChunkerEffectType.INFESTED, "minecraft:infested");
             mapping.put(ChunkerEffectType.RAID_OMEN, "minecraft:raid_omen");
         }
+        if (javaVersion.isGreaterThanOrEqual(1, 21, 11)) {
+            mapping.put(ChunkerEffectType.BREATH_OF_THE_NAUTILUS, "minecraft:breath_of_the_nautilus");
+        }
     }
 
     @Override
