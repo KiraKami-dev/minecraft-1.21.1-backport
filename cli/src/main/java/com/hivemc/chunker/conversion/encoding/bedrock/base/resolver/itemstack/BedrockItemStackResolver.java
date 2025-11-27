@@ -11,10 +11,7 @@ import com.hivemc.chunker.conversion.intermediate.column.blockentity.BlockEntity
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerVanillaItemType;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerDyeColor;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemDisplay;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.*;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.enchantment.ChunkerEnchantmentType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkExplosion;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkShape;
@@ -40,7 +37,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Resolver for converting Bedrock NBT to the Chunker ItemStack and resolving all the properties of the item.
@@ -649,6 +645,38 @@ public class BedrockItemStackResolver extends ItemStackResolver<BedrockResolvers
                     items.add(itemTagCompound);
                 }
                 value.getOrCreateCompound("tag").put("storage_item_component_content", items);
+            }
+        });
+
+        // Lodestone Data
+        registerContextualHandler(ChunkerItemProperty.LODESTONE_DATA, new PropertyHandler<>() {
+            @Override
+            public Optional<ChunkerLodestoneData> read(@NotNull Pair<ChunkerItemStack, CompoundTag> state) {
+                CompoundTag value = state.value();
+                Optional<Integer> lodestoneID = value.getOptional("tag", CompoundTag.class)
+                        .flatMap(tag -> tag.getOptionalValue("trackingHandle", Integer.class));
+                if (lodestoneID.isEmpty()) return Optional.empty();
+
+                // Ensure the item is the lodestone compass
+                if (state.key().getIdentifier() == ChunkerVanillaItemType.COMPASS) {
+                    state.key(new ChunkerItemStack(
+                            ChunkerVanillaItemType.LODESTONE_COMPASS,
+                            state.key().getPreservedIdentifier(),
+                            state.key().getProperties()
+                    ));
+                }
+
+                // Return the lodestone data (if it fails to fetch it will return empty)
+                return resolvers.getLodestoneData(lodestoneID.get());
+            }
+
+            @Override
+            public void write(@NotNull Pair<ChunkerItemStack, CompoundTag> state, @NotNull ChunkerLodestoneData lodestoneData) {
+                // Write items
+                int index = resolvers.getOrCreateLodestoneData(lodestoneData);
+                if (index != -1) {
+                    state.value().getOrCreateCompound("tag").put("trackingHandle", index);
+                }
             }
         });
 

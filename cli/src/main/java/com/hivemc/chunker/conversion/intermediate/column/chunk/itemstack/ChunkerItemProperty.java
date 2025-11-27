@@ -186,6 +186,14 @@ public class ChunkerItemProperty<V> extends Property<ChunkerItemStack, V> implem
             new TypeToken<>() {
             }
     );
+    /**
+     * The position data for the lodestone attached to the item.
+     */
+    public static final ChunkerItemProperty<ChunkerLodestoneData> LODESTONE_DATA = new ChunkerItemProperty<>(
+            "lodestone_data",
+            new TypeToken<>() {
+            }
+    );
 
     /**
      * Create a new item property using a type token.

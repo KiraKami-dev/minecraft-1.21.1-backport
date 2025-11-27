@@ -12,6 +12,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.i
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemDisplay;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerLodestoneData;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.enchantment.ChunkerEnchantmentType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkExplosion;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkShape;
@@ -28,6 +29,7 @@ import com.hivemc.chunker.conversion.intermediate.column.entity.PaintingEntity;
 import com.hivemc.chunker.conversion.intermediate.column.entity.type.ChunkerEntityType;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
+import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
@@ -731,6 +733,55 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                 );
                 explosion.put("Trail", chunkerFireworkExplosion.isTrail() ? (byte) 1 : (byte) 0);
                 explosion.put("Flicker", chunkerFireworkExplosion.isTwinkle() ? (byte) 1 : (byte) 0);
+            }
+        });
+
+        // Lodestone Compass
+        registerContextualHandler(ChunkerItemProperty.LODESTONE_DATA, new PropertyHandler<>() {
+            @Override
+            public Optional<ChunkerLodestoneData> read(@NotNull Pair<ChunkerItemStack, CompoundTag> state) {
+                CompoundTag tag = state.value().getCompound("tag");
+                if (tag == null) return Optional.empty();
+
+                CompoundTag position = tag.getCompound("LodestonePos");
+                if (position == null) return Optional.empty();
+
+                // Check if there's a dimension
+                Dimension dimension = Dimension.fromJavaNBT(tag.get("LodestoneDimension"), Dimension.OVERWORLD);
+
+                // Create the data
+                ChunkerLodestoneData lodestoneData = new ChunkerLodestoneData(
+                        dimension,
+                        position.getInt("X", 0),
+                        position.getInt("Y", 0),
+                        position.getInt("Z", 0),
+                        tag.getByte("LodestoneTracked", (byte) 1) == (byte) 1
+                );
+
+                // Ensure the item is the lodestone compass (Bedrock based type)
+                if (state.key().getIdentifier() == ChunkerVanillaItemType.COMPASS) {
+                    state.key(new ChunkerItemStack(
+                            ChunkerVanillaItemType.LODESTONE_COMPASS,
+                            state.key().getPreservedIdentifier(),
+                            state.key().getProperties()
+                    ));
+                }
+                return Optional.of(lodestoneData);
+            }
+
+            @Override
+            public void write(@NotNull Pair<ChunkerItemStack, CompoundTag> state, @NotNull ChunkerLodestoneData lodestoneData) {
+                // Write the tag
+                CompoundTag tag = state.value().getOrCreateCompound("tag");
+
+                // Create the target
+                tag.put("LodestoneDimension", lodestoneData.dimension().getIdentifier());
+                CompoundTag position = new CompoundTag(3);
+                position.put("X", lodestoneData.x());
+                position.put("Y", lodestoneData.y());
+                position.put("Z", lodestoneData.z());
+                tag.put("LodestonePos", position);
+                tag.put("LodestoneTracked", lodestoneData.tracked() ? (byte) 1 : (byte) 0);
             }
         });
 

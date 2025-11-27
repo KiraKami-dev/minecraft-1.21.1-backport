@@ -10,6 +10,7 @@ import com.hivemc.chunker.conversion.handlers.pretransform.manager.PreTransformM
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerLodestoneData;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.banner.ChunkerBannerPattern;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.enchantment.ChunkerEnchantmentType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.potion.ChunkerEffectType;
@@ -25,6 +26,8 @@ import com.hivemc.chunker.resolver.Resolver;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.ToIntFunction;
 
 /**
  * Builder style class for generating BedrockResolvers, this allows you to override specific resolvers while inheriting
@@ -52,6 +55,8 @@ public class BedrockResolversBuilder {
     private Function<BedrockResolvers, Resolver<CompoundTag, ChunkerItemStack>> itemStackResolverConstructor;
     private Function<BedrockResolvers, BlockEntityResolver<BedrockResolvers, CompoundTag>> blockEntityResolverConstructor;
     private Function<BedrockResolvers, EntityResolver<BedrockResolvers, CompoundTag>> entityResolverConstructor;
+    private IntFunction<ChunkerLodestoneData> lodestoneDataGetter;
+    private ToIntFunction<ChunkerLodestoneData> lodestoneDataSetter;
     private PreTransformManager preTransformManager;
 
     /**
@@ -325,6 +330,24 @@ public class BedrockResolversBuilder {
             }
 
             @Override
+            public int getOrCreateLodestoneData(ChunkerLodestoneData lodestoneData) {
+                if (lodestoneDataSetter != null) {
+                    return lodestoneDataSetter.applyAsInt(lodestoneData);
+                }
+
+                // Always return -1 as it wasn't possible
+                return -1;
+            }
+
+            @Override
+            public Optional<ChunkerLodestoneData> getLodestoneData(int index) {
+                if (lodestoneDataGetter != null) {
+                    return Optional.ofNullable(lodestoneDataGetter.apply(index));
+                }
+                return Optional.empty();
+            }
+
+            @Override
             public Converter converter() {
                 return converter;
             }
@@ -447,6 +470,12 @@ public class BedrockResolversBuilder {
 
     public BedrockResolversBuilder preTransformManager(PreTransformManager resolver) {
         preTransformManager = resolver;
+        return this;
+    }
+
+    public BedrockResolversBuilder lodestoneData(IntFunction<ChunkerLodestoneData> lodestoneDataGetter, ToIntFunction<ChunkerLodestoneData> lodestoneDataSetter) {
+        this.lodestoneDataGetter = lodestoneDataGetter;
+        this.lodestoneDataSetter = lodestoneDataSetter;
         return this;
     }
 }

@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 public enum Dimension {
     OVERWORLD((byte) 0, (byte) 0, "minecraft:overworld"),
-    NETHER((byte) -1, (byte) 1, "minecraft:nether"),
+    NETHER((byte) -1, (byte) 1, "minecraft:the_nether"),
     THE_END((byte) 1, (byte) 2, "minecraft:the_end");
 
     private static final Byte2ObjectMap<Dimension> dimensionByJavaId = new Byte2ObjectOpenHashMap<>();

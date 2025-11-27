@@ -1,6 +1,5 @@
 package com.hivemc.chunker.conversion.encoding.java.base.resolver.blockentity.legacy;
 
-import com.google.common.collect.ImmutableBiMap;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.base.resolver.blockentity.BlockEntityResolver;
 import com.hivemc.chunker.conversion.encoding.base.resolver.blockentity.EmptyBlockEntityHandler;
@@ -8,7 +7,6 @@ import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolvers;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.blockentity.legacy.handlers.*;
 import com.hivemc.chunker.conversion.intermediate.column.blockentity.BlockEntity;
 import com.hivemc.chunker.conversion.intermediate.column.blockentity.DaylightDetectorBlockEntity;
-import com.hivemc.chunker.conversion.intermediate.column.blockentity.StructureBlockEntity;
 import com.hivemc.chunker.conversion.intermediate.column.blockentity.container.EnderChestBlockEntity;
 import com.hivemc.chunker.conversion.intermediate.column.blockentity.container.HopperBlockEntity;
 import com.hivemc.chunker.conversion.intermediate.column.blockentity.container.randomizable.*;

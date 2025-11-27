@@ -37,7 +37,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Resolver for converting legacy Bedrock NBT to the Chunker ItemStack and resolving all the properties of the item.
