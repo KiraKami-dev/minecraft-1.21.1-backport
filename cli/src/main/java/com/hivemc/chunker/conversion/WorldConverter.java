@@ -75,7 +75,7 @@ public class WorldConverter implements Converter {
     private List<ChunkerMap> maps;
     @Nullable
     private MappingsFileResolvers blockMappings;
-    private boolean levelDBCompaction = false;
+    private boolean levelDBCompaction = true;
     private boolean processMaps = true;
     private boolean processItems = true;
     private boolean processEntities = true;
