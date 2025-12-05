@@ -6,9 +6,15 @@ import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.BlockMapping;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.ChunkerBlockIdentifierResolver;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.state.StateMappingGroup;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.Bool;
+import com.hivemc.chunker.mapping.identifier.states.StateValue;
+import com.hivemc.chunker.mapping.identifier.states.StateValueBoolean;
+import com.hivemc.chunker.mapping.identifier.states.StateValueString;
+
+import java.util.Map;
 
 /**
  * Resolver to convert between Java block identifiers and ChunkerBlockIdentifier.
@@ -31,6 +37,11 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
      */
     public JavaBlockIdentifierResolver(Converter converter, Version version, boolean reader, boolean customIdentifiersAllowed) {
         super(converter, version, reader, customIdentifiersAllowed);
+    }
+
+    @Override
+    protected void addCustomBlockWaterloggedState(ChunkerBlockIdentifier input, Map<String, StateValue<?>> output) {
+        output.put("waterlogged", new StateValueString("true"));
     }
 
     @Override
