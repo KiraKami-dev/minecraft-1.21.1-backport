@@ -116,7 +116,7 @@ jobs:
   build_mac:
     strategy:
       matrix:
-        os: [macos-latest, macos-13]
+        os: [macos-latest, macos-15-intel]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
@@ -226,7 +226,7 @@ jobs:
       - name: Download Mac artifact (legacy)
         uses: actions/download-artifact@v7
         with:
-          name: macos-builds-macos-13
+          name: macos-builds-macos-15-intel
           path: artifacts
 
       - name: Compress Mac CLI (legacy)

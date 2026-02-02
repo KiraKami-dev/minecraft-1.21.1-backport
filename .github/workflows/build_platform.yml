@@ -117,7 +117,7 @@ jobs:
   build_mac:
     strategy:
       matrix:
-        os: [macos-latest, macos-13]
+        os: [macos-latest, macos-15-intel]
     runs-on: ${{ matrix.os }}
     if: github.event.inputs.build_mac == 'true'
     steps:
