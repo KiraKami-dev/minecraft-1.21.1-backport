@@ -17,6 +17,8 @@ public class LevelDBKey {
     public static final byte[] LOCAL_PLAYER = "~local_player".getBytes(StandardCharsets.UTF_8);
     public static final byte[] MAP_PREFIX = "map_".getBytes(StandardCharsets.UTF_8);
     public static final byte[] PORTALS = "portals".getBytes(StandardCharsets.UTF_8);
+    public static final byte[] POS_TRACK_DB = "PosTrackDB-0x".getBytes(StandardCharsets.UTF_8);
+    public static final byte[] POS_TRACK_DB_LAST_ID = "PositionTrackDB-LastId".getBytes(StandardCharsets.UTF_8);
 
     /**
      * Check if a key starts with a prefix.

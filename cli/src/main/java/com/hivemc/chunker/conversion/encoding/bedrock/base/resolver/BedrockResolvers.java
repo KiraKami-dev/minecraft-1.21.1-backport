@@ -9,6 +9,7 @@ import com.hivemc.chunker.conversion.handlers.pretransform.manager.PreTransformM
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerLodestoneData;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.banner.ChunkerBannerPattern;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.enchantment.ChunkerEnchantmentType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.potion.ChunkerEffectType;
@@ -260,6 +261,22 @@ public interface BedrockResolvers {
      * @return the pre-transform manager, this should vary on if this a reader or writer.
      */
     PreTransformManager preTransformManager();
+
+    /**
+     * Get or create an index for lodestone data.
+     *
+     * @param lodestoneData the lodestone data to add the pool.
+     * @return the index or -1 if it was not possible to create the data.
+     */
+    int getOrCreateLodestoneData(ChunkerLodestoneData lodestoneData);
+
+    /**
+     * Get the lodestone data from an index.
+     *
+     * @param index the index to lookup.
+     * @return the lodestone data or empty if the index wasn't found.
+     */
+    Optional<ChunkerLodestoneData> getLodestoneData(int index);
 
     /**
      * Get the converter instance.

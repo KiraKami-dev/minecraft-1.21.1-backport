@@ -8,9 +8,6 @@ import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.primitive.ByteTag;
 import com.hivemc.chunker.nbt.tags.primitive.IntTag;
-import com.hivemc.chunker.nbt.tags.primitive.StringTag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 

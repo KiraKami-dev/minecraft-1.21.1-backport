@@ -32,11 +32,11 @@ dependencies {
 
     // Unit Testing (JUnit)
     testImplementation(libs.junit)
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 group = "com.hivemc.chunker"
-version = "1.14.0"
+version = "1.15.0"
 description = "chunker"
 base.archivesName = "chunker-cli"
 java.sourceCompatibility = JavaVersion.VERSION_17

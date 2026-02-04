@@ -13,6 +13,7 @@ import com.hivemc.chunker.conversion.handlers.pretransform.manager.PreTransformM
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerLodestoneData;
 import com.hivemc.chunker.conversion.intermediate.level.*;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
@@ -624,6 +625,16 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
     @Override
     public @Nullable PreTransformManager getPreTransformManager() {
         return resolvers.preTransformManager();
+    }
+
+    @Override
+    public int getOrCreateLodestoneData(ChunkerLodestoneData lodestoneData) {
+        return -1; // By default, return -1 as it's not supported on old versions
+    }
+
+    @Override
+    public @Nullable ChunkerLodestoneData getLodestoneData(int index) {
+        return null; // Return null as it's not supported on old versions
     }
 
     /**

@@ -18,10 +18,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerItemType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.item.ChunkerVanillaItemType;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerDyeColor;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemDisplay;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
-import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.*;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.banner.ChunkerBannerPattern;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkExplosion;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkShape;
@@ -292,6 +289,33 @@ public class JavaBasicComponentItemResolverTests {
             }
 
             return (T[]) trims.toArray();
+        } else if (asClass.equals(ChunkerLodestoneData.class)) {
+            List<ChunkerLodestoneData> chunkerLodestoneDatas = new ArrayList<>();
+            for (Dimension dimension : Dimension.values()) {
+                chunkerLodestoneDatas.add(new ChunkerLodestoneData(
+                        dimension,
+                        10,
+                        10,
+                        50,
+                        true
+                ));
+                chunkerLodestoneDatas.add(new ChunkerLodestoneData(
+                        dimension,
+                        10,
+                        10,
+                        50,
+                        false
+                ));
+                chunkerLodestoneDatas.add(new ChunkerLodestoneData(
+                        dimension,
+                        -100,
+                        0,
+                        -50,
+                        true
+                ));
+            }
+
+            return (T[]) chunkerLodestoneDatas.toArray();
         } else if (asClass.equals(List.class)) {
             Type listType = Object.class;
             if (type instanceof ParameterizedType) {

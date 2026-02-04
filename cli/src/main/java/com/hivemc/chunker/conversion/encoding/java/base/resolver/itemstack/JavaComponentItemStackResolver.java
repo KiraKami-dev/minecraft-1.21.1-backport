@@ -11,6 +11,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.i
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemDisplay;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerLodestoneData;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.enchantment.ChunkerEnchantmentType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkExplosion;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.firework.ChunkerFireworkShape;
@@ -26,6 +27,7 @@ import com.hivemc.chunker.conversion.intermediate.column.entity.Entity;
 import com.hivemc.chunker.conversion.intermediate.column.entity.type.ChunkerEntityType;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
+import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
@@ -924,6 +926,64 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
                     items.add(itemTag.get());
                 }
                 value.getOrCreateCompound("components").put("minecraft:bundle_contents", items);
+            }
+        });
+
+        // Lodestone Compass
+        registerContextualHandler(ChunkerItemProperty.LODESTONE_DATA, new PropertyHandler<>() {
+            @Override
+            public Optional<ChunkerLodestoneData> read(@NotNull Pair<ChunkerItemStack, CompoundTag> state) {
+                Optional<CompoundTag> component = state.value().getOptional("components", CompoundTag.class)
+                        .flatMap(tag -> tag.getOptional("minecraft:lodestone_tracker", CompoundTag.class));
+                if (component.isEmpty()) return Optional.empty();
+
+                CompoundTag lodestoneTracker = component.get();
+
+                // Check if there's a target
+                CompoundTag target = lodestoneTracker.getCompound("target");
+                if (target == null) return Optional.empty();
+                Dimension dimension = Dimension.fromJavaNBT(target.get("dimension"), Dimension.OVERWORLD);
+
+                // Check if the position is valid
+                int[] position = target.getIntArray("pos", null);
+                if (position == null) return Optional.empty();
+
+                // Create the data
+                ChunkerLodestoneData lodestoneData = new ChunkerLodestoneData(
+                        dimension,
+                        position[0],
+                        position[1],
+                        position[2],
+                        lodestoneTracker.getByte("tracked", (byte) 1) == (byte) 1
+                );
+
+                // Ensure the item is the lodestone compass (Bedrock based type)
+                if (state.key().getIdentifier() == ChunkerVanillaItemType.COMPASS) {
+                    state.key(new ChunkerItemStack(
+                            ChunkerVanillaItemType.LODESTONE_COMPASS,
+                            state.key().getPreservedIdentifier(),
+                            state.key().getProperties()
+                    ));
+                }
+                return Optional.of(lodestoneData);
+            }
+
+            @Override
+            public void write(@NotNull Pair<ChunkerItemStack, CompoundTag> state, @NotNull ChunkerLodestoneData lodestoneData) {
+                // Write the tag
+                CompoundTag lodestoneTracker = state.value().getOrCreateCompound("components")
+                        .getOrCreateCompound("minecraft:lodestone_tracker");
+
+                // Create the target
+                CompoundTag target = new CompoundTag(2);
+                target.put("dimension", lodestoneData.dimension().getIdentifier());
+                target.put("pos", new int[]{
+                        lodestoneData.x(), lodestoneData.y(), lodestoneData.z()
+                });
+                lodestoneTracker.put("target", target);
+
+                // Add tracked
+                lodestoneTracker.put("tracked", lodestoneData.tracked() ? (byte) 1 : (byte) 0);
             }
         });
 

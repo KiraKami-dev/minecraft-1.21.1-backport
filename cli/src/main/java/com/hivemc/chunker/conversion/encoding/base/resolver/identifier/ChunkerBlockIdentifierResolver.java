@@ -17,7 +17,6 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.Bool;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
-import com.hivemc.chunker.mapping.identifier.states.StateValueString;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.CollectionComparator;
@@ -387,6 +386,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
     }
 
     /**
+     * Called when a custom block has a waterlogged state being written. This allows it to be recovered and turn back
+     * into a valid state for the output. This is only called when the waterlogging value is true.
+     *
+     * @param input  the input identifier.
+     * @param output the output map to write states to.
+     */
+    protected void addCustomBlockWaterloggedState(ChunkerBlockIdentifier input, Map<String, StateValue<?>> output) {
+        // Not implemented by default
+        // This should add the waterlogged state for versions where it exists so that custom blocks can write it.
+    }
+
+    /**
      * Called when an input chunker identifier could not be mapped.
      *
      * @param input the block identifier that couldn't be mapped.
@@ -404,8 +415,8 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
             if (entry.getValue() instanceof ChunkerCustomBlockType.CustomBlockStateValue<?> customBlockStateValue) {
                 newMap.put(entry.getKey().getName(), StateValue.fromBoxed(customBlockStateValue.getStateValue()));
             } else if (entry.getKey() == VanillaBlockStates.WATERLOGGED && entry.getValue() == Bool.TRUE) {
-                // Write the waterlogged state if the custom block had it
-                newMap.put(entry.getKey().getName(), new StateValueString("true"));
+                // Write the waterlogged state if the custom block had it (this differs on bedrock/java)
+                addCustomBlockWaterloggedState(input, newMap);
             }
         }
 

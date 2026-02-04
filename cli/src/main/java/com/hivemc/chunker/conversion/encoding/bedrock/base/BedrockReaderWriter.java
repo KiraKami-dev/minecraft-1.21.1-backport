@@ -18,6 +18,8 @@ import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.identifier.l
 import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.itemstack.*;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.itemstack.legacy.BedrockLegacyItemStackResolver;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.writer.pretransform.BedrockWriterPreTransformManager;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerLodestoneData;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A Bedrock Level Reader / Writer, used to share resolvers.
@@ -27,6 +29,23 @@ public interface BedrockReaderWriter extends LevelReaderWriter {
     default EncodingType getEncodingType() {
         return EncodingType.BEDROCK;
     }
+
+    /**
+     * Get or create an index for lodestone data.
+     *
+     * @param lodestoneData the lodestone data to add the pool.
+     * @return the index or -1 if it was not possible to create the data.
+     */
+    int getOrCreateLodestoneData(ChunkerLodestoneData lodestoneData);
+
+    /**
+     * Get the lodestone data from an index.
+     *
+     * @param index the index to lookup.
+     * @return the lodestone data or null if the index wasn't found.
+     */
+    @Nullable
+    ChunkerLodestoneData getLodestoneData(int index);
 
     /**
      * Build the resolvers which should be used for this version.
@@ -53,6 +72,7 @@ public interface BedrockReaderWriter extends LevelReaderWriter {
                 .itemStackResolverConstructor(BedrockLegacyItemStackResolver::new)
                 .blockEntityResolverConstructor((resolvers) -> new BedrockBlockEntityResolver(version, resolvers))
                 .entityResolverConstructor((resolvers) -> new BedrockEntityResolver(version, resolvers))
-                .preTransformManager(isReader() ? new BedrockReaderPreTransformManager(version) : new BedrockWriterPreTransformManager(version));
+                .preTransformManager(isReader() ? new BedrockReaderPreTransformManager(version) : new BedrockWriterPreTransformManager(version))
+                .lodestoneData(this::getLodestoneData, this::getOrCreateLodestoneData);
     }
 }

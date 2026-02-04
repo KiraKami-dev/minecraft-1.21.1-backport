@@ -3,10 +3,8 @@ package com.hivemc.chunker.conversion.encoding.java.v1_21_11.writer;
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.java.base.writer.JavaWorldWriter;
-import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
-import com.hivemc.chunker.nbt.tags.primitive.DoubleTag;
 import com.hivemc.chunker.nbt.tags.primitive.StringTag;
 
 import java.io.File;
