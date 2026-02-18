@@ -30,6 +30,7 @@ import com.hivemc.chunker.conversion.intermediate.column.entity.type.ChunkerEnti
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
@@ -746,8 +747,9 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                 CompoundTag position = tag.getCompound("LodestonePos");
                 if (position == null) return Optional.empty();
 
+                DimensionRegistry dimensionRegistry = resolvers.converter().getDimensionRegistry();
                 // Check if there's a dimension
-                Dimension dimension = Dimension.fromJavaNBT(tag.get("LodestoneDimension"), Dimension.OVERWORLD);
+                Dimension dimension = dimensionRegistry.fromJavaNBT(tag.get("LodestoneDimension"), Dimension.OVERWORLD);
 
                 // Create the data
                 ChunkerLodestoneData lodestoneData = new ChunkerLodestoneData(

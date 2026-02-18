@@ -2,12 +2,14 @@ package com.hivemc.chunker.conversion.encoding.bedrock.util;
 
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerLodestoneData;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
 import com.hivemc.chunker.nbt.tags.primitive.IntTag;
 import org.iq80.leveldb.DB;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class PositionTrackingDBUtil {
      * @throws IOException if it failed to parse the data from LevelDB.
      */
     @Nullable
-    public static ChunkerLodestoneData getLodestoneData(DB database, int index) throws IOException {
+    public static ChunkerLodestoneData getLodestoneData(DB database, @NotNull DimensionRegistry dimensionRegistry, int index) throws IOException {
         // Format is PosTrackDB-0x00000001
         byte[] key = LevelDBKey.key(LevelDBKey.POS_TRACK_DB, String.format("%08x", index).getBytes(StandardCharsets.UTF_8));
         byte[] bytes = database.get(key);
@@ -41,7 +43,7 @@ public class PositionTrackingDBUtil {
         if (position == null || position.size() < 3) return null; // Not valid as it doesn't have a position
 
         return new ChunkerLodestoneData(
-                Dimension.fromBedrockNBT(entry.get("dim"), Dimension.OVERWORLD),
+                dimensionRegistry.fromBedrockNBT(entry.get("dim"), Dimension.OVERWORLD),
                 position.get(0),
                 position.get(1),
                 position.get(2),
@@ -63,7 +65,7 @@ public class PositionTrackingDBUtil {
 
         // Create the NBT
         CompoundTag tag = new CompoundTag();
-        tag.put("dim", (int) data.dimension().getBedrockID());
+        tag.put("dim", data.dimension().getBedrockID());
         tag.put("id", "0x" + id);
         tag.put("pos", ListTag.fromValues(TagType.INT, List.of(
                 data.x(),
@@ -127,11 +129,11 @@ public class PositionTrackingDBUtil {
      * @return the new index of the entry (starting at 1) or existing index if it was found.
      * @throws IOException if it failed to deserialize/serialize the data to LevelDB.
      */
-    public static int getOrCreateLodestoneData(DB database, ChunkerLodestoneData lodestoneData) throws IOException {
+    public static int getOrCreateLodestoneData(DB database, @NotNull DimensionRegistry dimensionRegistry, ChunkerLodestoneData lodestoneData) throws IOException {
         // Loop through all the current lodestone data to see if it already exists
         int count = getLodestoneDataCount(database);
         for (int i = 1; i <= count; i++) {
-            ChunkerLodestoneData chunkerLodestoneData = getLodestoneData(database, i);
+            ChunkerLodestoneData chunkerLodestoneData = getLodestoneData(database, dimensionRegistry, i);
             if (chunkerLodestoneData != null && chunkerLodestoneData.equals(lodestoneData)) {
                 return i; // This index matches
             }

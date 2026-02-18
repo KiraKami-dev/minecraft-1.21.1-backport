@@ -1,134 +1,38 @@
 package com.hivemc.chunker.conversion.intermediate.world;
 
-import com.hivemc.chunker.nbt.tags.Tag;
-import com.hivemc.chunker.nbt.tags.primitive.ByteTag;
-import com.hivemc.chunker.nbt.tags.primitive.IntTag;
-import com.hivemc.chunker.nbt.tags.primitive.StringTag;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.jetbrains.annotations.Nullable;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 
-import java.util.Locale;
-import java.util.Objects;
+import java.io.File;
 
 /**
  * The different types of Dimensions present in Minecraft.
  */
-public enum Dimension {
-    OVERWORLD((byte) 0, (byte) 0, "minecraft:overworld"),
-    NETHER((byte) -1, (byte) 1, "minecraft:the_nether"),
-    THE_END((byte) 1, (byte) 2, "minecraft:the_end");
+public class Dimension {
+    public static Dimension OVERWORLD = new Dimension(0, 0, "minecraft:overworld", ChunkerBiome.ChunkerVanillaBiome.PLAINS, 24);
+    public static Dimension NETHER = new Dimension(-1, 1, "minecraft:the_nether", ChunkerBiome.ChunkerVanillaBiome.NETHER_WASTES, 8);
+    public static Dimension THE_END = new Dimension(1, 2, "minecraft:the_end", ChunkerBiome.ChunkerVanillaBiome.THE_END, 16);
 
-    private static final Byte2ObjectMap<Dimension> dimensionByJavaId = new Byte2ObjectOpenHashMap<>();
-    private static final Byte2ObjectMap<Dimension> dimensionByBedrockId = new Byte2ObjectOpenHashMap<>();
-    private static final Object2ObjectMap<String, Dimension> dimensionByIdentifier = new Object2ObjectOpenHashMap<>();
-
-    static {
-        Dimension[] dimensions = values();
-        for (Dimension dimension : dimensions) {
-            dimensionByJavaId.put(dimension.getJavaID(), dimension);
-            dimensionByBedrockId.put(dimension.getBedrockID(), dimension);
-            dimensionByIdentifier.put(dimension.getIdentifier(), dimension);
-        }
-    }
-
-    private final byte javaID;
-    private final byte bedrockID;
+    private final int javaID;
+    private final int bedrockID;
+    private final int biomeHeight;
     private final String identifier;
+    private final ChunkerBiome.ChunkerVanillaBiome fallbackBiome;
 
     /**
      * Create a new dimension.
      *
-     * @param javaID     the java ID.
-     * @param bedrockID  the bedrock ID.
-     * @param identifier the namespaced identifier used on Java.
+     * @param javaID        the java ID.
+     * @param bedrockID     the bedrock ID.
+     * @param identifier    the namespaced identifier used on Java.
+     * @param fallbackBiome the fallback biome for the dimension
+     * @param biomeHeight   the height in chunks of how many biome palettes should be written
      */
-    Dimension(byte javaID, byte bedrockID, String identifier) {
+    public Dimension(int javaID, int bedrockID, String identifier, ChunkerBiome.ChunkerVanillaBiome fallbackBiome, int biomeHeight) {
         this.javaID = javaID;
         this.bedrockID = bedrockID;
         this.identifier = identifier;
-    }
-
-    /**
-     * Get the dimension based on a Java NBT tag.
-     *
-     * @param tag      the tag to use (string, byte or integer).
-     * @param fallback the fallback dimension to use if the tag can't be parsed or the ID is invalid.
-     * @return the dimension if it was parsed otherwise the fallback.
-     */
-    public static Dimension fromJavaNBT(@Nullable Tag<?> tag, Dimension fallback) {
-        // There is every chance there was no tag, so we'll handle that first
-        if (tag == null) return fallback;
-
-        // We can either parse it as an identifier or a byte
-        try {
-            if (tag instanceof StringTag stringTag) {
-                return dimensionByIdentifier.getOrDefault(Objects.requireNonNull(stringTag.getValue()).toLowerCase(Locale.ROOT), fallback);
-            } else if (tag instanceof ByteTag byteTag) {
-                byte value = byteTag.getValue();
-                return fromJava(value, fallback);
-            } else if (tag instanceof IntTag intTag) {
-                byte value = (byte) intTag.getValue();
-                return fromJava(value, fallback);
-            } else {
-                return fallback; // Can't be parsed
-            }
-        } catch (Exception exception) {
-            return fallback;
-        }
-    }
-
-    /**
-     * Get the dimension based on a Bedrock NBT tag.
-     *
-     * @param tag      the tag to use (string, byte or integer).
-     * @param fallback the fallback dimension to use if the tag can't be parsed or the ID is invalid.
-     * @return the dimension if it was parsed otherwise the fallback.
-     */
-    public static Dimension fromBedrockNBT(@Nullable Tag<?> tag, Dimension fallback) {
-        // There is every chance there was no tag, so we'll handle that first
-        if (tag == null) return fallback;
-
-        // We can either parse it as an identifier or a byte
-        try {
-            if (tag instanceof StringTag stringTag) {
-                return dimensionByIdentifier.getOrDefault(Objects.requireNonNull(stringTag.getValue()).toLowerCase(Locale.ROOT), fallback);
-            } else if (tag instanceof ByteTag byteTag) {
-                byte value = byteTag.getValue();
-                return dimensionByBedrockId.getOrDefault(value, fallback);
-            } else if (tag instanceof IntTag intTag) {
-                byte value = (byte) intTag.getValue();
-                return dimensionByBedrockId.getOrDefault(value, fallback);
-            } else {
-                return fallback; // Can't be parsed
-            }
-        } catch (Exception exception) {
-            return fallback;
-        }
-    }
-
-    /**
-     * Create a dimension from a Bedrock ID.
-     *
-     * @param id       the input ID.
-     * @param fallback the fallback to use if the ID wasn't found.
-     * @return the dimension or fallback if it wasn't found.
-     */
-    public static Dimension fromBedrock(byte id, Dimension fallback) {
-        return dimensionByBedrockId.getOrDefault(id, fallback);
-    }
-
-    /**
-     * Create a dimension from a Java ID.
-     *
-     * @param id       the input ID.
-     * @param fallback the fallback to use if the ID wasn't found.
-     * @return the dimension or fallback if it wasn't found.
-     */
-    public static Dimension fromJava(byte id, Dimension fallback) {
-        return dimensionByJavaId.getOrDefault(id, fallback);
+        this.fallbackBiome = fallbackBiome;
+        this.biomeHeight = biomeHeight;
     }
 
     /**
@@ -136,7 +40,7 @@ public enum Dimension {
      *
      * @return the ID based on 0 being overworld and -1 being the nether.
      */
-    public byte getJavaID() {
+    public int getJavaID() {
         return javaID;
     }
 
@@ -145,7 +49,7 @@ public enum Dimension {
      *
      * @return the indexed ID for the dimension.
      */
-    public byte getBedrockID() {
+    public int getBedrockID() {
         return bedrockID;
     }
 
@@ -156,5 +60,31 @@ public enum Dimension {
      */
     public String getIdentifier() {
         return identifier;
+    }
+
+    /**
+     * The Fallback Vanilla Biome for the dimension.
+     *
+     * @return the Fallback Vanilla Biome for the dimension.
+     */
+    public ChunkerBiome.ChunkerVanillaBiome getFallbackBiome() {
+        return fallbackBiome;
+    }
+
+    /**
+     * Get the height in chunks for how many biome palettes should be written
+     *
+     * @return the height in chunks of how many biome palettes should be written.
+     */
+    public int getBiomeHeight() {
+        return biomeHeight;
+    }
+
+    public File getJavaDimensionBaseDirectory(File directory) {
+        if (this.javaID == 0) {
+            return directory;
+        } else {
+            return new File(directory, "DIM" + this.javaID);
+        }
     }
 }

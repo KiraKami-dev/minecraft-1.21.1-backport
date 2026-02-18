@@ -137,10 +137,14 @@ public class Messenger {
 
                         // Turn the indexed based pruning list into a map
                         if (previewRequest.getPruningList() != null && previewRequest.getPruningList().getConfigs() != null && !previewRequest.getPruningList().getConfigs().isEmpty()) {
-                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(previewRequest.getPruningList().getConfigs().size());
-                            for (int i = 0; i < previewRequest.getPruningList().getConfigs().size(); i++) {
-                                pruningConfigs.put(Dimension.values()[i], previewRequest.getPruningList().getConfigs().get(i));
+                            var registry = worldConverter.getDimensionRegistry();
+                            var pruning = previewRequest.getPruningList().getConfigs();
+
+                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
+                            for (String key : pruning.keySet()) {
+                                pruningConfigs.put(registry.find(key), pruning.get(key));
                             }
+
                             worldConverter.setPruningConfigs(pruningConfigs);
                         }
 
@@ -191,10 +195,14 @@ public class Messenger {
 
                         // Turn the indexed based pruning list into a map
                         if (convertRequest.getPruningList() != null && convertRequest.getPruningList().getConfigs() != null && !convertRequest.getPruningList().getConfigs().isEmpty()) {
-                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(convertRequest.getPruningList().getConfigs().size());
-                            for (int i = 0; i < convertRequest.getPruningList().getConfigs().size(); i++) {
-                                pruningConfigs.put(Dimension.values()[i], convertRequest.getPruningList().getConfigs().get(i));
+                            var registry = worldConverter.getDimensionRegistry();
+                            var pruning = convertRequest.getPruningList().getConfigs();
+
+                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
+                            for (String key : pruning.keySet()) {
+                                pruningConfigs.put(registry.find(key), pruning.get(key));
                             }
+
                             worldConverter.setPruningConfigs(pruningConfigs);
                         }
 

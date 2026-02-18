@@ -306,7 +306,8 @@ public class BedrockBasicItemResolverTests {
             return (T[]) trims.toArray();
         } else if (asClass.equals(ChunkerLodestoneData.class)) {
             List<ChunkerLodestoneData> chunkerLodestoneDatas = new ArrayList<>();
-            for (Dimension dimension : Dimension.values()) {
+            var dimensionRegistry = converter.getDimensionRegistry();
+            for (Dimension dimension : dimensionRegistry.values()) {
                 chunkerLodestoneDatas.add(new ChunkerLodestoneData(
                         dimension,
                         10,

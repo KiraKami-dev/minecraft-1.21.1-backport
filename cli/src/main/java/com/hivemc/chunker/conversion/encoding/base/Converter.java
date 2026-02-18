@@ -5,6 +5,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.RegionCoordPair;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,6 +133,8 @@ public interface Converter {
      */
     @Nullable
     MappingsFileResolvers getBlockMappings();
+
+    DimensionRegistry getDimensionRegistry();
 
     /**
      * Log a non-fatal exception.

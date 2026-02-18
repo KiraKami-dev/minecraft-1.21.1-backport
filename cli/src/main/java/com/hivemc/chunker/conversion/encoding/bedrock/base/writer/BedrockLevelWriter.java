@@ -113,6 +113,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
     protected void remapExistingDB() throws IOException {
         List<byte[]> removals = new ArrayList<>();
         try (DBIterator iterator = database.iterator()) {
+            var dimensionRegistry = converter.getDimensionRegistry();
             while (iterator.hasNext()) {
                 Map.Entry<byte[], byte[]> entry = iterator.next();
                 byte[] key = entry.getKey();
@@ -142,7 +143,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
                 Dimension dimension = Dimension.OVERWORLD;
                 if (containsDimension) {
                     int dimensionID = buffer.getInt();
-                    dimension = Dimension.fromBedrock((byte) dimensionID, null);
+                    dimension = dimensionRegistry.fromBedrock(dimensionID, null);
 
                     // If unknown report an issue
                     if (dimension == null) {
@@ -325,7 +326,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         ListTag<CompoundTag, Map<String, Tag<?>>> portalRecords = new ListTag<>(TagType.COMPOUND, chunkerLevel.getPortals().size());
         for (ChunkerPortal portal : chunkerLevel.getPortals()) {
             CompoundTag record = new CompoundTag(7);
-            record.put("DimId", (int) portal.getDimension().getBedrockID());
+            record.put("DimId", portal.getDimension().getBedrockID());
             record.put("Span", portal.getWidth());
             record.put("TpX", portal.getX());
             record.put("TpY", portal.getY());

@@ -22,7 +22,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.bedrock.
     @Override
     public synchronized @Nullable ChunkerLodestoneData getLodestoneData(int index) {
         try {
-            return PositionTrackingDBUtil.getLodestoneData(database, index);
+            return PositionTrackingDBUtil.getLodestoneData(database, converter.getDimensionRegistry(), index);
         } catch (Exception e) {
             converter.logNonFatalException(e);
         }
@@ -32,7 +32,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.bedrock.
     @Override
     public synchronized int getOrCreateLodestoneData(ChunkerLodestoneData lodestoneData) {
         try {
-            return PositionTrackingDBUtil.getOrCreateLodestoneData(database, lodestoneData);
+            return PositionTrackingDBUtil.getOrCreateLodestoneData(database, converter.getDimensionRegistry(), lodestoneData);
         } catch (Exception e) {
             converter.logNonFatalException(e);
         }
