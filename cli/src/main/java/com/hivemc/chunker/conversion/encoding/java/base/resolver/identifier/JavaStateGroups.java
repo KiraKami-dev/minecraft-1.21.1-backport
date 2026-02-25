@@ -442,6 +442,13 @@ public class JavaStateGroups {
             )
             // 1.19.3 added several skull based noteblock sounds
             .version(new Version(1, 19, 3), new StateMappingGroup.Builder()
+                    .state("instrument", VanillaBlockStates.NOTE_BLOCK_INSTRUMENT, JavaStateTypes.INSTRUMENT_PRE_26_1)
+                    .state("note", VanillaBlockStates.NOTE, JavaStateTypes.NOTE)
+                    .state("powered", VanillaBlockStates.POWERED, JavaStateTypes.BOOL)
+                    .build()
+            )
+            // 26.1 added trumpet noteblock sounds
+            .version(new Version(26, 1, 0), new StateMappingGroup.Builder()
                     .state("instrument", VanillaBlockStates.NOTE_BLOCK_INSTRUMENT, JavaStateTypes.INSTRUMENT)
                     .state("note", VanillaBlockStates.NOTE, JavaStateTypes.NOTE)
                     .state("powered", VanillaBlockStates.POWERED, JavaStateTypes.BOOL)

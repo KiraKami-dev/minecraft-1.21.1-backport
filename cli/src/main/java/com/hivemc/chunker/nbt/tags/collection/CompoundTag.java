@@ -292,6 +292,7 @@ public class CompoundTag extends Tag<Map<String, Tag<?>>> implements Iterable<Ma
      * @param name the name to search for.
      * @return the name was found in the map, or null otherwise (case-sensitive).
      */
+    @Nullable
     public Tag<?> remove(String name) {
         if (value == null) return null; // No map present
         return value.remove(name);

@@ -11,7 +11,6 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.Bool;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
-import com.hivemc.chunker.mapping.identifier.states.StateValueBoolean;
 import com.hivemc.chunker.mapping.identifier.states.StateValueString;
 
 import java.util.Map;
@@ -1669,6 +1668,12 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
                             .build(),
                     JavaStateGroups.LANTERN
             ));
+        }
+
+        // 26.1
+        if (version.isGreaterThanOrEqual(26, 1, 0)) {
+            register(BlockMapping.of("minecraft:golden_dandelion", ChunkerVanillaBlockType.GOLDEN_DANDELION));
+            register(BlockMapping.of("minecraft:potted_golden_dandelion", ChunkerVanillaBlockType.POTTED_GOLDEN_DANDELION));
         }
     }
 }

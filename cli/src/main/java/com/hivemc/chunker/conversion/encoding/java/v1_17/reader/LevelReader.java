@@ -39,7 +39,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
 
     private boolean isCavesAndCliffs() {
         // CavesAndCliffs for Java is awkward because it is in a directory in older versions in the datapack, so we'll look for the right height changes
-        File datapacks = new File(inputDirectory, "datapacks");
+        File datapacks = resolvers.javaLevelDirectoryResolver().getDataPacksDirectory();
         if (!datapacks.isDirectory()) return false; // No packs, no caves and cliffs
 
         // Loop through each zip file

@@ -18,9 +18,6 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
 
     @Override
     protected CompoundTag prepareNBTForLevelSettings(CompoundTag level) throws Exception {
-        // Call super
-        level = super.prepareNBTForLevelSettings(level);
-
         // Make a copy (this ensures that we don't overwrite the original
         level = level.clone();
 
@@ -66,7 +63,9 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
             convertIntegerGameRule(gameRules, "randomTickSpeed", "minecraft:random_tick_speed");
             convertIntegerGameRule(gameRules, "spawnRadius", "minecraft:respawn_radius");
         }
-        return level;
+
+        // Call the super
+        return super.prepareNBTForLevelSettings(level);
     }
 
     protected void convertBooleanGameRule(CompoundTag gameRules, String oldName, String newName) {

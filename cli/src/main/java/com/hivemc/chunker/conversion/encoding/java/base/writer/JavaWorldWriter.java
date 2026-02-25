@@ -3,7 +3,6 @@ package com.hivemc.chunker.conversion.encoding.java.base.writer;
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.writer.ColumnWriter;
 import com.hivemc.chunker.conversion.encoding.base.writer.WorldWriter;
-import com.hivemc.chunker.conversion.encoding.java.base.reader.JavaLevelReader;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolvers;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.world.ChunkerWorld;
@@ -46,7 +45,7 @@ public class JavaWorldWriter implements WorldWriter {
     @Override
     public ColumnWriter writeWorld(ChunkerWorld chunkerWorld) {
         // Make the output directory
-        File directory = JavaLevelReader.getDimensionBaseDirectory(outputFolder, chunkerWorld.getDimension());
+        File directory = resolvers.javaLevelDirectoryResolver().getDimensionBaseDirectory(chunkerWorld.getDimension());
         directory.mkdirs();
 
         // Return a new column writer
@@ -79,7 +78,7 @@ public class JavaWorldWriter implements WorldWriter {
      * @throws Exception if it failed to write the data.
      */
     public void writeMCAData(Dimension dimension, ChunkCoordPair chunkCoordPair, CompoundTag chunkData) throws Exception {
-        File directory = new File(JavaLevelReader.getDimensionBaseDirectory(outputFolder, dimension), "region");
+        File directory = resolvers.javaLevelDirectoryResolver().getDimensionRegionDirectory(dimension);
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -96,7 +95,7 @@ public class JavaWorldWriter implements WorldWriter {
      * @throws Exception if it failed to write the data.
      */
     public void writePOIData(Dimension dimension, ChunkCoordPair chunkCoordPair, CompoundTag chunkData) throws Exception {
-        File directory = new File(JavaLevelReader.getDimensionBaseDirectory(outputFolder, dimension), "poi");
+        File directory = resolvers.javaLevelDirectoryResolver().getDimensionPOIDirectory(dimension);
         if (!directory.exists()) {
             directory.mkdirs();
         }

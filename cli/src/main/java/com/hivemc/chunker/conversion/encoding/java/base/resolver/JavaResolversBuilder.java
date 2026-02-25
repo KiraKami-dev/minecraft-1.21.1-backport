@@ -60,6 +60,7 @@ public class JavaResolversBuilder {
     private Function<JavaResolvers, Resolver<CompoundTag, ChunkerItemStack>> itemStackResolverConstructor;
     private Function<JavaResolvers, BlockEntityResolver<JavaResolvers, CompoundTag>> blockEntityResolverConstructor;
     private Function<JavaResolvers, EntityResolver<JavaResolvers, CompoundTag>> entityResolverConstructor;
+    private JavaLevelDirectoryResolver levelDirectoryResolver;
     private PreTransformManager preTransformManager;
 
     /**
@@ -438,6 +439,11 @@ public class JavaResolversBuilder {
             }
 
             @Override
+            public JavaLevelDirectoryResolver javaLevelDirectoryResolver() {
+                return levelDirectoryResolver;
+            }
+
+            @Override
             public Converter converter() {
                 return converter;
             }
@@ -570,6 +576,11 @@ public class JavaResolversBuilder {
 
     public JavaResolversBuilder entityResolverConstructor(Function<JavaResolvers, EntityResolver<JavaResolvers, CompoundTag>> constructor) {
         entityResolverConstructor = constructor;
+        return this;
+    }
+
+    public JavaResolversBuilder levelDirectoryResolver(JavaLevelDirectoryResolver resolver) {
+        levelDirectoryResolver = resolver;
         return this;
     }
 

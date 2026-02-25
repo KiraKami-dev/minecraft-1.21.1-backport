@@ -335,6 +335,13 @@ public interface JavaResolvers {
     PreTransformManager preTransformManager();
 
     /**
+     * Get the level directory resolver, used for getting paths for saving/loading files.
+     *
+     * @return an instance of the resolver.
+     */
+    JavaLevelDirectoryResolver javaLevelDirectoryResolver();
+
+    /**
      * Get the converter instance.
      *
      * @return the instance of the converter.

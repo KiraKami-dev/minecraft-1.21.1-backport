@@ -1191,6 +1191,8 @@ public enum ChunkerVanillaBlockType implements ChunkerBlockType {
     WAXED_OXIDIZED_COPPER_LANTERN(0x167e86, VanillaBlockStateGroups.LANTERN, false),
     WAXED_WEATHERED_COPPER_LANTERN(0x3a8e8c, VanillaBlockStateGroups.LANTERN, false),
     WEATHERED_COPPER_LANTERN(0x3a8e8c, VanillaBlockStateGroups.LANTERN, false),
+    GOLDEN_DANDELION(0x7c00, false),
+    POTTED_GOLDEN_DANDELION(0x0, false),
     ;
 
     private final int rgbColor;

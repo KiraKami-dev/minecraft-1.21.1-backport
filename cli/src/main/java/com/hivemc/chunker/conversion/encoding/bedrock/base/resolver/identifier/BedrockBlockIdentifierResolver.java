@@ -794,6 +794,7 @@ public class BedrockBlockIdentifierResolver extends ChunkerBlockIdentifierResolv
                         .put("minecraft:flower_pot", ChunkerVanillaBlockType.POTTED_PALE_OAK_SAPLING)
                         .put("minecraft:flower_pot", ChunkerVanillaBlockType.POTTED_OPEN_EYEBLOSSOM)
                         .put("minecraft:flower_pot", ChunkerVanillaBlockType.POTTED_CLOSED_EYEBLOSSOM)
+                        .put("minecraft:flower_pot", ChunkerVanillaBlockType.POTTED_GOLDEN_DANDELION)
                         .build(),
                 BedrockStateGroups.FLOWER_POT));
 
@@ -3026,6 +3027,11 @@ public class BedrockBlockIdentifierResolver extends ChunkerBlockIdentifierResolv
                             .build(),
                     BedrockStateGroups.LANTERN
             ));
+        }
+
+        // R26U1
+        if (version.isGreaterThanOrEqual(1, 26, 10)) {
+            register(BlockMapping.of("minecraft:golden_dandelion", ChunkerVanillaBlockType.GOLDEN_DANDELION));
         }
     }
 }

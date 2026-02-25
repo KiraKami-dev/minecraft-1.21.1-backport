@@ -24,9 +24,6 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
 
     @Override
     protected CompoundTag prepareNBTForLevelSettings(CompoundTag level) throws Exception {
-        // Call super
-        level = super.prepareNBTForLevelSettings(level);
-
         // Make a copy (this ensures that we don't overwrite the original
         level = level.clone();
 
@@ -83,7 +80,9 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
                 level.put("BorderWarningTime", (double) worldBorderTag.getInt("warning_time"));
             }
         }
-        return level;
+
+        // Call the super
+        return super.prepareNBTForLevelSettings(level);
     }
 
     @Override

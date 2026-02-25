@@ -138,7 +138,7 @@ public class JavaWorldReader implements WorldReader {
      */
     protected File[] getMCAFolders() {
         // Base version only uses region folder
-        return new File[]{new File(dimensionFolder, "region")};
+        return new File[]{resolvers.javaLevelDirectoryResolver().getDimensionRegionDirectory(dimensionFolder)};
     }
 
     /**
