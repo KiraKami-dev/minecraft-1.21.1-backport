@@ -1406,7 +1406,7 @@ public class BedrockBlockIdentifierResolver extends ChunkerBlockIdentifierResolv
             register(BlockMapping.of("minecraft:ancient_debris", ChunkerVanillaBlockType.ANCIENT_DEBRIS));
             register(BlockMapping.of("minecraft:blackstone", ChunkerVanillaBlockType.BLACKSTONE));
             register(BlockMapping.of("minecraft:blackstone_double_slab", ChunkerVanillaBlockType.BLACKSTONE_SLAB, BedrockStateGroups.SLAB_DOUBLE, VanillaBlockStates.SLAB_TYPE, SlabType.DOUBLE));
-            register(BlockMapping.of("minecraft:chain", ChunkerVanillaBlockType.CHAIN, BedrockStateGroups.CHAIN));
+            register(BlockMapping.of("minecraft:chain", ChunkerVanillaBlockType.IRON_CHAIN, BedrockStateGroups.CHAIN));
             register(BlockMapping.of("minecraft:chiseled_nether_bricks", ChunkerVanillaBlockType.CHISELED_NETHER_BRICKS));
             register(BlockMapping.of("minecraft:chiseled_polished_blackstone", ChunkerVanillaBlockType.CHISELED_POLISHED_BLACKSTONE));
             register(BlockMapping.of("minecraft:cracked_nether_bricks", ChunkerVanillaBlockType.CRACKED_NETHER_BRICKS));
@@ -2983,7 +2983,7 @@ public class BedrockBlockIdentifierResolver extends ChunkerBlockIdentifierResolv
             register(BlockMapping.of("minecraft:copper_torch", ChunkerVanillaBlockType.COPPER_WALL_TORCH, BedrockStateGroups.TORCH_FACING));
 
             // Rename chain -> iron_chain
-            registerOverrideOutput(BlockMapping.of("minecraft:iron_chain", ChunkerVanillaBlockType.CHAIN, BedrockStateGroups.CHAIN));
+            registerOverrideOutput(BlockMapping.of("minecraft:iron_chain", ChunkerVanillaBlockType.IRON_CHAIN, BedrockStateGroups.CHAIN));
 
             // New chains
             register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()

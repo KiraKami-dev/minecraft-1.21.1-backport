@@ -348,7 +348,7 @@ public enum ChunkerVanillaBlockType implements ChunkerBlockType {
     RED_MUSHROOM_BLOCK(0x993333, VanillaBlockStateGroups.CONNECTABLE_ALL, true),
     MUSHROOM_STEM(0xc7c7c7, VanillaBlockStateGroups.CONNECTABLE_ALL, true),
     IRON_BARS(0x0, VanillaBlockStateGroups.CONNECTABLE_HORIZONTAL, false),
-    CHAIN(0x0, Set.of(VanillaBlockStates.AXIS), false),
+    IRON_CHAIN(0x0, Set.of(VanillaBlockStates.AXIS), false),
     GLASS_PANE(0x0, VanillaBlockStateGroups.CONNECTABLE_HORIZONTAL, false),
     MELON(0x7fcc19, true),
     ATTACHED_PUMPKIN_STEM(0x7c00, VanillaBlockStateGroups.FACING_HORIZONTAL, false),

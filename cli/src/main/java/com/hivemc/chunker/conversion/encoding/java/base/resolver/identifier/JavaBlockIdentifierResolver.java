@@ -960,7 +960,7 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
         if (version.isGreaterThanOrEqual(1, 16, 0)) {
             register(BlockMapping.of("minecraft:ancient_debris", ChunkerVanillaBlockType.ANCIENT_DEBRIS));
             register(BlockMapping.of("minecraft:blackstone", ChunkerVanillaBlockType.BLACKSTONE));
-            register(BlockMapping.of("minecraft:chain", ChunkerVanillaBlockType.CHAIN, JavaStateGroups.CHAIN));
+            register(BlockMapping.of("minecraft:chain", ChunkerVanillaBlockType.IRON_CHAIN, JavaStateGroups.CHAIN));
             register(BlockMapping.of("minecraft:chiseled_nether_bricks", ChunkerVanillaBlockType.CHISELED_NETHER_BRICKS));
             register(BlockMapping.of("minecraft:chiseled_polished_blackstone", ChunkerVanillaBlockType.CHISELED_POLISHED_BLACKSTONE));
             register(BlockMapping.of("minecraft:cracked_nether_bricks", ChunkerVanillaBlockType.CRACKED_NETHER_BRICKS));
@@ -1626,7 +1626,7 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
             register(BlockMapping.of("minecraft:copper_wall_torch", ChunkerVanillaBlockType.COPPER_WALL_TORCH, JavaStateGroups.FACING_HORIZONTAL));
 
             // Rename chain -> iron_chain
-            registerOverrideOutput(BlockMapping.of("minecraft:iron_chain", ChunkerVanillaBlockType.CHAIN, JavaStateGroups.CHAIN));
+            registerOverrideOutput(BlockMapping.of("minecraft:iron_chain", ChunkerVanillaBlockType.IRON_CHAIN, JavaStateGroups.CHAIN));
 
             // New chains
             register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
