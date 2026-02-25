@@ -1145,7 +1145,7 @@ public enum ChunkerVanillaBlockType implements ChunkerBlockType {
     WAXED_OXIDIZED_COPPER_CHEST(0x167e86, VanillaBlockStateGroups.CHEST, ChestBlockEntity.class, false),
     WAXED_WEATHERED_COPPER_CHEST(0x3a8e8c, VanillaBlockStateGroups.CHEST, ChestBlockEntity.class, false),
     WEATHERED_COPPER_CHEST(0x3a8e8c, VanillaBlockStateGroups.CHEST, ChestBlockEntity.class, false),
-    COPPER_GOLEM(0xd87f33, VanillaBlockStateGroups.COPPER_GOLEM, false),
+    COPPER_GOLEM_STATUE(0xd87f33, VanillaBlockStateGroups.COPPER_GOLEM, false),
     EXPOSED_COPPER_GOLEM_STATUE(0x876b62, VanillaBlockStateGroups.COPPER_GOLEM, false),
     OXIDIZED_COPPER_GOLEM_STATUE(0x167e86, VanillaBlockStateGroups.COPPER_GOLEM, false),
     WAXED_COPPER_GOLEM_STATUE(0xd87f33, VanillaBlockStateGroups.COPPER_GOLEM, false),

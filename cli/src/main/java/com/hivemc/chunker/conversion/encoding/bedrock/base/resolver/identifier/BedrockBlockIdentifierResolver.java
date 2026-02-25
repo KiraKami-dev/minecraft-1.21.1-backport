@@ -2947,7 +2947,7 @@ public class BedrockBlockIdentifierResolver extends ChunkerBlockIdentifierResolv
 
             // New copper golem
             register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
-                            .put("minecraft:copper_golem_statue", ChunkerVanillaBlockType.COPPER_GOLEM)
+                            .put("minecraft:copper_golem_statue", ChunkerVanillaBlockType.COPPER_GOLEM_STATUE)
                             .put("minecraft:exposed_copper_golem_statue", ChunkerVanillaBlockType.EXPOSED_COPPER_GOLEM_STATUE)
                             .put("minecraft:oxidized_copper_golem_statue", ChunkerVanillaBlockType.OXIDIZED_COPPER_GOLEM_STATUE)
                             .put("minecraft:waxed_copper_golem_statue", ChunkerVanillaBlockType.WAXED_COPPER_GOLEM_STATUE)
