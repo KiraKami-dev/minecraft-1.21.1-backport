@@ -4,6 +4,7 @@ import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.java.base.reader.JavaWorldReader;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerGeneratorType;
+import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
@@ -24,7 +25,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
     }
 
     @Override
-    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         // Default implementation for seed
         if (targetName.equals("RandomSeed")) {
             // Try old property
@@ -41,12 +42,16 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
         if (type == ChunkerGeneratorType.class) {
             // If string format, use legacy
             if (root.contains("generatorOptions") && root.get("generatorOptions") instanceof StringTag) {
-                return super.readCustomLevelSetting(root, targetName, type);
+                return super.readCustomLevelSetting(root, chunkerLevelSettings, targetName, type);
             }
 
             // Try new property
             CompoundTag worldGenSettings = root.getCompound("WorldGenSettings");
             if (worldGenSettings == null) return ChunkerGeneratorType.NORMAL;
+
+            // Load the MapFeatures / bonusChestEnabled while we're here
+            chunkerLevelSettings.MapFeatures = worldGenSettings.getByte("generate_features", (byte) 0) == (byte) 1;
+            chunkerLevelSettings.bonusChestEnabled = worldGenSettings.getByte("bonus_chest", (byte) 0) == (byte) 1;
 
             // Grab the tag and check it has dimensions
             CompoundTag dimensions = worldGenSettings.getCompound("dimensions");
@@ -82,6 +87,6 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
             return ChunkerGeneratorType.CUSTOM;
         }
 
-        return super.readCustomLevelSetting(root, targetName, type);
+        return super.readCustomLevelSetting(root, chunkerLevelSettings, targetName, type);
     }
 }

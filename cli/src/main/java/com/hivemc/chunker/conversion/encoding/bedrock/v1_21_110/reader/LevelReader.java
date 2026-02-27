@@ -5,6 +5,7 @@ import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.reader.BedrockWorldReader;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.RegionCoordPair;
+import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +21,10 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.bedrock.
     }
 
     @Override
-    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         // Check for AutumnDrop2025
         if (targetName.equals("AutumnDrop2025")) return true; // U11 supports this
-        return super.readCustomLevelSetting(root, targetName, type);
+        return super.readCustomLevelSetting(root, chunkerLevelSettings, targetName, type);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.java.base.reader.JavaWorldReader;
+import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
     }
 
     @Override
-    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         // Check for caves and cliffs
         if (targetName.equals("CavesAndCliffs")) {
             return isCavesAndCliffs();
@@ -33,7 +34,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
         if (targetName.equals("FlatWorldVersion")) {
             return isCavesAndCliffs() ? 1 : 0;
         }
-        return super.readCustomLevelSetting(root, targetName, type);
+        return super.readCustomLevelSetting(root, chunkerLevelSettings, targetName, type);
     }
 
     private boolean isCavesAndCliffs() {

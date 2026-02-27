@@ -425,15 +425,6 @@ public class JavaLevelWriter implements LevelWriter, JavaReaderWriter {
             data.put("DataVersion", resolvers.dataVersion().getDataVersion());
         }
 
-        // Force void world
-        if (!data.contains("generatorName")) {
-            data.put("generatorName", "flat");
-        }
-
-        if (!data.contains("generatorVersion")) {
-            data.put("generatorVersion", 0);
-        }
-
         if (!data.contains("initialized")) {
             data.put("initialized", (byte) 1);
         }

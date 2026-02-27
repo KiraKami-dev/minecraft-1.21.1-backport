@@ -2,6 +2,7 @@ package com.hivemc.chunker.conversion.encoding.base.reader;
 
 import com.hivemc.chunker.conversion.encoding.base.LevelReaderWriter;
 import com.hivemc.chunker.conversion.handlers.LevelConversionHandler;
+import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,12 +21,13 @@ public interface LevelReader extends LevelReaderWriter {
     /**
      * Read a custom level setting which is annotated as custom.
      *
-     * @param root       the root NBT.
-     * @param targetName the target name of the setting.
-     * @param type       the setting type.
+     * @param root                 the root NBT.
+     * @param chunkerLevelSettings the level settings (note: not all settings may be loaded).
+     * @param targetName           the target name of the setting.
+     * @param type                 the setting type.
      * @return the value, by default throws an exception.
      */
-    default @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+    default @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         throw new IllegalArgumentException("Custom setting reading is not implemented for this writer");
     }
 

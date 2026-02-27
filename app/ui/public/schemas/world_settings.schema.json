@@ -168,7 +168,7 @@
         "bonusChestEnabled": {
             "type": "boolean",
             "title": "Bonus Chest Enabled",
-            "description": "Whether a bonus chest is enabled for the world. (Bedrock only)",
+            "description": "Whether a bonus chest is enabled for the world.",
             "default": false,
             "examples": [
                 true,
