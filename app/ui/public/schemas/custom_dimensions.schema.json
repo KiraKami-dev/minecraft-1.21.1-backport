@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://chunker.app/schemas/custom_dimensions.schema.json",
+  "type": "object",
+  "title": "Custom Dimension",
+  "description": "Provides mappings for custom dimension(s)",
+  "default": {
+    "dimensions": []
+  },
+  "examples": [
+    {
+      "dimensions": [
+        {
+          "identifier": "my:custom_dim",
+          "javaID": 1000,
+          "bedrockID": 1000,
+          "biomeHeight": 24,
+          "fallbackBiome": "PLAINS"
+        }
+      ]
+    },
+    {
+      "dimensions": [
+        {
+          "identifier": "my:custom_dim1",
+          "javaID": 1000,
+          "bedrockID": 1000,
+          "biomeHeight": 24,
+          "fallbackBiome": "PLAINS"
+        },
+        {
+          "identifier": "my:custom_dim2",
+          "javaID": 1001,
+          "bedrockID": 1001,
+          "biomeHeight": 24,
+          "fallbackBiome": "PLAINS"
+        }
+      ]
+    }
+  ],
+  "required": [
+    "dimensions"
+  ],
+  "properties": {
+    "dimensions": {
+      "type": "array",
+      "examples": [
+        [
+          {
+            "identifier": "my:custom_dim",
+            "javaID": 1000,
+            "bedrockID": 1000,
+            "biomeHeight": 24,
+            "fallbackBiome": "PLAINS"
+          }
+        ]
+      ],
+      "items": {
+        "type": "object",
+        "title": "Custom Dimension",
+        "description": "Sets which custom dimensions should exist in this world",
+        "required": [
+          "identifier",
+          "javaID",
+          "bedrockID",
+          "biomeHeight",
+          "fallbackBiome"
+        ],
+        "additionalItems": false,
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "pattern": "^[\\w-]+:[\\w-]+$",
+            "description": "Namespaced identifier in the format namespace:id"
+          },
+          "javaID": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Java numeric identifier"
+          },
+          "bedrockID": {
+            "type": "integer",
+            "minimum": 1000,
+            "description": "Custom dimension numeric identifier"
+          },
+          "biomeHeight": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 24,
+            "description": "The number of biome sections in this dimension"
+          },
+          "fallbackBiome": {
+            "type": "string",
+            "description": "The fallback when biomes are not found"
+          }
+        }
+      }
+    }
+  }
+}
