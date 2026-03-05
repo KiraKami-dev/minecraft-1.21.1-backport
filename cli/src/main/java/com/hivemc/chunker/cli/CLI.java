@@ -11,6 +11,8 @@ import com.hivemc.chunker.conversion.encoding.EncodingType;
 import com.hivemc.chunker.conversion.encoding.base.reader.LevelReader;
 import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
+import com.hivemc.chunker.mapping.DimensionMapping;
 import com.hivemc.chunker.mapping.DimensionMappingList;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
@@ -203,10 +205,10 @@ public class CLI implements Runnable {
             }
             if (dimensionRegistry != null) {
                 try {
-                    var dimensionMapping = GSON.fromJson(dimensionRegistry.getJSONObjectString(), DimensionMappingList.class);
+                    DimensionMappingList dimensionMapping = GSON.fromJson(dimensionRegistry.getJSONObjectString(), DimensionMappingList.class);
                     if (dimensionMapping.getMappings() != null) {
-                        var registry = worldConverter.getDimensionRegistry();
-                        for (var mapping : dimensionMapping.getMappings()) {
+                        DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                        for (DimensionMapping mapping : dimensionMapping.getMappings()) {
                             registry.register(mapping.identifier(), mapping.toDimension());
                         }
                     }
@@ -232,12 +234,12 @@ public class CLI implements Runnable {
                 try {
                     DimensionPruningList pruningList = GSON.fromJson(pruningSettings.getJSONObjectString(), DimensionPruningList.class);
                     if (pruningList.getConfigs() != null && !pruningList.getConfigs().isEmpty()) {
-                        var registry = worldConverter.getDimensionRegistry();
-                        var pruning = pruningList.getConfigs();
+                        DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                        Map<String, PruningConfig> pruning = pruningList.getConfigs();
 
                         Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
                         for (String key : pruning.keySet()) {
-                            pruningConfigs.put(registry.find(key), pruning.get(key));
+                            pruningConfigs.put(registry.getByIdentifier(key), pruning.get(key));
                         }
 
                         worldConverter.setPruningConfigs(pruningConfigs);
@@ -264,10 +266,10 @@ public class CLI implements Runnable {
                 try {
                     Map<String, String> rawDimensionMapping = GSON.fromJson(dimensionMappings.getJSONObjectString(), Map.class);
                     Map<Dimension, Dimension> dimensionMapping = new Object2ObjectOpenHashMap<>(rawDimensionMapping.size());
-                    var registry = worldConverter.getDimensionRegistry();
+                    DimensionRegistry registry = worldConverter.getDimensionRegistry();
                     for (String key : rawDimensionMapping.keySet()) {
-                        var src = registry.find(key);
-                        var dst = registry.find(rawDimensionMapping.get(key));
+                        Dimension src = registry.getByIdentifier(key);
+                        Dimension dst = registry.getByIdentifier(rawDimensionMapping.get(key));
                         if (src != null && dst != null) {
                             dimensionMapping.put(src, dst);
                         }

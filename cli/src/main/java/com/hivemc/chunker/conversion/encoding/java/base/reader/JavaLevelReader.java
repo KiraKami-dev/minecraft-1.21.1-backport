@@ -86,7 +86,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
 
             // Read worlds
             List<Task<Void>> worlds = new ArrayList<>(3);
-            for (Dimension dimension : converter.getDimensionRegistry().values()) {
+            for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
                 File dimensionBaseDirectory = getDimensionBaseDirectory(inputDirectory, dimension);
 
                 // Create a world reader if the dimension is present
@@ -131,7 +131,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
         output.setPortals(Collections.synchronizedList(new ArrayList<>()));
 
         // Loop through dimensions and parse the POI
-        for (Dimension dimension : converter.getDimensionRegistry().values()) {
+        for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
             File poiBaseDirectory = new File(getDimensionBaseDirectory(inputDirectory, dimension), "poi");
 
             // Don't parse if it doesn't exist / it shouldn't be processed

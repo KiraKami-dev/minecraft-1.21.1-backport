@@ -4,6 +4,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Class to hold a list of custom Dimension definitions.
+ */
 public class DimensionMappingList {
     private @Nullable List<DimensionMapping> dimensions;
 

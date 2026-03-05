@@ -17,6 +17,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.Chunker
 import com.hivemc.chunker.conversion.intermediate.level.*;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
@@ -113,7 +114,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
     protected void remapExistingDB() throws IOException {
         List<byte[]> removals = new ArrayList<>();
         try (DBIterator iterator = database.iterator()) {
-            var dimensionRegistry = converter.getDimensionRegistry();
+            DimensionRegistry dimensionRegistry = converter.getDimensionRegistry();
             while (iterator.hasNext()) {
                 Map.Entry<byte[], byte[]> entry = iterator.next();
                 byte[] key = entry.getKey();
@@ -282,8 +283,14 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         // Scale requires 4 when it's not the parent map
         mapData.put("scale", mapData.getLong("parentMapId", -1L) == -1L ? (byte) 4 : chunkerMap.getScale());
 
+        boolean dimensionShouldUseByte = getVersion().isLessThan(1, 26, 10);
         // Copy over the other settings
-        mapData.put("dimension", chunkerMap.getDimension().getBedrockID());
+        if (dimensionShouldUseByte) {
+            mapData.put("dimension", (byte) chunkerMap.getDimension().getBedrockID());
+        }
+        else {
+            mapData.put("dimension", chunkerMap.getDimension().getBedrockID());
+        }
         mapData.put("width", (short) chunkerMap.getWidth());
         mapData.put("height", (short) chunkerMap.getHeight());
         mapData.put("xCenter", chunkerMap.getXCenter());
@@ -592,7 +599,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         playerTag.put("Offhand", offhand);
 
         // Write dimension / gamemode
-        playerTag.put("DimensionId", (int) player.getDimension().getBedrockID());
+        playerTag.put("DimensionId", player.getDimension().getBedrockID());
 
         // Handle specific game types
         if (player.getGameType() == 3 || player.getGameType() == 4 || player.getGameType() == 6) {

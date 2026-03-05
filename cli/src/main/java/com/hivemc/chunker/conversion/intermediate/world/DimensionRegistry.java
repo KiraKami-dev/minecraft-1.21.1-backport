@@ -1,6 +1,5 @@
 package com.hivemc.chunker.conversion.intermediate.world;
 
-import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.primitive.ByteTag;
 import com.hivemc.chunker.nbt.tags.primitive.IntTag;
@@ -14,37 +13,49 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * Registry of dimensions that are registered to this world or the output world
+ */
 public class DimensionRegistry {
     private final HashMap<String, Dimension> dimensionByIdentifier = new HashMap<>();
     private final Int2ObjectMap<Dimension> dimensionByJavaId = new Int2ObjectOpenHashMap<>();
     private final Int2ObjectMap<Dimension> dimensionByBedrockId = new Int2ObjectOpenHashMap<>();
 
-    public Collection<Dimension> values() {
+    /**
+     * Creates a new DimensionRegistry with vanilla dimensions by default
+     */
+    public DimensionRegistry() {
+        register(Dimension.OVERWORLD.getIdentifier(), Dimension.OVERWORLD);
+        register(Dimension.NETHER.getIdentifier(), Dimension.NETHER);
+        register(Dimension.THE_END.getIdentifier(), Dimension.THE_END);
+    }
+
+    /**
+     * Get the dimensions registered
+     * @return Collection of Dimensions registered
+     */
+    public Collection<Dimension> getDimensions() {
         return dimensionByIdentifier.values();
     }
 
+    /**
+     * Registers a dimension
+     * @param identifier the identifier of the Dimension
+     * @param dimension  the dimension to be added
+     */
     public void register(String identifier, Dimension dimension) {
         this.dimensionByIdentifier.put(identifier, dimension);
         this.dimensionByBedrockId.put(dimension.getBedrockID(), dimension);
         this.dimensionByJavaId.put(dimension.getJavaID(), dimension);
     }
 
-    public @Nullable Dimension find(String identifier) {
+    /**
+     * Finds a dimension by it's registered identifier
+     * @param identifier the identifier of the Dimension to be found
+     * @return The dimension if found, null otherwise
+     */
+    public @Nullable Dimension getByIdentifier(String identifier) {
         return dimensionByIdentifier.get(identifier);
-    }
-
-    public DimensionRegistry() {
-        this.dimensionByIdentifier.put(Dimension.OVERWORLD.getIdentifier(), Dimension.OVERWORLD);
-        this.dimensionByBedrockId.put(Dimension.OVERWORLD.getBedrockID(), Dimension.OVERWORLD);
-        this.dimensionByJavaId.put(Dimension.OVERWORLD.getJavaID(), Dimension.OVERWORLD);
-
-        this.dimensionByIdentifier.put(Dimension.NETHER.getIdentifier(), Dimension.NETHER);
-        this.dimensionByBedrockId.put(Dimension.NETHER.getBedrockID(), Dimension.NETHER);
-        this.dimensionByJavaId.put(Dimension.NETHER.getJavaID(), Dimension.NETHER);
-
-        this.dimensionByIdentifier.put(Dimension.THE_END.getIdentifier(), Dimension.THE_END);
-        this.dimensionByBedrockId.put(Dimension.THE_END.getBedrockID(), Dimension.THE_END);
-        this.dimensionByJavaId.put(Dimension.THE_END.getJavaID(), Dimension.THE_END);
     }
 
     /**

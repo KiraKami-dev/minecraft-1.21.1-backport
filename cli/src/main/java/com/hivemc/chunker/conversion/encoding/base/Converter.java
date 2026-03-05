@@ -134,6 +134,11 @@ public interface Converter {
     @Nullable
     MappingsFileResolvers getBlockMappings();
 
+    /**
+     * Get the dimension register, by default populated with Vanilla dimensions
+     *
+     * @return the dimension registry
+     */
     DimensionRegistry getDimensionRegistry();
 
     /**

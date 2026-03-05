@@ -118,9 +118,9 @@ public class PreviewColumnWriter implements ColumnWriter {
                 );
             }
 
-            var name = worldData.dimension.getIdentifier().replace(":", "_");
+            String name = worldData.dimension.getIdentifier().replace(":", "_");
             // Write the region PNG
-            File outputFile = new File(outputFolder,  name + "." + region.regionX() + "." + region.regionZ() + ".png");
+            File outputFile = new File(outputFolder, name + "." + region.regionX() + "." + region.regionZ() + ".png");
             try {
                 ImageIO.write(image, "png", outputFile);
             } catch (IOException e) {

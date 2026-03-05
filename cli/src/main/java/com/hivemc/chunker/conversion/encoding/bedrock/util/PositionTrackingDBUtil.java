@@ -25,8 +25,9 @@ public class PositionTrackingDBUtil {
      * Get lodestone data from a database based on index.
      * Note: Any operations may need locking if using this multithreaded.
      *
-     * @param database the LevelDB database.
-     * @param index    the index of the data (starting at 1).
+     * @param database          the LevelDB database.
+     * @param dimensionRegistry the Dimension registry
+     * @param index             the index of the data (starting at 1).
      * @return the value or null if it wasn't found.
      * @throws IOException if it failed to parse the data from LevelDB.
      */
@@ -124,8 +125,9 @@ public class PositionTrackingDBUtil {
      * Get or create the lodestone data in the database.
      * Note: Any operations may need locking if using this multithreaded.
      *
-     * @param database      the LevelDB database.
-     * @param lodestoneData the lodestone data to find/save.
+     * @param database          the LevelDB database.
+     * @param dimensionRegistry the Dimension registry
+     * @param lodestoneData     the lodestone data to find/save.
      * @return the new index of the entry (starting at 1) or existing index if it was found.
      * @throws IOException if it failed to deserialize/serialize the data to LevelDB.
      */
