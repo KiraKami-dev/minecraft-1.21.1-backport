@@ -91,7 +91,7 @@
           },
           "fallbackBiome": {
             "type": "string",
-            "description": "The fallback when biomes are not found"
+            "description": "The fallback when biomes are not found (Accepted values can be found in ChunkerBiome.ChunkerVanillaBiome)"
           }
         }
       }

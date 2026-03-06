@@ -136,7 +136,7 @@ public class Messenger {
 
                         worldConverter.setDimensionMapping(previewRequest.getInputToOutputDimension());
 
-                        // Turn the indexed based pruning list into a map
+                        // Turn the String identifiers into a Dimension based map
                         if (previewRequest.getPruningList() != null && previewRequest.getPruningList().getConfigs() != null && !previewRequest.getPruningList().getConfigs().isEmpty()) {
                             DimensionRegistry registry = worldConverter.getDimensionRegistry();
                             Map<String, PruningConfig> pruning = previewRequest.getPruningList().getConfigs();
