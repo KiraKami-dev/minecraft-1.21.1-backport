@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @CommandLine.Command(name = "Chunker", versionProvider = VersionProvider.class, mixinStandardHelpOptions = true)
 public class CLI implements Runnable {
-    private static final TypeToken<Map<Dimension, Dimension>> DIMENSION_INPUT_TO_OUTPUT_TYPE = new TypeToken<>() {
+    private static final TypeToken<Map<String, String>> DIMENSION_INPUT_TO_OUTPUT_TYPE = new TypeToken<>() {
     };
     private static final Gson GSON = new Gson();
 
@@ -264,7 +264,7 @@ public class CLI implements Runnable {
             }
             if (dimensionMappings != null) {
                 try {
-                    Map<String, String> rawDimensionMapping = GSON.fromJson(dimensionMappings.getJSONObjectString(), Map.class);
+                    Map<String, String> rawDimensionMapping = GSON.fromJson(dimensionMappings.getJSONObjectString(), DIMENSION_INPUT_TO_OUTPUT_TYPE);
                     Map<Dimension, Dimension> dimensionMapping = new Object2ObjectOpenHashMap<>(rawDimensionMapping.size());
                     DimensionRegistry registry = worldConverter.getDimensionRegistry();
                     for (String key : rawDimensionMapping.keySet()) {
