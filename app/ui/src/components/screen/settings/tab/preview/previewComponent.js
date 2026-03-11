@@ -6,7 +6,7 @@ import "leaflet-draw";
 import {ProgressComponent} from "../../../../progress";
 import "leaflet-mouse-position/src/L.Control.MousePosition.css";
 import "leaflet-fullscreen/dist/leaflet.fullscreen.css";
-import {DIMENSIONS} from "../dimensionPruningTab";
+import {getDimensionDisplayName} from "../dimensionPruningTab";
 
 require("leaflet-mouse-position/src/L.Control.MousePosition"); // As it adds new controls, need to be required
 require("leaflet-fullscreen/dist/Leaflet.fullscreen"); // As it adds new controls, need to be required
@@ -61,11 +61,12 @@ export class Map extends Component {
                 minNativeZoom: 0,
                 minZoom: -5,
                 maxZoom: 5,
-                world: a,
+                world: a.replace(":", "_"),
                 id: "blocks",
                 session: self.props.session,
                 tileSize: 512,
                 noWrap: true,
+                identifier: a,
                 index: k,
                 continuousWorld: true
             });
@@ -83,7 +84,7 @@ export class Map extends Component {
                 this.mymap.setView(xy(centerX, centerZ), 2);
             }
         } else {
-            let defaultWorld = worlds.filter(a => this.app.state.previewState.layer === a.options.world)[0];
+            let defaultWorld = worlds.filter(a => this.app.state.previewState.layer === a.options.identifier)[0];
             defaultWorld.addTo(this.mymap);
             this.mymap.setView(this.app.state.previewState.center, this.app.state.previewState.zoom, {animate: false});
         }
@@ -93,24 +94,7 @@ export class Map extends Component {
         // Add controls
         let baseMaps = {};
         worlds.forEach(a => {
-            let name = a.options.world;
-            let niceName;
-            switch (name) {
-                case "NETHER":
-                    niceName = "Nether";
-                    break;
-                case "OVERWORLD":
-                    niceName = "Overworld";
-                    break;
-                case "THE_END":
-                    niceName = "The End";
-                    break;
-                default:
-                    niceName = "?";
-                    break;
-            }
-
-            baseMaps[niceName] = a;
+            baseMaps[getDimensionDisplayName(a.options.identifier)] = a;
         });
 
         // Mouse position
@@ -138,10 +122,10 @@ export class Map extends Component {
     };
 
     componentWillUnmount() {
-        let currentLayer = "OVERWORLD";
+        let currentLayer = "minecraft:overworld";
         this.mymap.eachLayer(function (layer) {
-            if (layer.options.world !== undefined) {
-                currentLayer = layer.options.world;
+            if (layer.options.identifier !== undefined) {
+                currentLayer = layer.options.identifier;
             }
         });
 
@@ -155,13 +139,12 @@ export class Map extends Component {
     }
 
     moveRegion = (world, regionIndex, minX, minZ, maxX, maxZ) => {
-        let dimensionIndex = DIMENSIONS.indexOf(world);
         this.app.setState((prevState) => {
             let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
 
             // Add new state
-            pruningSettingsClone[dimensionIndex].regions[regionIndex] = {
-                ...pruningSettingsClone[dimensionIndex].regions[regionIndex], // Merge old settings
+            pruningSettingsClone[world].regions[regionIndex] = {
+                ...pruningSettingsClone[world].regions[regionIndex], // Merge old settings
                 minChunkX: Math.floor(Math.min(minX, maxX)),
                 minChunkZ: Math.floor(Math.min(minZ, maxZ)),
                 maxChunkX: Math.ceil(Math.max(minX, maxX)) - 1,
@@ -179,8 +162,8 @@ export class Map extends Component {
 
         // Get selected map
         this.mymap.eachLayer(function (layer) {
-            if (layer.options.world !== undefined) {
-                self.renderWorldPruningRegion(layer.options.world);
+            if (layer.options.identifier !== undefined) {
+                self.renderWorldPruningRegion(layer.options.identifier);
             }
             if (layer.options.region) {
                 // Remove old polygons
@@ -190,10 +173,9 @@ export class Map extends Component {
     };
 
     renderWorldPruningRegion = (world) => {
-        let dimensionIndex = DIMENSIONS.indexOf(world);
-        if (!(this.app.state.pruningSettings[dimensionIndex] && this.app.state.pruningSettings[dimensionIndex].regions)) return; // No regions
+        if (!(this.app.state.pruningSettings[world] && this.app.state.pruningSettings[world].regions)) return; // No regions
 
-        let pruningRegions = this.app.state.pruningSettings[dimensionIndex];
+        let pruningRegions = this.app.state.pruningSettings[world];
 
         pruningRegions.regions.forEach((region, index) => {
             // Drawing the region

@@ -41,7 +41,7 @@ export class App extends Component {
         worldSettingsTab: "World Settings",
         dimensionSettingsTab: undefined,
         editedSettings: {},
-        pruningSettings: [null, null, null],
+        pruningSettings: {},
         mappings: {
             identifiers: []
         },
@@ -49,17 +49,19 @@ export class App extends Component {
         inputBlockSuggestions: [],
         outputBlockSuggestions: [],
         dimensionMapping: {
-            "OVERWORLD": "OVERWORLD",
-            "NETHER": "NETHER",
-            "THE_END": "THE_END"
+            "minecraft:overworld": "minecraft:overworld",
+            "minecraft:the_nether": "minecraft:the_nether",
+            "minecraft:the_end": "minecraft:the_end"
         },
         converterSettings: {}
     };
 
     getDimensionMappingsJSON = () => {
-        if (Object.keys(this.state.dimensionMapping).length !== 3 ||
-            Object.keys(this.state.dimensionMapping).filter(key => this.state.dimensionMapping[key] !== key).length > 0) {
-            return JSON.stringify(this.state.dimensionMapping);
+        const mapping = this.state.dimensionMapping;
+        const keys = Object.keys(mapping);
+        const defaultCount = this.state.settings?.dimensions?.length ?? 3;
+        if (keys.length !== defaultCount || keys.some(key => mapping[key] !== key)) {
+            return JSON.stringify(mapping);
         } else {
             return "{}";
         }
@@ -77,7 +79,7 @@ export class App extends Component {
 
     getPruningJSON = () => {
         let pruningSettings = this.state.pruningSettings;
-        if (!pruningSettings || pruningSettings.filter(a => a !== null).length === 0) return "{}";
+        if (!pruningSettings || Object.values(pruningSettings).filter(a => a !== null).length === 0) return "{}";
         return JSON.stringify({configs: pruningSettings});
     };
 
@@ -95,9 +97,9 @@ export class App extends Component {
         let dimensions = sessionData?.preloaded_settings?.dimension_mappings ?? {};
         if (Object.keys(dimensions).length === 0) {
             dimensions = {
-                "OVERWORLD": "OVERWORLD",
-                "NETHER": "NETHER",
-                "THE_END": "THE_END"
+                "minecraft:overworld": "minecraft:overworld",
+                "minecraft:the_nether": "minecraft:the_nether",
+                "minecraft:the_end": "minecraft:the_end"
             };
         }
 
@@ -108,9 +110,9 @@ export class App extends Component {
             mappings.identifiers = [];
         }
 
-        let pruning = sessionData?.preloaded_settings?.pruning?.configs ?? [];
-        if (!pruning || pruning.filter(a => a !== null).length === 0) {
-            pruning = [null, null, null];
+        let pruning = sessionData?.preloaded_settings?.pruning?.configs ?? {};
+        if (!pruning || Object.values(pruning).filter(a => a !== null).length === 0) {
+            pruning = {};
         }
 
         this.setState({
@@ -188,8 +190,8 @@ export class App extends Component {
                     bufferIndex += 4;
 
                     for (let i = 0; i < worldCount; i++) {
-                        let worldIndex = dataView.getUint8(bufferIndex);
-                        bufferIndex += 1;
+                        let worldIndex = dataView.getInt32(bufferIndex, true);
+                        bufferIndex += 4;
 
                         // World Index
                         worlds[worldIndex] = {};

@@ -70,7 +70,7 @@ public class WorldConverter implements Converter {
     @Nullable
     private Map<Dimension, PruningConfig> pruningConfigs;
     @Nullable
-    private  Map<Dimension, Dimension> dimensionMapping;
+    private Map<Dimension, Dimension> dimensionMapping;
     private DimensionRegistry dimensionRegistry = new DimensionRegistry();
     @Nullable
     private Map<ChunkerBiome, ChunkerBiome> biomeMapping;

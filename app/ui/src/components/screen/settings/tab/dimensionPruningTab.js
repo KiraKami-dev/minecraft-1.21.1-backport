@@ -2,7 +2,26 @@ import React, {Component} from "react";
 import {ProgressComponent} from "../../../progress";
 import {SettingsInput} from "./world_settings/settingsInput";
 
-export const DIMENSIONS = ["OVERWORLD", "NETHER", "THE_END"];
+export function getDimensionDisplayName(identifier) {
+    switch (identifier) {
+        case "minecraft:overworld": return "Overworld";
+        case "minecraft:the_nether": return "The Nether";
+        case "minecraft:the_end": return "The End";
+        default: {
+            const parts = identifier.split(":");
+            return parts.map(p => p.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())).join(": ");
+        }
+    }
+}
+
+function getDimensionColor(identifier) {
+    switch (identifier) {
+        case "minecraft:overworld": return "green";
+        case "minecraft:the_nether": return "red";
+        case "minecraft:the_end": return "yellow";
+        default: return "blue";
+    }
+}
 
 export class DimensionPruningTab extends Component {
     app = this.props.app;
@@ -22,17 +41,15 @@ export class DimensionPruningTab extends Component {
     };
 
     validateSetting = (tab, setting) => {
-        let tabIndex = DIMENSIONS.indexOf(tab);
-
         if (setting.type !== "Int32") return; // Don't validate any other settings
 
         // Ensure we don't have NaN set as a value
-        if (this.app.state.pruningSettings[tabIndex]) {
-            if (isNaN(this.app.state.pruningSettings[tabIndex].regions[setting.region][setting.name])) {
+        if (this.app.state.pruningSettings[tab]) {
+            if (isNaN(this.app.state.pruningSettings[tab].regions[setting.region][setting.name])) {
                 // Reset NaN -> 0
                 this.app.setState((prevState) => {
                     let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
-                    pruningSettingsClone[tabIndex].regions[setting.region][setting.name] = 0;
+                    pruningSettingsClone[tab].regions[setting.region][setting.name] = 0;
 
                     return {pruningSettings: pruningSettingsClone};
                 }, () => this.validateSetting(tab, setting)); // Validate when done to ensure no reordering is needed
@@ -42,8 +59,8 @@ export class DimensionPruningTab extends Component {
                 let maxName = setting.name.replace("min", "max");
 
                 // Get current values
-                let min = this.app.state.pruningSettings[tabIndex].regions[setting.region][minName];
-                let max = this.app.state.pruningSettings[tabIndex].regions[setting.region][maxName];
+                let min = this.app.state.pruningSettings[tab].regions[setting.region][minName];
+                let max = this.app.state.pruningSettings[tab].regions[setting.region][maxName];
 
                 // If min > max, then we should swap them
                 if (min !== max && min > max) {
@@ -51,10 +68,10 @@ export class DimensionPruningTab extends Component {
                         let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
 
                         // Set the new min
-                        pruningSettingsClone[tabIndex].regions[setting.region][minName] = max;
+                        pruningSettingsClone[tab].regions[setting.region][minName] = max;
 
                         // Set the new max
-                        pruningSettingsClone[tabIndex].regions[setting.region][maxName] = min;
+                        pruningSettingsClone[tab].regions[setting.region][maxName] = min;
 
                         return {pruningSettings: pruningSettingsClone};
                     });
@@ -64,7 +81,6 @@ export class DimensionPruningTab extends Component {
     }
 
     updateSetting = (tab, name, value, setting) => {
-        let tabIndex = DIMENSIONS.indexOf(tab);
         if (name === "Dimension") {
             this.app.setState((prevState) => {
                 let dimensionMappingClone = Object.assign({}, prevState.dimensionMapping);
@@ -82,18 +98,18 @@ export class DimensionPruningTab extends Component {
                 let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
 
                 if (value !== "OFF") {
-                    pruningSettingsClone[tabIndex] = {
+                    pruningSettingsClone[tab] = {
                         regions: [{
                             minChunkX: -10,
                             minChunkZ: -10,
                             maxChunkX: 10,
                             maxChunkZ: 10
                         }],
-                        ...pruningSettingsClone[tabIndex],
+                        ...pruningSettingsClone[tab],
                         include: value === "INCLUDE"
                     };
                 } else {
-                    pruningSettingsClone[tabIndex] = null;
+                    pruningSettingsClone[tab] = null;
                 }
 
                 return {pruningSettings: pruningSettingsClone};
@@ -101,7 +117,7 @@ export class DimensionPruningTab extends Component {
         } else if (name === "addRegion") {
             this.app.setState((prevState) => {
                 let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
-                pruningSettingsClone[tabIndex].regions = pruningSettingsClone[tabIndex].regions.concat([{
+                pruningSettingsClone[tab].regions = pruningSettingsClone[tab].regions.concat([{
                     minChunkX: -10,
                     minChunkZ: -10,
                     maxChunkX: 10,
@@ -113,7 +129,7 @@ export class DimensionPruningTab extends Component {
         } else if (name === "removeRegion") {
             this.app.setState((prevState) => {
                 let pruningSettingsClone = JSON.parse(JSON.stringify(prevState.pruningSettings));
-                pruningSettingsClone[tabIndex].regions.splice(setting.region, 1);
+                pruningSettingsClone[tab].regions.splice(setting.region, 1);
 
                 return {pruningSettings: pruningSettingsClone};
             });
@@ -125,14 +141,14 @@ export class DimensionPruningTab extends Component {
                 if (name === "name") {
                     // Check if name is equal to the default
                     if (value !== ("Region " + (setting.region + 1))) {
-                        pruningSettingsClone[tabIndex].regions[setting.region][name] = value;
+                        pruningSettingsClone[tab].regions[setting.region][name] = value;
                     } else {
                         // Delete the name
-                        delete pruningSettingsClone[tabIndex].regions[setting.region][name];
+                        delete pruningSettingsClone[tab].regions[setting.region][name];
                     }
                 } else {
                     // Parse as int
-                    pruningSettingsClone[tabIndex].regions[setting.region][name] = parseInt(value);
+                    pruningSettingsClone[tab].regions[setting.region][name] = parseInt(value);
                 }
 
 
@@ -148,9 +164,10 @@ export class DimensionPruningTab extends Component {
     };
 
     toDimensionOption = (input, output) => {
+        let dimensions = this.app.state.settings?.dimensions ?? [];
         return {
             "name": "Dimension",
-            "description": "The dimension to change " + input + " to.",
+            "description": "The dimension to change " + getDimensionDisplayName(input) + " to.",
             "type": "Radio",
             "value": output || "NONE",
             "options": [
@@ -159,30 +176,20 @@ export class DimensionPruningTab extends Component {
                     "color": "blue",
                     "value": "NONE"
                 },
-                {
-                    "name": "Overworld",
-                    "color": "green",
-                    "value": "OVERWORLD"
-                },
-                {
-                    "name": "Nether",
-                    "color": "red",
-                    "value": "NETHER"
-                },
-                {
-                    "name": "The End",
-                    "color": "yellow",
-                    "value": "THE_END"
-                }
+                ...dimensions.map(dim => ({
+                    "name": getDimensionDisplayName(dim),
+                    "color": getDimensionColor(dim),
+                    "value": dim
+                }))
             ]
         };
     };
 
-    getOptions = (dimension, dimensionIndex) => {
-        let enabled = !!(this.app.state.pruningSettings[dimensionIndex]
-            && this.app.state.pruningSettings[dimensionIndex].regions
-            && this.app.state.pruningSettings[dimensionIndex].regions.length > 0);
-        let pruningSetting = enabled ? (this.app.state.pruningSettings[dimensionIndex].include ? "INCLUDE" : "EXCLUDE") : "OFF";
+    getOptions = (dimension) => {
+        let enabled = !!(this.app.state.pruningSettings[dimension]
+            && this.app.state.pruningSettings[dimension].regions
+            && this.app.state.pruningSettings[dimension].regions.length > 0);
+        let pruningSetting = enabled ? (this.app.state.pruningSettings[dimension].include ? "INCLUDE" : "EXCLUDE") : "OFF";
         let options = [
             {
                 "name": "Pruning",
@@ -210,8 +217,8 @@ export class DimensionPruningTab extends Component {
             }
         ];
 
-        if (this.app.state.pruningSettings[dimensionIndex] && this.app.state.pruningSettings[dimensionIndex].regions) {
-            this.app.state.pruningSettings[dimensionIndex].regions.forEach((region, index) => {
+        if (this.app.state.pruningSettings[dimension] && this.app.state.pruningSettings[dimension].regions) {
+            this.app.state.pruningSettings[dimension].regions.forEach((region, index) => {
                 options = options.concat([{
                     "display": ("Region " + (index + 1)),
                     "name": "removeRegion",
@@ -289,7 +296,7 @@ export class DimensionPruningTab extends Component {
             tab = this.app.state.settings.dimensions[0];
         }
 
-        let pruningSettings = this.getOptions(tab, DIMENSIONS.indexOf(tab));
+        let pruningSettings = this.getOptions(tab);
         return (
             <div>
                 {(this.app.settingsProgress.isComplete() &&
@@ -302,7 +309,7 @@ export class DimensionPruningTab extends Component {
                                 {this.app.state.settings.dimensions.map(name => (
                                     <li key={name}>
                                         <button className={tab === name ? "active" : ""}
-                                                onClick={(e) => this.setTab(name, e)}>{name.replace("_", " ")}</button>
+                                                onClick={(e) => this.setTab(name, e)}>{getDimensionDisplayName(name)}</button>
                                     </li>
                                 ))}
                             </ul>

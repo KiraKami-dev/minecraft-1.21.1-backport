@@ -192,11 +192,24 @@ public class Messenger {
                             }
                         }
                         worldConverter.setChangedSettings(convertRequest.getNbtSettings());
-                        worldConverter.setDimensionMapping(convertRequest.getInputToOutputDimension());
+                        DimensionRegistry registry = worldConverter.getDimensionRegistry();
 
-                        // Turn the indexed based pruning list into a map
+                        // Convert identifiers to Dimension types
+                        Map<String, String> rawDimensionMapping = convertRequest.getInputToOutputDimension();
+                        if (rawDimensionMapping != null) {
+                            Map<Dimension, Dimension> dimensionMapping = new Object2ObjectOpenHashMap<>(rawDimensionMapping.size());
+                            for (String key : rawDimensionMapping.keySet()) {
+                                Dimension src = registry.getByIdentifier(key);
+                                Dimension dst = registry.getByIdentifier(rawDimensionMapping.get(key));
+                                if (src != null && dst != null) {
+                                    dimensionMapping.put(src, dst);
+                                }
+                            }
+                            worldConverter.setDimensionMapping(dimensionMapping);
+                        }
+
+                        // Turn the identifier based pruning map into a dimension map
                         if (convertRequest.getPruningList() != null && convertRequest.getPruningList().getConfigs() != null && !convertRequest.getPruningList().getConfigs().isEmpty()) {
-                            DimensionRegistry registry = worldConverter.getDimensionRegistry();
                             Map<String, PruningConfig> pruning = convertRequest.getPruningList().getConfigs();
 
                             Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
@@ -236,7 +249,6 @@ public class Messenger {
                             worldConverter.setMaps(chunkerMaps);
                         }
 
-                        worldConverter.setDimensionMapping(convertRequest.getInputToOutputDimension());
                         worldConverter.setAllowNBTCopying(convertRequest.isCopyNbt());
                         worldConverter.setProcessMaps(!convertRequest.isSkipMaps());
                         worldConverter.setProcessLootTables(!convertRequest.isSkipLootTables());

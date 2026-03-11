@@ -20,7 +20,7 @@ public class ConvertRequest extends BasicMessage implements InvokesWorldConverte
     private final String outputPath;
     private final String outputType;
     @Nullable
-    private final Map<Dimension, Dimension> inputToOutputDimension;
+    private final Map<String, String> inputToOutputDimension;
     @Nullable
     private final JsonObject mappings;
     @Nullable
@@ -62,7 +62,7 @@ public class ConvertRequest extends BasicMessage implements InvokesWorldConverte
      * @param discardEmptyChunks     whether empty chunks should not be written.
      * @param preventYBiomeBlending  whether biomes should be prevented from blending (Java).
      */
-    public ConvertRequest(UUID anonymousId, String inputPath, String outputPath, String outputType, @Nullable Map<Dimension, Dimension> inputToOutputDimension, @Nullable JsonObject mappings, @Nullable JsonObject nbtSettings, @Nullable JsonArray maps, boolean copyNbt, @Nullable DimensionPruningList pruningList, boolean skipMaps, boolean skipLootTables, boolean skipItemConversion, boolean customIdentifiers, boolean skipBlockConnections, boolean enableCompact, boolean discardEmptyChunks, boolean preventYBiomeBlending) {
+    public ConvertRequest(UUID anonymousId, String inputPath, String outputPath, String outputType, @Nullable Map<String, String> inputToOutputDimension, @Nullable JsonObject mappings, @Nullable JsonObject nbtSettings, @Nullable JsonArray maps, boolean copyNbt, @Nullable DimensionPruningList pruningList, boolean skipMaps, boolean skipLootTables, boolean skipItemConversion, boolean customIdentifiers, boolean skipBlockConnections, boolean enableCompact, boolean discardEmptyChunks, boolean preventYBiomeBlending) {
         this.anonymousId = anonymousId;
         this.inputPath = inputPath;
         this.outputPath = outputPath;
@@ -107,7 +107,7 @@ public class ConvertRequest extends BasicMessage implements InvokesWorldConverte
      * @param discardEmptyChunks     whether empty chunks should not be written.
      * @param preventYBiomeBlending  whether biomes should be prevented from blending (Java).
      */
-    public ConvertRequest(UUID requestId, UUID anonymousId, String inputPath, String outputPath, String outputType, @Nullable Map<Dimension, Dimension> inputToOutputDimension, @Nullable JsonObject mappings, @Nullable JsonObject nbtSettings, @Nullable JsonArray maps, boolean copyNbt, @Nullable DimensionPruningList pruningList, boolean skipMaps, boolean skipLootTables, boolean skipItemConversion, boolean customIdentifiers, boolean skipBlockConnections, boolean enableCompact, boolean discardEmptyChunks, boolean preventYBiomeBlending) {
+    public ConvertRequest(UUID requestId, UUID anonymousId, String inputPath, String outputPath, String outputType, @Nullable Map<String, String> inputToOutputDimension, @Nullable JsonObject mappings, @Nullable JsonObject nbtSettings, @Nullable JsonArray maps, boolean copyNbt, @Nullable DimensionPruningList pruningList, boolean skipMaps, boolean skipLootTables, boolean skipItemConversion, boolean customIdentifiers, boolean skipBlockConnections, boolean enableCompact, boolean discardEmptyChunks, boolean preventYBiomeBlending) {
         super(requestId);
         this.anonymousId = anonymousId;
         this.inputPath = inputPath;
@@ -173,7 +173,7 @@ public class ConvertRequest extends BasicMessage implements InvokesWorldConverte
      * @return null if the input should map to the output otherwise a map of dimensions.
      */
     @Nullable
-    public Map<Dimension, Dimension> getInputToOutputDimension() {
+    public Map<String, String> getInputToOutputDimension() {
         return inputToOutputDimension;
     }
 
