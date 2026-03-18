@@ -9,7 +9,6 @@ import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 public record DimensionMapping(
         String identifier,
         int javaID,
-        int bedrockID,
         int biomeHeight,
         ChunkerBiome.ChunkerVanillaBiome fallbackBiome
 ) {
@@ -17,7 +16,7 @@ public record DimensionMapping(
      * Creates a registerable dimension based on the mapping
      * @return The dimension
      */
-    public Dimension toDimension() {
+    public Dimension toDimension(int bedrockID) {
         return new Dimension(javaID, bedrockID, identifier, fallbackBiome, biomeHeight);
     }
 }

@@ -13,7 +13,6 @@
         {
           "identifier": "my:custom_dim",
           "javaID": 1000,
-          "bedrockID": 1000,
           "biomeHeight": 24,
           "fallbackBiome": "PLAINS"
         }
@@ -24,14 +23,12 @@
         {
           "identifier": "my:custom_dim1",
           "javaID": 1000,
-          "bedrockID": 1000,
           "biomeHeight": 24,
           "fallbackBiome": "PLAINS"
         },
         {
           "identifier": "my:custom_dim2",
           "javaID": 1001,
-          "bedrockID": 1001,
           "biomeHeight": 24,
           "fallbackBiome": "PLAINS"
         }
@@ -49,7 +46,6 @@
           {
             "identifier": "my:custom_dim",
             "javaID": 1000,
-            "bedrockID": 1000,
             "biomeHeight": 24,
             "fallbackBiome": "PLAINS"
           }
@@ -62,7 +58,6 @@
         "required": [
           "identifier",
           "javaID",
-          "bedrockID",
           "biomeHeight",
           "fallbackBiome"
         ],
@@ -77,11 +72,6 @@
             "type": "integer",
             "minimum": 0,
             "description": "Java numeric identifier"
-          },
-          "bedrockID": {
-            "type": "integer",
-            "minimum": 1000,
-            "description": "Custom dimension numeric identifier"
           },
           "biomeHeight": {
             "type": "integer",

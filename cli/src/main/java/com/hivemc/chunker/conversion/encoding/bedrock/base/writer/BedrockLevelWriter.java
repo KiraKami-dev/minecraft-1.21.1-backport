@@ -228,6 +228,21 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         // Save level data
         Task.asyncConsume("Writing Level Data", TaskWeight.NORMAL, this::writeLevelData, chunkerLevel);
 
+        if (version.isGreaterThan(1, 26, 10)) {
+            CompoundTag dimensionTable = new CompoundTag(1);
+            CompoundTag entries = new CompoundTag(4);
+
+            for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
+                if (dimension.getBedrockID() < 1000) continue;
+                entries.put(dimension.getIdentifier(), dimension.getBedrockID());
+            }
+
+            dimensionTable.put("entries", entries);
+            byte[] value = Tag.writeBedrockNBT(dimensionTable);
+
+            database.put("DimensionNameIdTable".getBytes(StandardCharsets.UTF_8), value);
+        }
+
         // Create a new world writer with the created worldData
         return createWorldWriter();
     }
@@ -283,7 +298,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         // Scale requires 4 when it's not the parent map
         mapData.put("scale", mapData.getLong("parentMapId", -1L) == -1L ? (byte) 4 : chunkerMap.getScale());
 
-        boolean dimensionShouldUseByte = getVersion().isLessThan(1, 26, 10);
+        boolean dimensionShouldUseByte = getVersion().isLessThanOrEqual(1, 26, 10);
         // Copy over the other settings
         if (dimensionShouldUseByte) {
             mapData.put("dimension", (byte) chunkerMap.getDimension().getBedrockID());

@@ -25,6 +25,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -208,8 +209,10 @@ public class CLI implements Runnable {
                     DimensionMappingList dimensionMapping = GSON.fromJson(dimensionRegistry.getJSONObjectString(), DimensionMappingList.class);
                     if (dimensionMapping.getMappings() != null) {
                         DimensionRegistry registry = worldConverter.getDimensionRegistry();
-                        for (DimensionMapping mapping : dimensionMapping.getMappings()) {
-                            registry.register(mapping.identifier(), mapping.toDimension());
+                        List<DimensionMapping> mappings = dimensionMapping.getMappings();
+                        for (int i = 0, id = 1000; i < mappings.size(); id++, i++) {
+                            DimensionMapping mapping = mappings.get(i);
+                            registry.register(mapping.identifier(), mapping.toDimension(id));
                         }
                     }
                 } catch (Exception e) {
