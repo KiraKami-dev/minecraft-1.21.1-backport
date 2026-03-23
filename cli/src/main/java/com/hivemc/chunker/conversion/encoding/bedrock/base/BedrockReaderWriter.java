@@ -63,7 +63,7 @@ public interface BedrockReaderWriter extends LevelReaderWriter {
                 .blockIdentifierResolver(new BedrockLegacyBlockIdentifierResolver(converter, version, isReader(), converter.shouldAllowCustomIdentifiers()))
                 .itemBlockIdentifierResolver(new BedrockBlockIdentifierResolver(converter, version, isReader(), converter.shouldAllowCustomIdentifiers()))
                 .itemIdentifierResolver(new BedrockItemIdentifierResolver(converter, version, isReader()))
-                .biomeIDResolver(new BedrockBiomeIDResolver(version))
+                .biomeIDResolver(new BedrockBiomeIDResolver(version, converter.shouldAllowCustomIdentifiers()))
                 .enchantmentIDResolver(new BedrockEnchantmentIDResolver(version))
                 .paintingMotiveResolver(new BedrockPaintingMotiveResolver(version))
                 .trimPatternResolver(new BedrockTrimPatternResolver(version))

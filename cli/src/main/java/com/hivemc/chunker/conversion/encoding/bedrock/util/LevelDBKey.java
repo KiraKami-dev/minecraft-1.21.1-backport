@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class LevelDBKey {
     public static final byte[] ACTOR_PREFIX = "actorprefix".getBytes(StandardCharsets.UTF_8);
+    public static final byte[] BIOME_IDS_TABLE = "BiomeIdsTable".getBytes(StandardCharsets.UTF_8);
     public static final byte[] DIGP_PREFIX = "digp".getBytes(StandardCharsets.UTF_8);
     public static final byte[] DIMENSION_NAME_ID_TABLE = "DimensionNameIdTable".getBytes(StandardCharsets.UTF_8);
     public static final byte[] LOCAL_PLAYER = "~local_player".getBytes(StandardCharsets.UTF_8);

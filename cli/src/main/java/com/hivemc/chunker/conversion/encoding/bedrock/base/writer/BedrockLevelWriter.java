@@ -207,6 +207,12 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
 
     @Override
     public void flushLevel() {
+        try {
+            writeBiomeList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // Compact database
         if (converter.shouldLevelDBCompaction()) {
             // Signal the converter to indicate compaction has started
@@ -641,6 +647,8 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         byte[] value = Tag.writeBedrockNBT(playerTag);
         database.put(LevelDBKey.LOCAL_PLAYER, value);
     }
+
+    protected void writeBiomeList() throws Exception {}
 
     @Override
     public Version getVersion() {

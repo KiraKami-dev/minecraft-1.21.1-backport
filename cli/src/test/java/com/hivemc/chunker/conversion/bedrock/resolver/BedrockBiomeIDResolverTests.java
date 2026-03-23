@@ -42,7 +42,7 @@ public class BedrockBiomeIDResolverTests {
     @Test
     public void checkBiomeObjectUniqueness() throws IOException {
         List<Arguments> biomeIds = biomeList().toList();
-        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST);
+        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST, true);
         Set<ChunkerBiome> loadedBiomes = new ObjectOpenHashSet<>();
         Set<Integer> loadedBiomeIDs = new ObjectOpenHashSet<>();
 
@@ -64,7 +64,7 @@ public class BedrockBiomeIDResolverTests {
     @MethodSource("biomeList")
     public void checkBiome(String biome, int biomeId) {
         // Use a high version to ensure every biome is used
-        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST);
+        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST, true);
 
         // Convert value
         Optional<ChunkerBiome> mappedValue = biomeResolver.to(biomeId);
