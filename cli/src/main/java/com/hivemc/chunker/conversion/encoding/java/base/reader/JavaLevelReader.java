@@ -67,12 +67,11 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
     /**
      * Get the base directory used for a dimension.
      *
-     * @param directory the root world folder.
      * @param dimension the dimension.
      * @return the folder which the dimension data resides in.
      */
-    public static File getDimensionBaseDirectory(File directory, Dimension dimension) {
-        return dimension.getJavaDimensionBaseDirectory(directory);
+    public File getDimensionBaseDirectory(Dimension dimension) {
+        return resolvers.javaLevelDirectoryResolver().getDimensionBaseDirectory(dimension);
     }
 
     @Override
@@ -83,11 +82,10 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
         // When we've collected the level data, go through each world and call the reading process
         ProgressiveTask<Void> worldReading = levelDataCollection.thenConsume("Reading Worlds", TaskWeight.HIGHEST, (worldConversionHandler) -> {
             if (worldConversionHandler == null) return; // This can be null if the worlds aren't handled by the reader
-
             // Read worlds
             List<Task<Void>> worlds = new ArrayList<>(3);
             for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
-                File dimensionBaseDirectory = getDimensionBaseDirectory(inputDirectory, dimension);
+                File dimensionBaseDirectory = getDimensionBaseDirectory(dimension);
 
                 // Create a world reader if the dimension is present
                 if (dimensionBaseDirectory.exists() && converter.shouldProcessDimension(dimension)) {
@@ -132,7 +130,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
 
         // Loop through dimensions and parse the POI
         for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
-            File poiBaseDirectory = new File(getDimensionBaseDirectory(inputDirectory, dimension), "poi");
+            File poiBaseDirectory = new File(getDimensionBaseDirectory(dimension), "poi");
 
             // Don't parse if it doesn't exist / it shouldn't be processed
             if (!poiBaseDirectory.exists() || !converter.shouldProcessDimension(dimension)) continue;
