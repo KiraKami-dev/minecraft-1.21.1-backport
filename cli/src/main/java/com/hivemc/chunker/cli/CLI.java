@@ -10,6 +10,8 @@ import com.hivemc.chunker.conversion.WorldConverter;
 import com.hivemc.chunker.conversion.encoding.EncodingType;
 import com.hivemc.chunker.conversion.encoding.base.reader.LevelReader;
 import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerCustomBiome;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.DimensionMapping;
@@ -48,6 +50,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @CommandLine.Command(name = "Chunker", versionProvider = VersionProvider.class, mixinStandardHelpOptions = true)
 public class CLI implements Runnable {
     private static final TypeToken<Map<String, String>> DIMENSION_INPUT_TO_OUTPUT_TYPE = new TypeToken<>() {
+    };
+    private static final TypeToken<Map<String, String>> BIOME_INPUT_TO_OUTPUT_TYPE = new TypeToken<>() {
     };
     private static final Gson GSON = new Gson();
 
@@ -114,6 +118,13 @@ public class CLI implements Runnable {
             converter = JsonObjectOrFile.Converter.class
     )
     private JsonObjectOrFile dimensionMappings;
+
+    @CommandLine.Option(
+            names = {"--biomeMappings", "-b"},
+            description = "A JSON file/object containing biome mappings.",
+            converter = JsonObjectOrFile.Converter.class
+    )
+    private JsonObjectOrFile biomeMappings;
 
     @CommandLine.Option(
             names = {"--keepOriginalNBT", "-k"},
@@ -280,6 +291,43 @@ public class CLI implements Runnable {
                     worldConverter.setDimensionMapping(dimensionMapping);
                 } catch (Exception e) {
                     System.err.println("Failed to parse dimension mappings.");
+                    throw new RuntimeException(e);
+                }
+            }
+
+            // Apply biome mappings if they're present and parse
+            if (biomeMappings == null) {
+                Path file = inputDirectory.toPath().resolve("biome_mappings.chunker.json");
+                try {
+                    if (file.toFile().exists()) {
+                        biomeMappings = new JsonObjectOrFile(file);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to parse integrated biome mappings.");
+                    throw new RuntimeException(e);
+                }
+            }
+            if (biomeMappings != null) {
+                try {
+                    Map<String, String> rawBiomeMapping = GSON.fromJson(biomeMappings.getJSONObjectString(), BIOME_INPUT_TO_OUTPUT_TYPE);
+                    final Map<ChunkerBiome, ChunkerBiome> biomeMapping = new Object2ObjectOpenHashMap<>(rawBiomeMapping.size());
+                    for (Map.Entry<String, String> entry : rawBiomeMapping.entrySet()) {
+                        Optional<? extends ChunkerBiome> src = entry.getKey().startsWith("minecraft:")
+                                ? ChunkerBiome.ChunkerVanillaBiome.find(entry.getKey())
+                                : Optional.of(new ChunkerCustomBiome(entry.getKey()));
+
+                        Optional<? extends ChunkerBiome> dst = entry.getValue().startsWith("minecraft:")
+                                ? ChunkerBiome.ChunkerVanillaBiome.find(entry.getValue())
+                                : Optional.of(new ChunkerCustomBiome(entry.getValue()));
+
+                        if (src.isPresent() && dst.isPresent()) {
+                            biomeMapping.put(src.get(), dst.get());
+                        }
+                    }
+
+                    worldConverter.setBiomeMapping(biomeMapping);
+                } catch (Exception e) {
+                    System.err.println("Failed to parse biome mappings.");
                     throw new RuntimeException(e);
                 }
             }
