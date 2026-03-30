@@ -6,19 +6,18 @@ import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerCustomBiom
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.InvertibleMap;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.*;
 
 /**
  * Biome ID resolver, used for Bedrock
  */
 @SuppressWarnings("deprecation")
 public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
+    private static final int MINIMUM_CUSTOM_BIOME_ID = 30000;
     private final InvertibleMap<ChunkerBiome.ChunkerVanillaBiome, Integer> mapping = InvertibleMap.enumKeys(ChunkerBiome.ChunkerVanillaBiome.class);
     private final InvertibleMap<ChunkerCustomBiome, Integer> customMapping = InvertibleMap.create();
     private final boolean customIdentifierSupported;
-    private int customBiomeID = 30000;
+    private int customBiomeID = MINIMUM_CUSTOM_BIOME_ID;
 
     /**
      * Create a new bedrock ID biome resolver.
@@ -141,28 +140,28 @@ public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
     }
 
     public void loadCustom(Map<Integer, String> biomes) {
-        if (customIdentifierSupported) {
+        if (customIdentifierSupported) return;
+
         customMapping.forward().clear();
         customMapping.inverse().clear();
         customBiomeID = 0;
 
         for (Map.Entry<Integer, String> entry : biomes.entrySet()) {
-            if (entry.getKey() >= 30000) {
+            if (entry.getKey() >= MINIMUM_CUSTOM_BIOME_ID) {
                 customMapping.put(new ChunkerCustomBiome(entry.getValue()), entry.getKey());
                 customBiomeID = Math.max(customBiomeID, entry.getKey());
             }
         }
 
-        customBiomeID = Math.max(customBiomeID + 1, 30000);
-        }
+        customBiomeID = Math.max(customBiomeID + 1, MINIMUM_CUSTOM_BIOME_ID);
     }
 
-    public Stream<Map.Entry<ChunkerCustomBiome, Integer>> getCustomBiomes() {
-        return customMapping.forward().entrySet().stream();
+    public Set<Map.Entry<ChunkerCustomBiome, Integer>> getCustomBiomes() {
+        return customMapping.forward().entrySet();
     }
 
     @Override
-    public Optional<Integer> from(ChunkerBiome input) {
+    public synchronized Optional<Integer> from(ChunkerBiome input) {
         if (input instanceof ChunkerBiome.ChunkerVanillaBiome chunkerVanillaBiome) {
             return from(chunkerVanillaBiome);
         } else if (input instanceof ChunkerCustomBiome customIdentifierBiome) {
@@ -183,13 +182,13 @@ public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
         }
     }
 
-    protected Optional<Integer> from(ChunkerBiome.ChunkerVanillaBiome ChunkerVanillaBiome) {
+    protected Optional<Integer> from(ChunkerBiome.ChunkerVanillaBiome chunkerVanillaBiome) {
         // Try to map it
-        Integer mapped = mapping.forward().get(ChunkerVanillaBiome);
+        Integer mapped = mapping.forward().get(chunkerVanillaBiome);
 
         // It wasn't found, so first we should use chunkers built-in fallbacks
         if (mapped == null) {
-            ChunkerBiome.ChunkerVanillaBiome fallback = ChunkerVanillaBiome.getFallback();
+            ChunkerBiome.ChunkerVanillaBiome fallback = chunkerVanillaBiome.getFallback();
 
             // Use the fallback if it's present
             if (fallback != null) {
@@ -203,23 +202,24 @@ public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
 
     protected Optional<Integer> from(ChunkerCustomBiome customBiome) {
         // Try to map it
-        Integer mapped = Optional.ofNullable(customMapping.forward().get(customBiome)).orElseGet(
-                () -> {
-                    customMapping.put(customBiome, customBiomeID);
-                    int id = customBiomeID;
-                    customBiomeID = customBiomeID + 1;
-                    return id;
-                }
-        );
+        Integer id = customMapping.forward().get(customBiome);
+        if (id == null) {
+            customMapping.put(customBiome, customBiomeID);
+            int custom = customBiomeID;
+            customBiomeID = customBiomeID + 1;
+            return Optional.of(custom);
+        }
 
-        return Optional.of(mapped);
+        return Optional.of(id);
     }
 
     @Override
     public Optional<ChunkerBiome> to(Integer input) {
-        return Optional.ofNullable(
-                Optional.ofNullable((ChunkerBiome) mapping.inverse().get(input))
-                        .orElseGet(() -> customMapping.inverse().get(input))
-        );
+        if (input >= MINIMUM_CUSTOM_BIOME_ID) {
+            return Optional.ofNullable(customMapping.inverse().get(input));
+        }
+        else {
+            return Optional.ofNullable(mapping.inverse().get(input));
+        }
     }
 }

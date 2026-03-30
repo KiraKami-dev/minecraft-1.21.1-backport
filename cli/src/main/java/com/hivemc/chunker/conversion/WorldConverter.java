@@ -461,7 +461,7 @@ public class WorldConverter implements Converter {
 
     @Override
     public ChunkerBiome getNewBiome(ChunkerBiome biome) {
-        return biomeMapping == null ? biome : Optional.ofNullable(biomeMapping.get(biome)).orElse(biome);
+        return biomeMapping == null ? biome : biomeMapping.getOrDefault(biome, biome);
     }
 
     @Override

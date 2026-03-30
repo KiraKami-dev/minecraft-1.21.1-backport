@@ -4,6 +4,7 @@ import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.writer.BedrockWorldWriter;
 import com.hivemc.chunker.conversion.encoding.bedrock.util.LevelDBKey;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerCustomBiome;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
@@ -11,7 +12,6 @@ import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 public class LevelWriter extends com.hivemc.chunker.conversion.encoding.bedrock.v1_21_100.writer.LevelWriter {
@@ -32,16 +32,14 @@ public class LevelWriter extends com.hivemc.chunker.conversion.encoding.bedrock.
     }
 
     @Override
-    protected void writeBiomeList()  throws Exception {
+    protected void writeBiomeList() throws Exception {
         ListTag<CompoundTag, Map<String, Tag<?>>> biomesList = new ListTag<>(TagType.COMPOUND);
-        resolvers.biomeIdResolver().getCustomBiomes().map(
-                (var entry) -> {
-                    CompoundTag tag = new CompoundTag(2);
-                    tag.put("id", entry.getValue().shortValue());
-                    tag.put("name", entry.getKey().getIdentifier());
-                    return tag;
-                }
-        ).forEach(biomesList::add);
+        for (Map.Entry<ChunkerCustomBiome, Integer> entry : resolvers.biomeIdResolver().getCustomBiomes()) {
+            CompoundTag tag = new CompoundTag(2);
+            tag.put("id", entry.getValue().shortValue());
+            tag.put("name", entry.getKey().getIdentifier());
+            biomesList.add(tag);
+        }
 
         if (biomesList.size() > 0) {
             CompoundTag biomesNameTable = new CompoundTag();

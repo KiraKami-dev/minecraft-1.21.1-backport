@@ -545,6 +545,7 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
      * @param output the output to add the portal data to.
      */
     protected void parseBiomeList(ChunkerLevel output) {
+        // Support for custom biomes was added in 1.21.110
     }
 
     @Override

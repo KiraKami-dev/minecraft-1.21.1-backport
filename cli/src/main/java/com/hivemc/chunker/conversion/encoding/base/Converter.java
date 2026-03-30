@@ -186,7 +186,7 @@ public interface Converter {
     /**
      * Get the biome mapping given an input.
      *
-     * @param biome the input dimension.
+     * @param biome the input biome.
      * @return the new biome.
      */
     ChunkerBiome getNewBiome(ChunkerBiome biome);

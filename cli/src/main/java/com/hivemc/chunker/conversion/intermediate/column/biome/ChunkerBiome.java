@@ -241,7 +241,6 @@ public interface ChunkerBiome {
             return Optional.ofNullable(mapping.get(value));
         }
 
-
         private final ChunkerVanillaBiome fallback;
 
         /**

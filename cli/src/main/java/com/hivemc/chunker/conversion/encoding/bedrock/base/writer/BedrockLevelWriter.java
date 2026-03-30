@@ -210,7 +210,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         try {
             writeBiomeList();
         } catch (Exception e) {
-            e.printStackTrace();
+            converter.logNonFatalException(e);
         }
 
         // Compact database
@@ -648,7 +648,14 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         database.put(LevelDBKey.LOCAL_PLAYER, value);
     }
 
-    protected void writeBiomeList() throws Exception {}
+    /**
+     * Write the custom biome table
+     *
+     * @throws Exception if it fails to write the table
+     */
+    protected void writeBiomeList() throws Exception {
+        // Support for custom biomes was added in 1.21.110
+    }
 
     @Override
     public Version getVersion() {

@@ -8,11 +8,11 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.RegionCoordPair;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
-import com.hivemc.chunker.conversion.intermediate.level.ChunkerPortal;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +47,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.bedrock.
             ListTag<CompoundTag, Map<String, Tag<?>>> list = wrappedData.getList("list", CompoundTag.class, null);
             if (list == null) return;
 
-            Map<Integer, String> customBiomes = new HashMap<>();
+            Int2ObjectOpenHashMap<String> customBiomes = new Int2ObjectOpenHashMap<>(list.size());
             for (CompoundTag record : list) {
                 int id = record.getShort("id");
                 String name = record.getString("name");
