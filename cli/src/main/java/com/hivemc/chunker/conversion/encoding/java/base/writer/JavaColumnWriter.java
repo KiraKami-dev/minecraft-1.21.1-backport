@@ -376,6 +376,8 @@ public class JavaColumnWriter implements ColumnWriter {
             if (!converter.level().map(a -> a.getSettings().CavesAndCliffs).orElse(false)) {
                 return 16;
             }
+        } else if (dimension.equals(Dimension.NETHER)) {
+            return 16;
         }
         return dimension.getBiomeHeight();
     }

@@ -237,10 +237,12 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
                 entries.put(dimension.getIdentifier(), dimension.getBedrockID());
             }
 
-            dimensionTable.put("entries", entries);
-            byte[] value = Tag.writeBedrockNBT(dimensionTable);
+            if (entries.size() > 0) {
+                dimensionTable.put("entries", entries);
+                byte[] value = Tag.writeBedrockNBT(dimensionTable);
 
-            database.put("DimensionNameIdTable".getBytes(StandardCharsets.UTF_8), value);
+                database.put(LevelDBKey.DIMENSION_NAME_ID_TABLE, value);
+            }
         }
 
         // Create a new world writer with the created worldData

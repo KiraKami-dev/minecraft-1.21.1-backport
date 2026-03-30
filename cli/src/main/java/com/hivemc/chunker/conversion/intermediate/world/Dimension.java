@@ -79,12 +79,4 @@ public class Dimension {
     public int getBiomeHeight() {
         return biomeHeight;
     }
-
-    public File getJavaDimensionBaseDirectory(File directory) {
-        if (this.javaID == 0) {
-            return directory;
-        } else {
-            return new File(directory, "DIM" + this.javaID);
-        }
-    }
 }
