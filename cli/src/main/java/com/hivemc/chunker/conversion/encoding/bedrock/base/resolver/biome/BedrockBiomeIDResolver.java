@@ -140,7 +140,7 @@ public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
     }
 
     public void loadCustom(Map<Integer, String> biomes) {
-        if (customIdentifierSupported) return;
+        if (!customIdentifierSupported) return;
 
         customMapping.forward().clear();
         customMapping.inverse().clear();
