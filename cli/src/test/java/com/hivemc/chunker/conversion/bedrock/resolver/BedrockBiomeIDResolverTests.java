@@ -76,4 +76,18 @@ public class BedrockBiomeIDResolverTests {
         assertFalse(biomeResolver.from(mappedValue.get()).isEmpty());
         assertEquals(biomeId, biomeResolver.from(mappedValue.get()).get());
     }
+
+    @ParameterizedTest
+    @MethodSource("biomeList")
+    public void checkBiomeParsingExists(String biome, int biomeId) {
+        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST, true);
+        Optional<ChunkerBiome.ChunkerVanillaBiome> mappedBiome = ChunkerBiome.ChunkerVanillaBiome.find("minecraft:" + biome);
+
+        // Ensure there is a value
+        assertFalse(mappedBiome.isEmpty());
+
+        final Optional<Integer> value = biomeResolver.from(mappedBiome.get());
+        assertFalse(value.isEmpty());
+        assertEquals(biomeId, value.get());
+    }
 }

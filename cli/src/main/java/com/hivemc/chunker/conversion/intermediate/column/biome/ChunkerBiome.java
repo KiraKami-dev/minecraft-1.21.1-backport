@@ -235,6 +235,36 @@ public interface ChunkerBiome {
             mapping.put("minecraft:savanna_mutated", ChunkerBiome.ChunkerVanillaBiome.WINDSWEPT_SAVANNA);
             mapping.put("minecraft:mesa_plateau_stone", ChunkerBiome.ChunkerVanillaBiome.WOODED_BADLANDS);
             mapping.put("minecraft:hell", ChunkerBiome.ChunkerVanillaBiome.NETHER_WASTES);
+
+            mapping.put("minecraft:bamboo_jungle_hills", ChunkerVanillaBiome.BAMBOO_JUNGLE_HILLS);
+            mapping.put("minecraft:birch_forest_hills", ChunkerVanillaBiome.BIRCH_FOREST_HILLS);
+            mapping.put("minecraft:birch_forest_hills_mutated", ChunkerVanillaBiome.TALL_BIRCH_HILLS);
+            mapping.put("minecraft:cold_taiga_hills", ChunkerVanillaBiome.SNOWY_TAIGA_HILLS);
+            mapping.put("minecraft:cold_taiga_mutated", ChunkerVanillaBiome.SNOWY_TAIGA_MOUNTAINS);
+            mapping.put("minecraft:deep_warm_ocean", ChunkerVanillaBiome.DEEP_WARM_OCEAN);
+            mapping.put("minecraft:desert_hills", ChunkerVanillaBiome.DESERT_HILLS);
+            mapping.put("minecraft:desert_mutated", ChunkerVanillaBiome.DESERT_LAKES);
+            mapping.put("minecraft:extreme_hills_edge", ChunkerVanillaBiome.MOUNTAIN_EDGE);
+            mapping.put("minecraft:extreme_hills_plus_trees_mutated", ChunkerVanillaBiome.MODIFIED_GRAVELLY_MOUNTAINS);
+            mapping.put("minecraft:forest_hills", ChunkerVanillaBiome.WOODED_HILLS);
+            mapping.put("minecraft:ice_mountains", ChunkerVanillaBiome.SNOWY_MOUNTAINS);
+            mapping.put("minecraft:jungle_edge_mutated", ChunkerVanillaBiome.MODIFIED_JUNGLE_EDGE);
+            mapping.put("minecraft:jungle_hills", ChunkerVanillaBiome.JUNGLE_HILLS);
+            mapping.put("minecraft:jungle_mutated", ChunkerVanillaBiome.MODIFIED_JUNGLE);
+            mapping.put("minecraft:legacy_frozen_ocean", ChunkerVanillaBiome.LEGACY_FROZEN_OCEAN);
+            mapping.put("minecraft:mega_taiga_hills", ChunkerVanillaBiome.GIANT_TREE_TAIGA_HILLS);
+            mapping.put("minecraft:mesa", ChunkerVanillaBiome.BADLANDS);
+            mapping.put("minecraft:mesa_plateau", ChunkerVanillaBiome.BADLANDS_PLATEAU);
+            mapping.put("minecraft:mesa_plateau_mutated", ChunkerVanillaBiome.MODIFIED_BADLANDS_PLATEAU);
+            mapping.put("minecraft:mesa_plateau_stone_mutated", ChunkerVanillaBiome.MODIFIED_WOODED_BADLANDS_PLATEAU);
+            mapping.put("minecraft:mushroom_island_shore", ChunkerVanillaBiome.MUSHROOM_FIELD_SHORE);
+            mapping.put("minecraft:redwood_taiga_hills_mutated", ChunkerVanillaBiome.GIANT_SPRUCE_TAIGA_HILLS);
+            mapping.put("minecraft:roofed_forest_mutated", ChunkerVanillaBiome.DARK_FOREST_HILLS);
+            mapping.put("minecraft:savanna_plateau_mutated", ChunkerVanillaBiome.SHATTERED_SAVANNA_PLATEAU);
+            mapping.put("minecraft:soulsand_valley", ChunkerVanillaBiome.SOUL_SAND_VALLEY);
+            mapping.put("minecraft:swampland_mutated", ChunkerVanillaBiome.SWAMP_HILLS);
+            mapping.put("minecraft:taiga_hills", ChunkerVanillaBiome.TAIGA_HILLS);
+            mapping.put("minecraft:taiga_mutated", ChunkerVanillaBiome.TAIGA_MOUNTAINS);
         }
 
         public static Optional<ChunkerVanillaBiome> find(String value) {
