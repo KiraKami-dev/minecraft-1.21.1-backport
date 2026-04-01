@@ -292,7 +292,7 @@ public class BedrockItemIdentifierResolver extends ChunkerItemIdentifierResolver
         register(ItemMapping.of("minecraft:cauldron", ChunkerVanillaBlockType.CAULDRON));
         register(ItemMapping.of("minecraft:brewing_stand", ChunkerVanillaBlockType.BREWING_STAND));
         register(ItemMapping.of("minecraft:cake", ChunkerVanillaBlockType.CAKE));
-        register(ItemMapping.of("minecraft:chain", ChunkerVanillaBlockType.CHAIN));
+        register(ItemMapping.of("minecraft:chain", ChunkerVanillaBlockType.IRON_CHAIN));
         register(ItemMapping.of("minecraft:flower_pot", ChunkerVanillaBlockType.FLOWER_POT));
         register(ItemMapping.of("minecraft:emptymap", ChunkerVanillaItemType.MAP));
         register(ItemMapping.of("minecraft:horsearmorleather", ChunkerVanillaItemType.LEATHER_HORSE_ARMOR));

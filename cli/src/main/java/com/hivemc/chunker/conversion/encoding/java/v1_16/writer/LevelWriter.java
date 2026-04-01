@@ -170,4 +170,14 @@ public class LevelWriter extends com.hivemc.chunker.conversion.encoding.java.v1_
         }
         return biomes;
     }
+
+    @Override
+    protected void writeExtraLevelSettings(CompoundTag data) throws Exception {
+        // Call super
+        super.writeExtraLevelSettings(data);
+
+        // Remove MapFeatures / BonusChest (they're in the generator settings)
+        data.remove("MapFeatures");
+        data.remove("BonusChest");
+    }
 }

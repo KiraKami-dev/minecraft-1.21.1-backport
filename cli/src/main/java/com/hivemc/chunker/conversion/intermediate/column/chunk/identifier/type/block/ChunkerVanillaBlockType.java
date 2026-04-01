@@ -348,7 +348,7 @@ public enum ChunkerVanillaBlockType implements ChunkerBlockType {
     RED_MUSHROOM_BLOCK(0x993333, VanillaBlockStateGroups.CONNECTABLE_ALL, true),
     MUSHROOM_STEM(0xc7c7c7, VanillaBlockStateGroups.CONNECTABLE_ALL, true),
     IRON_BARS(0x0, VanillaBlockStateGroups.CONNECTABLE_HORIZONTAL, false),
-    CHAIN(0x0, Set.of(VanillaBlockStates.AXIS), false),
+    IRON_CHAIN(0x0, Set.of(VanillaBlockStates.AXIS), false),
     GLASS_PANE(0x0, VanillaBlockStateGroups.CONNECTABLE_HORIZONTAL, false),
     MELON(0x7fcc19, true),
     ATTACHED_PUMPKIN_STEM(0x7c00, VanillaBlockStateGroups.FACING_HORIZONTAL, false),
@@ -1145,7 +1145,7 @@ public enum ChunkerVanillaBlockType implements ChunkerBlockType {
     WAXED_OXIDIZED_COPPER_CHEST(0x167e86, VanillaBlockStateGroups.CHEST, ChestBlockEntity.class, false),
     WAXED_WEATHERED_COPPER_CHEST(0x3a8e8c, VanillaBlockStateGroups.CHEST, ChestBlockEntity.class, false),
     WEATHERED_COPPER_CHEST(0x3a8e8c, VanillaBlockStateGroups.CHEST, ChestBlockEntity.class, false),
-    COPPER_GOLEM(0xd87f33, VanillaBlockStateGroups.COPPER_GOLEM, false),
+    COPPER_GOLEM_STATUE(0xd87f33, VanillaBlockStateGroups.COPPER_GOLEM, false),
     EXPOSED_COPPER_GOLEM_STATUE(0x876b62, VanillaBlockStateGroups.COPPER_GOLEM, false),
     OXIDIZED_COPPER_GOLEM_STATUE(0x167e86, VanillaBlockStateGroups.COPPER_GOLEM, false),
     WAXED_COPPER_GOLEM_STATUE(0xd87f33, VanillaBlockStateGroups.COPPER_GOLEM, false),
@@ -1191,6 +1191,8 @@ public enum ChunkerVanillaBlockType implements ChunkerBlockType {
     WAXED_OXIDIZED_COPPER_LANTERN(0x167e86, VanillaBlockStateGroups.LANTERN, false),
     WAXED_WEATHERED_COPPER_LANTERN(0x3a8e8c, VanillaBlockStateGroups.LANTERN, false),
     WEATHERED_COPPER_LANTERN(0x3a8e8c, VanillaBlockStateGroups.LANTERN, false),
+    GOLDEN_DANDELION(0x7c00, false),
+    POTTED_GOLDEN_DANDELION(0x0, false),
     ;
 
     private final int rgbColor;

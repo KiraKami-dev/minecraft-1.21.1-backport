@@ -5,6 +5,7 @@ import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.LevelReaderWriter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.java.base.reader.pretransform.legacy.JavaLegacyReaderPreTransformManager;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaLevelDirectoryResolver;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolversBuilder;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.biome.JavaBiomeIDResolver;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.biome.JavaNamedBiomeResolver;
@@ -20,6 +21,8 @@ import com.hivemc.chunker.conversion.encoding.java.base.resolver.itemstack.*;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.itemstack.legacy.JavaLegacyItemStackResolver;
 import com.hivemc.chunker.conversion.encoding.java.base.writer.pretransform.legacy.JavaLegacyWriterPreTransformManager;
 
+import java.io.File;
+
 /**
  * A Java Level Reader / Writer, used to share resolvers.
  */
@@ -28,6 +31,13 @@ public interface JavaReaderWriter extends LevelReaderWriter {
     default EncodingType getEncodingType() {
         return EncodingType.JAVA;
     }
+
+    /**
+     * Get the directory that is being used for reading/writing the level.
+     *
+     * @return the directory path, used as the base directory for fetching worlds.
+     */
+    File getLevelDirectory();
 
     /**
      * Build the resolvers which should be used for this version.
@@ -60,6 +70,7 @@ public interface JavaReaderWriter extends LevelReaderWriter {
                 .itemStackResolverConstructor(JavaLegacyItemStackResolver::new)
                 .blockEntityResolverConstructor((resolvers) -> new JavaLegacyBlockEntityResolver(version, resolvers))
                 .entityResolverConstructor((resolvers) -> new JavaLegacyEntityResolver(version, resolvers))
+                .levelDirectoryResolver(new JavaLevelDirectoryResolver(getLevelDirectory()))
                 .preTransformManager(isReader() ? new JavaLegacyReaderPreTransformManager(version) : new JavaLegacyWriterPreTransformManager(version));
     }
 }

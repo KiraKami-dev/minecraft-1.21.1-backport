@@ -5,6 +5,7 @@ import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.reader.BedrockWorldReader;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.RegionCoordPair;
+import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.bedrock.
     }
 
     @Override
-    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         // Check for caves and cliffs
         if (targetName.equals("CavesAndCliffs")) {
             // Check experiment
@@ -30,7 +31,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.bedrock.
             // If the byte is set caves and cliffs is enabled
             return experiments.getByte("caves_and_cliffs", (byte) 0) == (byte) 1;
         }
-        return super.readCustomLevelSetting(root, targetName, type);
+        return super.readCustomLevelSetting(root, chunkerLevelSettings, targetName, type);
     }
 
     @Override

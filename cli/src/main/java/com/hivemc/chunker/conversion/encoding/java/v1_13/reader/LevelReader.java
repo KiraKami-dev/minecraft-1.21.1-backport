@@ -13,6 +13,7 @@ import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.Java
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.itemstack.JavaItemStackResolver;
 import com.hivemc.chunker.conversion.encoding.java.base.writer.pretransform.JavaWriterPreTransformManager;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerGeneratorType;
+import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
@@ -28,7 +29,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
     }
 
     @Override
-    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         if (type == ChunkerGeneratorType.class) {
             String generatorName = root.getString("generatorName", null);
             if (generatorName == null) {
@@ -45,7 +46,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
                     return ChunkerGeneratorType.FLAT; // Unknown generator type, use flat
                 } else if (!(generatorOptions instanceof CompoundTag)) {
                     // Use legacy parsing if the generatorOptions are a string
-                    return super.readCustomLevelSetting(root, targetName, type);
+                    return super.readCustomLevelSetting(root, chunkerLevelSettings, targetName, type);
                 }
 
                 // Detect whether the layers look like a flat/void world
@@ -58,7 +59,7 @@ public class LevelReader extends com.hivemc.chunker.conversion.encoding.java.v1_
         }
 
         // Fallback to previous
-        return super.readCustomLevelSetting(root, targetName, type);
+        return super.readCustomLevelSetting(root, chunkerLevelSettings, targetName, type);
     }
 
     protected ChunkerGeneratorType inferGeneratorTypeFromLayers(@Nullable Tag<?> layers) {

@@ -19,8 +19,8 @@ public class WorldReader extends com.hivemc.chunker.conversion.encoding.java.v1_
     protected File[] getMCAFolders() {
         // Scan the region & entities folder
         return new File[]{
-                new File(dimensionFolder, "region"),
-                new File(dimensionFolder, "entities")
+                resolvers.javaLevelDirectoryResolver().getDimensionRegionDirectory(dimensionFolder),
+                resolvers.javaLevelDirectoryResolver().getDimensionEntitiesDirectory(dimensionFolder),
         };
     }
 

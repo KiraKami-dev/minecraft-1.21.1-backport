@@ -60,7 +60,7 @@ export class ConverterSettingsTab extends Component {
             {
                 "display": "Prevent Y Biome Blending",
                 "name": "preventYBiomeBlending",
-                "description": "Whether an empty chunk should be required at the top of each column to prevent vertical biome blending (Java only).",
+                "description": "Whether empty chunks should be padded at the top of each column to prevent vertical biome blending (Java only).",
                 "type": "Boolean"
             }
         ];

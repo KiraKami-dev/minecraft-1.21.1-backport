@@ -352,18 +352,36 @@ public class JavaColumnWriter implements ColumnWriter {
                 entity
         ));
 
-        // Check whether an additional chunk needs to be added to prevent Y biome blending
+        // Check whether additional chunks needs to be added to prevent Y biome blending
         if (converter.shouldPreventYBiomeBlending() && !column.getChunks().isEmpty()) {
             Byte2ObjectMap.Entry<ChunkerChunk> last = column.getChunks().byte2ObjectEntrySet().last();
 
-            // Only add if the last chunk isn't empty and the world isn't the top chunk
-            int highestChunkY = converter.level().map(a -> a.getSettings().CavesAndCliffs).orElse(false) ? 23 : 15;
-            if (!last.getValue().isEmpty() && last.getByteKey() < highestChunkY) {
-                ChunkerChunk emptyChunk = new ChunkerChunk((byte) (last.getByteKey() + 1));
+            // Pad the top of the world to the biome height
+            int highestChunkY = getDimensionBiomeHeight() - 1; // -1 as this is an index
+            for (int i = last.getByteKey() + 1; i <= highestChunkY; i++) {
+                ChunkerChunk emptyChunk = new ChunkerChunk((byte) (i));
                 emptyChunk.setPalette(ChunkerBlockIdentifier.AIR.asFilledChunkPalette());
                 column.getChunks().put(emptyChunk.getY(), emptyChunk);
             }
         }
+    }
+
+    /**
+     * Get the height that biomes can go up to in the current dimension.
+     *
+     * @return the height in chunks of how many biome palettes can be written.
+     */
+    public int getDimensionBiomeHeight() {
+        return switch (dimension) {
+            case NETHER, THE_END -> 16;
+            case OVERWORLD -> {
+                if (converter.level().map(a -> a.getSettings().CavesAndCliffs).orElse(false)) {
+                    yield 24;
+                } else {
+                    yield 16;
+                }
+            }
+        };
     }
 
     /**

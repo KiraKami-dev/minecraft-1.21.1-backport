@@ -672,9 +672,9 @@ export class Session {
                     }
 
                     // Don't include in-game map data
-                    if (parts.includes("data") && parts.length === 2) {
-                        let fileName = parts[1];
-                        if (fileName === "idcounts.dat" || fileName.startsWith("map_") && fileName.endsWith(".dat")) {
+                    if (parts.includes("data") && parts.length === 2 || parts.includes("maps") && parts.length === 4) {
+                        let fileName = parts[parts.length - 1];
+                        if (fileName === "idcounts.dat" || fileName === "last_id.dat" || fileName.startsWith("map_") && fileName.endsWith(".dat") || /^\d+\.dat$/.test(fileName)) {
                             return false;
                         }
                     }

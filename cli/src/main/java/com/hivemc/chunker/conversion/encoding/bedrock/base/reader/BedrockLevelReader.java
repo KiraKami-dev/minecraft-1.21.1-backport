@@ -244,7 +244,7 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
     }
 
     @Override
-    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+    public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         // Check for AutumnDrop2025 support
         if (targetName.equals("AutumnDrop2025")) {
             return false;

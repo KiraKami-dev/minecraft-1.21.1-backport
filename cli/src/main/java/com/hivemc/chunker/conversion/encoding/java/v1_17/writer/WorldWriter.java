@@ -1,7 +1,6 @@
 package com.hivemc.chunker.conversion.encoding.java.v1_17.writer;
 
 import com.hivemc.chunker.conversion.encoding.base.Converter;
-import com.hivemc.chunker.conversion.encoding.java.base.reader.JavaLevelReader;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolvers;
 import com.hivemc.chunker.conversion.encoding.java.base.writer.JavaColumnWriter;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
@@ -29,7 +28,7 @@ public class WorldWriter extends com.hivemc.chunker.conversion.encoding.java.v1_
             entitiesData.put("DataVersion", resolvers.dataVersion().getDataVersion());
             entitiesData.put("Position", new int[]{chunkCoordPair.chunkX(), chunkCoordPair.chunkZ()});
 
-            File entityDirectory = new File(JavaLevelReader.getDimensionBaseDirectory(outputFolder, dimension), "entities");
+            File entityDirectory = resolvers.javaLevelDirectoryResolver().getDimensionEntitiesDirectory(dimension);
             if (!entityDirectory.exists()) {
                 entityDirectory.mkdirs();
             }

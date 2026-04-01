@@ -26,7 +26,7 @@ public class LevelWriter extends com.hivemc.chunker.conversion.encoding.java.v1_
             // Note: This shouldn't be triggered when editing a world (is copy nbt indicates that)
             if ((boolean) value && !converter.shouldAllowNBTCopying()) {
                 // Copy datapack
-                File directory = new File(outputFolder, "datapacks");
+                File directory = resolvers.javaLevelDirectoryResolver().getDataPacksDirectory();
                 if (!directory.isDirectory()) {
                     directory.mkdirs();
                 }
