@@ -130,7 +130,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
 
         // Loop through dimensions and parse the POI
         for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
-            File poiBaseDirectory = new File(resolvers.javaLevelDirectoryResolver().getDimensionBaseDirectory(dimension), "poi");
+            File poiBaseDirectory = resolvers.javaLevelDirectoryResolver().getDimensionPOIDirectory(dimension);;
 
             // Don't parse if it doesn't exist / it shouldn't be processed
             if (!poiBaseDirectory.exists() || !converter.shouldProcessDimension(dimension)) continue;
