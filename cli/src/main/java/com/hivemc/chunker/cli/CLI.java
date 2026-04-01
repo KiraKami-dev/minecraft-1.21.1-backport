@@ -322,10 +322,15 @@ public class CLI implements Runnable {
 
                         if (src.isPresent() && dst.isPresent()) {
                             biomeMapping.put(src.get(), dst.get());
-                        
-                        }
-                        else {
-                            throw new IllegalArgumentException("Unknown biome for input mapping \"" + entry.getKey() + "\"");
+
+                        } else {
+                            if (dst.isPresent()) {
+                                throw new IllegalArgumentException("Unknown input biome for mapping \"" + entry.getKey() + "\": \"" + entry.getValue() + "\"");
+                            } else if (src.isPresent()) {
+                                throw new IllegalArgumentException("Unknown output biome for mapping \"" + entry.getKey() + "\": \"" + entry.getValue() + "\"");
+                            } else {
+                                throw new IllegalArgumentException("Unknown input and output biome for mapping \"" + entry.getKey() + "\": \"" + entry.getValue() + "\"");
+                            }
                         }
                     }
 
