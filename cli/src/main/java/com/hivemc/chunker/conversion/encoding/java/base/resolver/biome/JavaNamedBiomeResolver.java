@@ -100,6 +100,10 @@ public class JavaNamedBiomeResolver implements Resolver<String, ChunkerBiome> {
         if (javaVersion.isGreaterThanOrEqual(1, 21, 2)) {
             mapping.put(ChunkerBiome.ChunkerVanillaBiome.PALE_GARDEN, "minecraft:pale_garden");
         }
+
+        if (javaVersion.isGreaterThanOrEqual(26, 2, 0)) {
+            mapping.put(ChunkerBiome.ChunkerVanillaBiome.SULFUR_CAVES, "minecraft:sulfur_caves");
+        }
     }
 
     @Override

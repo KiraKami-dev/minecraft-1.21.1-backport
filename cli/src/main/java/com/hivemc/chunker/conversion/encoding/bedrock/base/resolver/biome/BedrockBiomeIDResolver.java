@@ -137,6 +137,10 @@ public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
         if (bedrockVersion.isGreaterThanOrEqual(1, 21, 50)) {
             mapping.put(ChunkerBiome.ChunkerVanillaBiome.PALE_GARDEN, 193);
         }
+
+        if (bedrockVersion.isGreaterThanOrEqual(1, 26, 20)) {
+            mapping.put(ChunkerBiome.ChunkerVanillaBiome.SULFUR_CAVES, 194);
+        }
     }
 
     public void loadCustom(Map<Integer, String> biomes) {

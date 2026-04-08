@@ -1,4 +1,4 @@
-package com.hivemc.chunker.conversion.encoding.java.v1_26_1;
+package com.hivemc.chunker.conversion.encoding.java.v26_1;
 
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaLevelDirectoryResolver;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;

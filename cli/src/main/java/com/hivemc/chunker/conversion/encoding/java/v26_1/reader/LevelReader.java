@@ -1,10 +1,10 @@
-package com.hivemc.chunker.conversion.encoding.java.v1_26_1.reader;
+package com.hivemc.chunker.conversion.encoding.java.v26_1.reader;
 
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.java.base.reader.JavaWorldReader;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolversBuilder;
-import com.hivemc.chunker.conversion.encoding.java.v1_26_1.LevelDirectoryResolver;
+import com.hivemc.chunker.conversion.encoding.java.v26_1.LevelDirectoryResolver;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;

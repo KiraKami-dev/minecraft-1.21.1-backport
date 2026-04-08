@@ -1,4 +1,4 @@
-package com.hivemc.chunker.conversion.encoding.java.v1_26_1.writer;
+package com.hivemc.chunker.conversion.encoding.java.v26_2.writer;
 
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolvers;
@@ -7,7 +7,7 @@ import com.hivemc.chunker.conversion.encoding.java.base.writer.JavaWorldWriter;
 import com.hivemc.chunker.conversion.intermediate.column.ChunkerColumn;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 
-public class ColumnWriter extends com.hivemc.chunker.conversion.encoding.java.v1_21_11.writer.ColumnWriter {
+public class ColumnWriter extends com.hivemc.chunker.conversion.encoding.java.v26_1.writer.ColumnWriter {
     public ColumnWriter(JavaWorldWriter parent, Converter converter, JavaResolvers resolvers, Dimension dimension) {
         super(parent, converter, resolvers, dimension);
     }

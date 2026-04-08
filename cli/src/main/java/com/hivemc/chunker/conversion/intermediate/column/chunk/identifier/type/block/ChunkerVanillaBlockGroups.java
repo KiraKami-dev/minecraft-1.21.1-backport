@@ -231,7 +231,13 @@ public class ChunkerVanillaBlockGroups {
             ChunkerVanillaBlockType.POLISHED_DEEPSLATE_STAIRS,
             ChunkerVanillaBlockType.DEEPSLATE_TILE_STAIRS,
             ChunkerVanillaBlockType.DEEPSLATE_BRICK_STAIRS,
-            ChunkerVanillaBlockType.RESIN_BRICK_STAIRS
+            ChunkerVanillaBlockType.RESIN_BRICK_STAIRS,
+            ChunkerVanillaBlockType.CINNABAR_STAIRS,
+            ChunkerVanillaBlockType.POLISHED_CINNABAR_STAIRS,
+            ChunkerVanillaBlockType.CINNABAR_BRICK_STAIRS,
+            ChunkerVanillaBlockType.SULFUR_STAIRS,
+            ChunkerVanillaBlockType.POLISHED_SULFUR_STAIRS,
+            ChunkerVanillaBlockType.SULFUR_BRICK_STAIRS
     );
     /**
      * Group of all the wall blocks.
@@ -262,7 +268,13 @@ public class ChunkerVanillaBlockGroups {
             ChunkerVanillaBlockType.POLISHED_DEEPSLATE_WALL,
             ChunkerVanillaBlockType.DEEPSLATE_TILE_WALL,
             ChunkerVanillaBlockType.DEEPSLATE_BRICK_WALL,
-            ChunkerVanillaBlockType.RESIN_BRICK_WALL
+            ChunkerVanillaBlockType.RESIN_BRICK_WALL,
+            ChunkerVanillaBlockType.CINNABAR_WALL,
+            ChunkerVanillaBlockType.POLISHED_CINNABAR_WALL,
+            ChunkerVanillaBlockType.CINNABAR_BRICK_WALL,
+            ChunkerVanillaBlockType.SULFUR_WALL,
+            ChunkerVanillaBlockType.POLISHED_SULFUR_WALL,
+            ChunkerVanillaBlockType.SULFUR_BRICK_WALL
     );
     /**
      * Group of all the wooden fences (currently just excludes the nether brick fence).

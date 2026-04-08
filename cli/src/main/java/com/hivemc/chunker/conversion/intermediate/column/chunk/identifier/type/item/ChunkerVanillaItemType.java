@@ -460,6 +460,7 @@ public enum ChunkerVanillaItemType implements ChunkerItemType {
     DIAMOND_NAUTILUS_ARMOR,
     COPPER_NAUTILUS_ARMOR,
     NETHERITE_NAUTILUS_ARMOR,
+    SULFUR_CUBE_BUCKET,
     ;
 
     private final Class<? extends BlockEntity> blockEntityClass;

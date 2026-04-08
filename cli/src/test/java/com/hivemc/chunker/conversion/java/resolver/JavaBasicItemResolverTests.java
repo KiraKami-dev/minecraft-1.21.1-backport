@@ -113,7 +113,10 @@ public class JavaBasicItemResolverTests {
                     ChunkerVanillaEntityType.CAMEL_HUSK,
                     ChunkerVanillaEntityType.NAUTILUS,
                     ChunkerVanillaEntityType.PARCHED,
-                    ChunkerVanillaEntityType.ZOMBIE_NAUTILUS
+                    ChunkerVanillaEntityType.ZOMBIE_NAUTILUS,
+
+                    // Summer Drop
+                    ChunkerVanillaEntityType.SULFUR_CUBE
 
             ),
             ChunkerPotionType.class, Set.of(

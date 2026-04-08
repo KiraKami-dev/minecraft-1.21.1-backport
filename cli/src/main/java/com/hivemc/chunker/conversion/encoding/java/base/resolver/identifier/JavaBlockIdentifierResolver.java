@@ -1675,5 +1675,39 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
             register(BlockMapping.of("minecraft:golden_dandelion", ChunkerVanillaBlockType.GOLDEN_DANDELION));
             register(BlockMapping.of("minecraft:potted_golden_dandelion", ChunkerVanillaBlockType.POTTED_GOLDEN_DANDELION));
         }
+
+        // 26.2
+        if (version.isGreaterThanOrEqual(26, 2, 0)) {
+            // Cinnabar blocks
+            register(BlockMapping.of("minecraft:cinnabar", ChunkerVanillaBlockType.CINNABAR));
+            register(BlockMapping.of("minecraft:chiseled_cinnabar", ChunkerVanillaBlockType.CHISELED_CINNABAR));
+            register(BlockMapping.of("minecraft:polished_cinnabar", ChunkerVanillaBlockType.POLISHED_CINNABAR));
+            register(BlockMapping.of("minecraft:cinnabar_bricks", ChunkerVanillaBlockType.CINNABAR_BRICKS));
+            register(BlockMapping.of("minecraft:cinnabar_slab", ChunkerVanillaBlockType.CINNABAR_SLAB, JavaStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:cinnabar_stairs", ChunkerVanillaBlockType.CINNABAR_STAIRS, JavaStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:cinnabar_wall", ChunkerVanillaBlockType.CINNABAR_WALL, JavaStateGroups.WALL));
+            register(BlockMapping.of("minecraft:polished_cinnabar_slab", ChunkerVanillaBlockType.POLISHED_CINNABAR_SLAB, JavaStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:polished_cinnabar_stairs", ChunkerVanillaBlockType.POLISHED_CINNABAR_STAIRS, JavaStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:polished_cinnabar_wall", ChunkerVanillaBlockType.POLISHED_CINNABAR_WALL, JavaStateGroups.WALL));
+            register(BlockMapping.of("minecraft:cinnabar_brick_slab", ChunkerVanillaBlockType.CINNABAR_BRICK_SLAB, JavaStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:cinnabar_brick_stairs", ChunkerVanillaBlockType.CINNABAR_BRICK_STAIRS, JavaStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:cinnabar_brick_wall", ChunkerVanillaBlockType.CINNABAR_BRICK_WALL, JavaStateGroups.WALL));
+
+            // Sulfur blocks
+            register(BlockMapping.of("minecraft:sulfur", ChunkerVanillaBlockType.SULFUR));
+            register(BlockMapping.of("minecraft:potent_sulfur", ChunkerVanillaBlockType.POTENT_SULFUR));
+            register(BlockMapping.of("minecraft:chiseled_sulfur", ChunkerVanillaBlockType.CHISELED_SULFUR));
+            register(BlockMapping.of("minecraft:polished_sulfur", ChunkerVanillaBlockType.POLISHED_SULFUR));
+            register(BlockMapping.of("minecraft:sulfur_bricks", ChunkerVanillaBlockType.SULFUR_BRICKS));
+            register(BlockMapping.of("minecraft:sulfur_slab", ChunkerVanillaBlockType.SULFUR_SLAB, JavaStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:sulfur_stairs", ChunkerVanillaBlockType.SULFUR_STAIRS, JavaStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:sulfur_wall", ChunkerVanillaBlockType.SULFUR_WALL, JavaStateGroups.WALL));
+            register(BlockMapping.of("minecraft:polished_sulfur_slab", ChunkerVanillaBlockType.POLISHED_SULFUR_SLAB, JavaStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:polished_sulfur_stairs", ChunkerVanillaBlockType.POLISHED_SULFUR_STAIRS, JavaStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:polished_sulfur_wall", ChunkerVanillaBlockType.POLISHED_SULFUR_WALL, JavaStateGroups.WALL));
+            register(BlockMapping.of("minecraft:sulfur_brick_slab", ChunkerVanillaBlockType.SULFUR_BRICK_SLAB, JavaStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:sulfur_brick_stairs", ChunkerVanillaBlockType.SULFUR_BRICK_STAIRS, JavaStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:sulfur_brick_wall", ChunkerVanillaBlockType.SULFUR_BRICK_WALL, JavaStateGroups.WALL));
+        }
     }
 }

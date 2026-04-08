@@ -88,6 +88,7 @@ public interface ChunkerBiome {
         MANGROVE_SWAMP,
         CHERRY_GROVE,
         PALE_GARDEN,
+        SULFUR_CAVES,
 
         // No longer used in newer versions
         @Deprecated
@@ -214,6 +215,7 @@ public interface ChunkerBiome {
             mapping.put("minecraft:mangrove_swamp", ChunkerVanillaBiome.MANGROVE_SWAMP);
             mapping.put("minecraft:cherry_grove", ChunkerVanillaBiome.CHERRY_GROVE);
             mapping.put("minecraft:pale_garden", ChunkerVanillaBiome.PALE_GARDEN);
+            mapping.put("minecraft:sulfur_caves", ChunkerVanillaBiome.SULFUR_CAVES);
 
             // Bedrock names
             mapping.put("minecraft:roofed_forest", ChunkerVanillaBiome.DARK_FOREST);

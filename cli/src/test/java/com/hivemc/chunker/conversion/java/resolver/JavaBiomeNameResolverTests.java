@@ -30,7 +30,9 @@ public class JavaBiomeNameResolverTests {
     public static final Set<ChunkerBiome> BIOMES_ID_NOT_SUPPORTED = Set.of(
             ChunkerBiome.ChunkerVanillaBiome.DEEP_DARK,
             ChunkerBiome.ChunkerVanillaBiome.MANGROVE_SWAMP,
-            ChunkerBiome.ChunkerVanillaBiome.CHERRY_GROVE
+            ChunkerBiome.ChunkerVanillaBiome.CHERRY_GROVE,
+            ChunkerBiome.ChunkerVanillaBiome.PALE_GARDEN,
+            ChunkerBiome.ChunkerVanillaBiome.SULFUR_CAVES
     );
 
     public static Stream<Arguments> biomeList() throws IOException {

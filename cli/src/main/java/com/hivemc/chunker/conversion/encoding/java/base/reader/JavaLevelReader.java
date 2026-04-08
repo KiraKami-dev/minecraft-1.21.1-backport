@@ -416,6 +416,10 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
     @Override
     public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         // Check for next update
+        if (targetName.equals("SummerDrop2026")) {
+            return false;
+        }
+
         if (targetName.equals("AutumnDrop2025")) {
             return false;
         }
