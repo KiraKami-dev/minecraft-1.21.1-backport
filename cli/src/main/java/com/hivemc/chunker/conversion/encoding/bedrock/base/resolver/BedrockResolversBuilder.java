@@ -5,6 +5,7 @@ import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.base.resolver.blockentity.BlockEntityResolver;
 import com.hivemc.chunker.conversion.encoding.base.resolver.entity.EntityResolver;
 import com.hivemc.chunker.conversion.encoding.bedrock.BedrockDataVersion;
+import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.biome.BedrockBiomeIDResolver;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.identifier.BedrockBlockCompoundTag;
 import com.hivemc.chunker.conversion.handlers.pretransform.manager.PreTransformManager;
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
@@ -44,7 +45,7 @@ public class BedrockResolversBuilder {
     private Resolver<Identifier, ChunkerBlockIdentifier> blockIdentifierResolver;
     private Resolver<Identifier, ChunkerBlockIdentifier> itemBlockIdentifierResolver;
     private Resolver<String, ChunkerEntityType> entityTypeResolver;
-    private Resolver<Integer, ChunkerBiome> biomeIDResolver;
+    private BedrockBiomeIDResolver biomeIDResolver;
     private Resolver<Integer, ChunkerEffectType> effectIDResolver;
     private Resolver<Integer, ChunkerEnchantmentType> enchantmentIDResolver;
     private Resolver<String, PaintingEntity.Motive> paintingMotiveResolver;
@@ -158,9 +159,10 @@ public class BedrockResolversBuilder {
 
             @Override
             public int writeBiomeID(ChunkerBiome biome, Dimension dimension) {
-                return biomeIDResolver.from(biome).orElseGet(() -> {
+                ChunkerBiome mapped = converter.getNewBiome(biome);
+                return biomeIDResolver.from(mapped).orElseGet(() -> {
                     // Report the error
-                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(biome));
+                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(mapped));
 
                     // Return fallback
                     return biomeIDResolver.from(getFallbackBiome(dimension)).orElseThrow();
@@ -323,6 +325,10 @@ public class BedrockResolversBuilder {
                 return itemIdentifierResolver;
             }
 
+            @Override
+            public BedrockBiomeIDResolver biomeIdResolver() {
+                return biomeIDResolver;
+            }
 
             @Override
             public PreTransformManager preTransformManager() {
@@ -409,7 +415,7 @@ public class BedrockResolversBuilder {
         return this;
     }
 
-    public BedrockResolversBuilder biomeIDResolver(Resolver<Integer, ChunkerBiome> resolver) {
+    public BedrockResolversBuilder biomeIDResolver(BedrockBiomeIDResolver resolver) {
         biomeIDResolver = resolver;
         return this;
     }

@@ -227,9 +227,10 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
         ProgressiveTask<Void> parseLocalPlayer = Task.asyncConsume("Parsing Local Player", TaskWeight.NORMAL, this::parseLocalPlayer, output);
         ProgressiveTask<Void> parseMaps = Task.asyncConsume("Parsing Saved Maps", TaskWeight.NORMAL, this::parseMaps, output);
         ProgressiveTask<Void> parsePortals = Task.asyncConsume("Parsing Portals", TaskWeight.NORMAL, this::parsePortals, output);
+        ProgressiveTask<Void> parseCustomBiomes = Task.asyncConsume("Parsing Biome List", TaskWeight.NORMAL, this::parseBiomeList, output);
 
         // When those tasks are done we can convert the level
-        return Task.join(parseLevelSettings, parseLocalPlayer, parseMaps, parsePortals)
+        return Task.join(parseLevelSettings, parseLocalPlayer, parseMaps, parsePortals, parseCustomBiomes)
                 .thenUnwrap("Converting Level", TaskWeight.LOW, levelConversionHandler::convertLevel, output);
     }
 
@@ -536,6 +537,15 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
         } catch (Exception e) {
             converter.logNonFatalException(e);
         }
+    }
+
+    /**
+     * Parse all the biome data in the world.
+     *
+     * @param output the output to add the biome data to.
+     */
+    protected void parseBiomeList(ChunkerLevel output) {
+        // Support for custom biomes was added in 1.21.110
     }
 
     @Override

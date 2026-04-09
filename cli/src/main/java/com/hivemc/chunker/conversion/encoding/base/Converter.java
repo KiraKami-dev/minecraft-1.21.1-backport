@@ -1,6 +1,7 @@
 package com.hivemc.chunker.conversion.encoding.base;
 
 import com.google.common.base.CaseFormat;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.RegionCoordPair;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
@@ -181,6 +182,14 @@ public interface Converter {
      * @return the new dimension or absent if the dimension should be removed.
      */
     Optional<Dimension> getNewDimension(Dimension dimension);
+
+    /**
+     * Get the biome mapping given an input.
+     *
+     * @param biome the input biome.
+     * @return the new biome.
+     */
+    ChunkerBiome getNewBiome(ChunkerBiome biome);
 
     /**
      * Get the main level data.

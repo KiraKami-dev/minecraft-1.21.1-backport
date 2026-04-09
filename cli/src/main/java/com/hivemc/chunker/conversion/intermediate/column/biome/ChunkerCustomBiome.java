@@ -25,6 +25,18 @@ public class ChunkerCustomBiome implements ChunkerBiome {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return identifier.equals(((ChunkerCustomBiome) o).identifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return identifier.hashCode();
+    }
+
+    @Override
     public ChunkerVanillaBiome getFallback() {
         return null;
     }

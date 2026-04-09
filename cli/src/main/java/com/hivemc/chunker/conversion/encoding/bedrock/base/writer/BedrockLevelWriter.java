@@ -207,6 +207,12 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
 
     @Override
     public void flushLevel() {
+        try {
+            writeBiomeList();
+        } catch (Exception e) {
+            converter.logNonFatalException(e);
+        }
+
         // Compact database
         if (converter.shouldLevelDBCompaction()) {
             // Signal the converter to indicate compaction has started
@@ -640,6 +646,15 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         // Write to field
         byte[] value = Tag.writeBedrockNBT(playerTag);
         database.put(LevelDBKey.LOCAL_PLAYER, value);
+    }
+
+    /**
+     * Write the custom biome table
+     *
+     * @throws Exception if it fails to write the table
+     */
+    protected void writeBiomeList() throws Exception {
+        // Support for custom biomes was added in 1.21.110
     }
 
     @Override

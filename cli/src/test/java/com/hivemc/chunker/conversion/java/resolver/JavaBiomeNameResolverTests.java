@@ -100,4 +100,18 @@ public class JavaBiomeNameResolverTests {
         boolean shouldBePresent = !BIOMES_ID_NOT_SUPPORTED.contains(mappedNameValue.get());
         assertEquals(shouldBePresent, biomeIDResolver.from(mappedNameValue.get()).isPresent());
     }
+
+    @ParameterizedTest
+    @MethodSource("biomeList")
+    public void checkBiomeParsingExists(String biome) {
+        Optional<ChunkerBiome.ChunkerVanillaBiome> mappedBiome = ChunkerBiome.ChunkerVanillaBiome.find(biome);
+        JavaNamedBiomeResolver biomeNameResolver = new JavaNamedBiomeResolver(Version.LATEST, false);
+
+        // Ensure there is a value
+        assertFalse(mappedBiome.isEmpty());
+
+        Optional<String> mappedNameValue = biomeNameResolver.from(mappedBiome.get());
+        assertTrue(mappedNameValue.isPresent());
+        assertEquals(biome, mappedNameValue.get());
+    }
 }

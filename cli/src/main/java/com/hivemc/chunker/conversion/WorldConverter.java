@@ -14,6 +14,7 @@ import com.hivemc.chunker.conversion.handlers.pipeline.Pipeline;
 import com.hivemc.chunker.conversion.handlers.pretransform.ColumnPreTransformConversionHandler;
 import com.hivemc.chunker.conversion.handlers.pretransform.ColumnPreTransformWriterConversionHandler;
 import com.hivemc.chunker.conversion.handlers.writer.LevelWriterConversionHandler;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.RegionCoordPair;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
@@ -71,6 +72,8 @@ public class WorldConverter implements Converter {
     @Nullable
     private  Map<Dimension, Dimension> dimensionMapping;
     private DimensionRegistry dimensionRegistry = new DimensionRegistry();
+    @Nullable
+    private Map<ChunkerBiome, ChunkerBiome> biomeMapping;
     @Nullable
     private JsonObject changedSettings;
     @Nullable
@@ -138,6 +141,15 @@ public class WorldConverter implements Converter {
      */
     public void setDimensionRegistry(@Nullable DimensionRegistry dimensionRegistry) {
         this.dimensionRegistry = dimensionRegistry;
+    }
+
+    /*
+     * Set which biomes should map to which output biomes.
+     *
+     * @param biomeMapping the mappings or null if it should keep the same input as output.
+     */
+    public void setBiomeMapping(@Nullable Map<ChunkerBiome, ChunkerBiome> biomeMapping) {
+        this.biomeMapping = biomeMapping;
     }
 
     /**
@@ -445,6 +457,11 @@ public class WorldConverter implements Converter {
     @Override
     public Optional<Dimension> getNewDimension(Dimension dimension) {
         return dimensionMapping == null ? Optional.of(dimension) : Optional.ofNullable(dimensionMapping.get(dimension));
+    }
+
+    @Override
+    public ChunkerBiome getNewBiome(ChunkerBiome biome) {
+        return biomeMapping == null ? biome : biomeMapping.getOrDefault(biome, biome);
     }
 
     @Override

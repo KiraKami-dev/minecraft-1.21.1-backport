@@ -2,24 +2,31 @@ package com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.biome;
 
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerCustomBiome;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.InvertibleMap;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Biome ID resolver, used for Bedrock
  */
 @SuppressWarnings("deprecation")
 public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
+    private static final int MINIMUM_CUSTOM_BIOME_ID = 30000;
     private final InvertibleMap<ChunkerBiome.ChunkerVanillaBiome, Integer> mapping = InvertibleMap.enumKeys(ChunkerBiome.ChunkerVanillaBiome.class);
+    private final InvertibleMap<ChunkerCustomBiome, Integer> customMapping = InvertibleMap.create();
+    private final boolean customIdentifierSupported;
+    private int customBiomeID = MINIMUM_CUSTOM_BIOME_ID;
 
     /**
      * Create a new bedrock ID biome resolver.
      *
      * @param bedrockVersion the game version being used, as certain biomes are only available after specific versions.
      */
-    public BedrockBiomeIDResolver(Version bedrockVersion) {
+    public BedrockBiomeIDResolver(Version bedrockVersion, boolean customIdentifierSupported) {
+        this.customIdentifierSupported = bedrockVersion.isGreaterThanOrEqual(1, 21, 110) && customIdentifierSupported;
+
         mapping.put(ChunkerBiome.ChunkerVanillaBiome.OCEAN, 0);
         mapping.put(ChunkerBiome.ChunkerVanillaBiome.PLAINS, 1);
         mapping.put(ChunkerBiome.ChunkerVanillaBiome.DESERT, 2);
@@ -132,29 +139,54 @@ public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
         }
     }
 
-    @Override
-    public Optional<Integer> from(ChunkerBiome input) {
-        // Custom biomes aren't supported in this version since they are IDs
-        ChunkerBiome.ChunkerVanillaBiome chunkerVanillaBiome;
+    public void loadCustom(Map<Integer, String> biomes) {
+        if (!customIdentifierSupported) return;
 
-        // Resolve it to a vanilla biome
-        if (input instanceof ChunkerBiome.ChunkerVanillaBiome biome) {
-            chunkerVanillaBiome = biome;
-        } else {
-            // If they're not supported check for a fallback
-            ChunkerBiome.ChunkerVanillaBiome fallback = input.getFallback();
-            if (fallback != null) {
-                return from(fallback);
-            } else {
-                // No possible mapping
-                return Optional.empty();
+        customMapping.forward().clear();
+        customMapping.inverse().clear();
+        customBiomeID = 0;
+
+        for (Map.Entry<Integer, String> entry : biomes.entrySet()) {
+            if (entry.getKey() >= MINIMUM_CUSTOM_BIOME_ID) {
+                customMapping.put(new ChunkerCustomBiome(entry.getValue()), entry.getKey());
+                customBiomeID = Math.max(customBiomeID, entry.getKey());
             }
         }
 
+        customBiomeID = Math.max(customBiomeID + 1, MINIMUM_CUSTOM_BIOME_ID);
+    }
+
+    public Set<Map.Entry<ChunkerCustomBiome, Integer>> getCustomBiomes() {
+        return customMapping.forward().entrySet();
+    }
+
+    @Override
+    public synchronized Optional<Integer> from(ChunkerBiome input) {
+        if (input instanceof ChunkerBiome.ChunkerVanillaBiome chunkerVanillaBiome) {
+            return from(chunkerVanillaBiome);
+        } else if (input instanceof ChunkerCustomBiome customIdentifierBiome) {
+            if (customIdentifierSupported) {
+                return from(customIdentifierBiome);
+            } else {
+                // If they're not supported check for a fallback
+                ChunkerBiome.ChunkerVanillaBiome fallback = input.getFallback();
+                if (fallback != null) {
+                    return from(fallback);
+                } else {
+                    // No possible mapping
+                    return Optional.empty();
+                }
+            }
+        } else {
+            return Optional.empty(); // Not possible to find a mapping
+        }
+    }
+
+    protected Optional<Integer> from(ChunkerBiome.ChunkerVanillaBiome chunkerVanillaBiome) {
         // Try to map it
         Integer mapped = mapping.forward().get(chunkerVanillaBiome);
 
-        // It wasn't found, so first we should use the built-in fallbacks
+        // It wasn't found, so first we should use chunkers built-in fallbacks
         if (mapped == null) {
             ChunkerBiome.ChunkerVanillaBiome fallback = chunkerVanillaBiome.getFallback();
 
@@ -168,8 +200,26 @@ public class BedrockBiomeIDResolver implements Resolver<Integer, ChunkerBiome> {
         return Optional.ofNullable(mapped);
     }
 
+    protected Optional<Integer> from(ChunkerCustomBiome customBiome) {
+        // Try to map it
+        Integer id = customMapping.forward().get(customBiome);
+        if (id == null) {
+            customMapping.put(customBiome, customBiomeID);
+            int custom = customBiomeID;
+            customBiomeID = customBiomeID + 1;
+            return Optional.of(custom);
+        }
+
+        return Optional.of(id);
+    }
+
     @Override
     public Optional<ChunkerBiome> to(Integer input) {
-        return Optional.ofNullable(mapping.inverse().get(input));
+        if (input >= MINIMUM_CUSTOM_BIOME_ID) {
+            return Optional.ofNullable(customMapping.inverse().get(input));
+        }
+        else {
+            return Optional.ofNullable(mapping.inverse().get(input));
+        }
     }
 }
