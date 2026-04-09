@@ -372,16 +372,14 @@ public class JavaColumnWriter implements ColumnWriter {
      * @return the height in chunks of how many biome palettes can be written.
      */
     public int getDimensionBiomeHeight() {
-        return switch (dimension) {
-            case NETHER, THE_END -> 16;
-            case OVERWORLD -> {
-                if (converter.level().map(a -> a.getSettings().CavesAndCliffs).orElse(false)) {
-                    yield 24;
-                } else {
-                    yield 16;
-                }
+        if (dimension.equals(Dimension.OVERWORLD)) {
+            if (!converter.level().map(a -> a.getSettings().CavesAndCliffs).orElse(false)) {
+                return 16;
             }
-        };
+        } else if (dimension.equals(Dimension.NETHER)) {
+            return 16;
+        }
+        return dimension.getBiomeHeight();
     }
 
     /**

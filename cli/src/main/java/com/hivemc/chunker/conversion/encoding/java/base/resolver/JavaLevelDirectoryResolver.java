@@ -26,11 +26,11 @@ public class JavaLevelDirectoryResolver {
      * @return the folder which the dimension resides in.
      */
     public File getDimensionBaseDirectory(Dimension dimension) {
-        return switch (dimension) {
-            case OVERWORLD -> rootDirectory;
-            case NETHER -> new File(rootDirectory, "DIM-1");
-            case THE_END -> new File(rootDirectory, "DIM1");
-        };
+        if (dimension == Dimension.OVERWORLD) return rootDirectory;
+        if (dimension == Dimension.NETHER) return new File(rootDirectory, "DIM-1");
+        if (dimension == Dimension.THE_END) return new File(rootDirectory, "DIM1");
+        String[] parts = dimension.getIdentifier().split(":", 2);
+        return new File(rootDirectory, "dimensions/" + parts[0] + "/" + parts[1]);
     }
 
     /**

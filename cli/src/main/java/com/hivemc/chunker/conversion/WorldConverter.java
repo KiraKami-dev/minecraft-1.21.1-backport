@@ -21,6 +21,7 @@ import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevelSettings;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.ChunkerWorld;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.pruning.PruningRegion;
@@ -68,7 +69,8 @@ public class WorldConverter implements Converter {
     @Nullable
     private Map<Dimension, PruningConfig> pruningConfigs;
     @Nullable
-    private Map<Dimension, Dimension> dimensionMapping;
+    private  Map<Dimension, Dimension> dimensionMapping;
+    private DimensionRegistry dimensionRegistry = new DimensionRegistry();
     @Nullable
     private JsonObject changedSettings;
     @Nullable
@@ -127,6 +129,15 @@ public class WorldConverter implements Converter {
      */
     public void setDimensionMapping(@Nullable Map<Dimension, Dimension> dimensionMapping) {
         this.dimensionMapping = dimensionMapping;
+    }
+
+    /**
+     * Set the dimension registry
+     *
+     * @param dimensionRegistry the registry.
+     */
+    public void setDimensionRegistry(@Nullable DimensionRegistry dimensionRegistry) {
+        this.dimensionRegistry = dimensionRegistry;
     }
 
     /**
@@ -410,6 +421,11 @@ public class WorldConverter implements Converter {
     @Nullable
     public MappingsFileResolvers getBlockMappings() {
         return blockMappings;
+    }
+
+    @Override
+    public DimensionRegistry getDimensionRegistry() {
+        return dimensionRegistry;
     }
 
     /**

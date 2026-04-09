@@ -3,13 +3,13 @@ package com.hivemc.chunker.cli.messenger.messaging;
 import com.hivemc.chunker.pruning.PruningConfig;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Class to hold a list of pruning configs ordered by the Dimension ordinal.
  */
 public class DimensionPruningList {
-    private @Nullable List<PruningConfig> configs;
+    private @Nullable Map<String, PruningConfig> configs;
 
     /**
      * Get the list of configs, if a dimension is absent it should not be pruned.
@@ -17,7 +17,7 @@ public class DimensionPruningList {
      * @return the backing list of configs.
      */
     @Nullable
-    public List<PruningConfig> getConfigs() {
+    public Map<String, PruningConfig> getConfigs() {
         return configs;
     }
 
@@ -26,7 +26,7 @@ public class DimensionPruningList {
      *
      * @param configs the configs.
      */
-    public void setConfigs(@Nullable List<PruningConfig> configs) {
+    public void setConfigs(@Nullable Map<String, PruningConfig> configs) {
         this.configs = configs;
     }
 }

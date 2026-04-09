@@ -460,11 +460,7 @@ public class JavaResolversBuilder {
 
             @Override
             public ChunkerBiome getFallbackBiome(Dimension dimension) {
-                return switch (dimension) {
-                    case OVERWORLD -> ChunkerBiome.ChunkerVanillaBiome.PLAINS;
-                    case NETHER -> ChunkerBiome.ChunkerVanillaBiome.NETHER_WASTES;
-                    case THE_END -> ChunkerBiome.ChunkerVanillaBiome.THE_END;
-                };
+                return dimension.getFallbackBiome();
             }
         };
     }

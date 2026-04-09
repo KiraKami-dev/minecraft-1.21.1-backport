@@ -19,6 +19,7 @@ import com.hivemc.chunker.conversion.encoding.preview.PreviewLevelWriter;
 import com.hivemc.chunker.conversion.encoding.settings.SettingsLevelWriter;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.pruning.PruningConfig;
@@ -135,12 +136,16 @@ public class Messenger {
 
                         worldConverter.setDimensionMapping(previewRequest.getInputToOutputDimension());
 
-                        // Turn the indexed based pruning list into a map
+                        // Turn the String identifiers into a Dimension based map
                         if (previewRequest.getPruningList() != null && previewRequest.getPruningList().getConfigs() != null && !previewRequest.getPruningList().getConfigs().isEmpty()) {
-                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(previewRequest.getPruningList().getConfigs().size());
-                            for (int i = 0; i < previewRequest.getPruningList().getConfigs().size(); i++) {
-                                pruningConfigs.put(Dimension.values()[i], previewRequest.getPruningList().getConfigs().get(i));
+                            DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                            Map<String, PruningConfig> pruning = previewRequest.getPruningList().getConfigs();
+
+                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
+                            for (String key : pruning.keySet()) {
+                                pruningConfigs.put(registry.getByIdentifier(key), pruning.get(key));
                             }
+
                             worldConverter.setPruningConfigs(pruningConfigs);
                         }
 
@@ -191,10 +196,14 @@ public class Messenger {
 
                         // Turn the indexed based pruning list into a map
                         if (convertRequest.getPruningList() != null && convertRequest.getPruningList().getConfigs() != null && !convertRequest.getPruningList().getConfigs().isEmpty()) {
-                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(convertRequest.getPruningList().getConfigs().size());
-                            for (int i = 0; i < convertRequest.getPruningList().getConfigs().size(); i++) {
-                                pruningConfigs.put(Dimension.values()[i], convertRequest.getPruningList().getConfigs().get(i));
+                            DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                            Map<String, PruningConfig> pruning = convertRequest.getPruningList().getConfigs();
+
+                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
+                            for (String key : pruning.keySet()) {
+                                pruningConfigs.put(registry.getByIdentifier(key), pruning.get(key));
                             }
+
                             worldConverter.setPruningConfigs(pruningConfigs);
                         }
 

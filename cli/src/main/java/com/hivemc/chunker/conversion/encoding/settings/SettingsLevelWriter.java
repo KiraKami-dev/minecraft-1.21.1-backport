@@ -59,7 +59,7 @@ public class SettingsLevelWriter implements LevelWriter {
         JsonObject dimensions = new JsonObject();
 
         // Sort the dimensions by index so they're in order
-        worlds.sort(Comparator.comparing(a -> a.dimension.ordinal()));
+        worlds.sort(Comparator.comparing(a -> a.dimension.getBedrockID()));
         for (SettingsWorldWriter.WorldData worldData : worlds) {
             JsonArray regions = new JsonArray(worldData.regions.size());
             for (RegionCoordPair regionCoordPair : worldData.regions) {
@@ -68,7 +68,7 @@ public class SettingsLevelWriter implements LevelWriter {
                 coords.add(regionCoordPair.regionZ());
                 regions.add(coords);
             }
-            dimensions.add(worldData.dimension.name(), regions);
+            dimensions.add(worldData.dimension.getIdentifier(), regions);
         }
 
         // Create the data object which holds all the data

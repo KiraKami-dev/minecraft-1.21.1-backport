@@ -138,7 +138,7 @@ public class JavaLevelWriter implements LevelWriter, JavaReaderWriter {
         CompoundTag mapData = chunkerMap.getOriginalNBT() != null ? chunkerMap.getOriginalNBT() : new CompoundTag(11);
 
         // Copy over the other settings
-        mapData.put("dimension", chunkerMap.getDimension().getJavaID());
+        mapData.put("dimension", (byte) chunkerMap.getDimension().getJavaID());
         mapData.put("width", (short) chunkerMap.getWidth());
         mapData.put("height", (short) chunkerMap.getHeight());
         mapData.put("xCenter", chunkerMap.getXCenter());

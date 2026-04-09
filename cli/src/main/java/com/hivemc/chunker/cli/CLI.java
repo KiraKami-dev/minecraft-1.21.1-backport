@@ -11,6 +11,9 @@ import com.hivemc.chunker.conversion.encoding.EncodingType;
 import com.hivemc.chunker.conversion.encoding.base.reader.LevelReader;
 import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
+import com.hivemc.chunker.mapping.DimensionMapping;
+import com.hivemc.chunker.mapping.DimensionMappingList;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.pruning.PruningConfig;
@@ -22,6 +25,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,7 +47,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @CommandLine.Command(name = "Chunker", versionProvider = VersionProvider.class, mixinStandardHelpOptions = true)
 public class CLI implements Runnable {
-    private static final TypeToken<Map<Dimension, Dimension>> DIMENSION_INPUT_TO_OUTPUT_TYPE = new TypeToken<>() {
+    private static final TypeToken<Map<String, String>> DIMENSION_INPUT_TO_OUTPUT_TYPE = new TypeToken<>() {
     };
     private static final Gson GSON = new Gson();
 
@@ -96,6 +100,13 @@ public class CLI implements Runnable {
             converter = JsonObjectOrFile.Converter.class
     )
     private JsonObjectOrFile converterSettings;
+
+    @CommandLine.Option(
+            names = {"--dimensionRegistry", "-r"},
+            description = "A JSON file/object containing dimension information.",
+            converter = JsonObjectOrFile.Converter.class
+    )
+    private JsonObjectOrFile dimensionRegistry;
 
     @CommandLine.Option(
             names = {"--dimensionMappings", "-d"},
@@ -181,6 +192,35 @@ public class CLI implements Runnable {
                 }
             }
 
+            // Apply dimension registry if they're present and parse
+            if (dimensionRegistry == null) {
+                Path file = inputDirectory.toPath().resolve("custom_dimensions.chunker.json");
+                try {
+                    if (file.toFile().exists()) {
+                        dimensionRegistry = new JsonObjectOrFile(file);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to parse integrated custom dimensions.");
+                    throw new RuntimeException(e);
+                }
+            }
+            if (dimensionRegistry != null) {
+                try {
+                    DimensionMappingList dimensionMapping = GSON.fromJson(dimensionRegistry.getJSONObjectString(), DimensionMappingList.class);
+                    if (dimensionMapping.getMappings() != null) {
+                        DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                        List<DimensionMapping> mappings = dimensionMapping.getMappings();
+                        for (int i = 0, id = 1000; i < mappings.size(); id++, i++) {
+                            DimensionMapping mapping = mappings.get(i);
+                            registry.register(mapping.identifier(), mapping.toDimension(id));
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to parse custom dimension.");
+                    throw new RuntimeException(e);
+                }
+            }
+
             // Apply pruning settings if they're present and parse
             if (pruningSettings == null) {
                 Path file = inputDirectory.toPath().resolve("pruning.chunker.json");
@@ -197,10 +237,14 @@ public class CLI implements Runnable {
                 try {
                     DimensionPruningList pruningList = GSON.fromJson(pruningSettings.getJSONObjectString(), DimensionPruningList.class);
                     if (pruningList.getConfigs() != null && !pruningList.getConfigs().isEmpty()) {
-                        Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruningList.getConfigs().size());
-                        for (int i = 0; i < pruningList.getConfigs().size(); i++) {
-                            pruningConfigs.put(Dimension.values()[i], pruningList.getConfigs().get(i));
+                        DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                        Map<String, PruningConfig> pruning = pruningList.getConfigs();
+
+                        Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
+                        for (String key : pruning.keySet()) {
+                            pruningConfigs.put(registry.getByIdentifier(key), pruning.get(key));
                         }
+
                         worldConverter.setPruningConfigs(pruningConfigs);
                     }
                 } catch (Exception e) {
@@ -223,7 +267,16 @@ public class CLI implements Runnable {
             }
             if (dimensionMappings != null) {
                 try {
-                    Map<Dimension, Dimension> dimensionMapping = GSON.fromJson(dimensionMappings.getJSONObjectString(), DIMENSION_INPUT_TO_OUTPUT_TYPE);
+                    Map<String, String> rawDimensionMapping = GSON.fromJson(dimensionMappings.getJSONObjectString(), DIMENSION_INPUT_TO_OUTPUT_TYPE);
+                    Map<Dimension, Dimension> dimensionMapping = new Object2ObjectOpenHashMap<>(rawDimensionMapping.size());
+                    DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                    for (String key : rawDimensionMapping.keySet()) {
+                        Dimension src = registry.getByIdentifier(key);
+                        Dimension dst = registry.getByIdentifier(rawDimensionMapping.get(key));
+                        if (src != null && dst != null) {
+                            dimensionMapping.put(src, dst);
+                        }
+                    }
                     worldConverter.setDimensionMapping(dimensionMapping);
                 } catch (Exception e) {
                     System.err.println("Failed to parse dimension mappings.");
