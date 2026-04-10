@@ -149,6 +149,8 @@ tasks.jar {
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Xlint:unchecked")
     options.encoding = "UTF-8"
+    options.isFork = true
+    options.forkOptions.jvmArgs = (options.forkOptions.jvmArgs ?: mutableListOf()) + "-Xss4m"
 }
 
 tasks.withType<Javadoc> {
