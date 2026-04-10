@@ -225,9 +225,10 @@ public class JavaResolversBuilder {
 
             @Override
             public String writeBiome(ChunkerBiome biome, Dimension dimension) {
-                return biomeNameResolver.from(biome).orElseGet(() -> {
+                ChunkerBiome mapped = converter.getNewBiome(biome);
+                return biomeNameResolver.from(mapped).orElseGet(() -> {
                     // Report the error
-                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(biome));
+                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(mapped));
 
                     // Return fallback
                     return biomeNameResolver.from(getFallbackBiome(dimension)).orElseThrow();

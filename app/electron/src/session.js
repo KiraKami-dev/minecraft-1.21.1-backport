@@ -25,6 +25,8 @@ export class Session {
     _finalName = null;
     _dimensionMappings = null;
     _blockMappings = null;
+    _biomeMappings = null;
+    _customDimensions = null;
 
     // Handlers
     _asyncResponseMappers = {};
@@ -347,6 +349,12 @@ export class Session {
                 // Reply with success
                 this.sendMessage({requestId: data.requestId, type: "response"});
                 break;
+            case "set_dimension_registry":
+                this._customDimensions = data.dimensions;
+
+                // Reply with success
+                this.sendMessage({requestId: data.requestId, type: "response"});
+                break;
             case "set_output_name":
                 this._finalName = data.name;
 
@@ -366,6 +374,12 @@ export class Session {
                 break;
             case "set_dimension_mappings":
                 this._dimensionMappings = data.dimensions;
+
+                // Reply with success
+                this.sendMessage({requestId: data.requestId, type: "response"});
+                break;
+            case "set_biome_mappings":
+                this._biomeMappings = data.biomes;
 
                 // Reply with success
                 this.sendMessage({requestId: data.requestId, type: "response"});
@@ -698,7 +712,9 @@ export class Session {
             inputPath: worldInputPath,
             outputPath: worldOutputPath,
             outputType: outputType,
+            customDimensions: this._customDimensions,
             inputToOutputDimension: this._dimensionMappings,
+            biomeMappings: this._biomeMappings,
             mappings: this._blockMappings,
             nbtSettings: this._worldSettings,
             pruningList: this._pruningSettings,

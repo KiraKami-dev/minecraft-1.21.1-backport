@@ -2,8 +2,6 @@ package com.hivemc.chunker.conversion.intermediate.world;
 
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 
-import java.io.File;
-
 /**
  * The different types of Dimensions present in Minecraft.
  */

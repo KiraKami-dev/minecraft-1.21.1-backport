@@ -53,6 +53,8 @@ export class App extends Component {
             "minecraft:the_nether": "minecraft:the_nether",
             "minecraft:the_end": "minecraft:the_end"
         },
+        biomeMapping: {},
+        customDimensions: {},
         converterSettings: {}
     };
 
@@ -75,6 +77,19 @@ export class App extends Component {
 
         let mappings = JSON.stringify(clone);
         return mappings.length === 18 ? "{}" : mappings;
+    };
+
+    getCustomDimensionsJSON = () => {
+        const json = this.state.customDimensions;
+        const dimensions = json?.dimensions;
+        if (!dimensions || dimensions.length === 0) return "{}";
+        return JSON.stringify(json);
+    };
+
+    getBiomeMappingsJSON = () => {
+        const mappings = this.state.biomeMapping;
+        if (Object.keys(mappings).length === 0) return "{}";
+        return JSON.stringify(mappings);
     };
 
     getPruningJSON = () => {
@@ -115,6 +130,9 @@ export class App extends Component {
             pruning = {};
         }
 
+        let biomeMapping = sessionData?.preloaded_settings?.biome_mappings ?? {};
+        let customDimensions = sessionData?.preloaded_settings?.custom_dimensions ?? {};
+
         this.setState({
             sessionData: sessionData,
             inputType: sessionData.version.input,
@@ -122,7 +140,9 @@ export class App extends Component {
             editedSettings: sessionData?.preloaded_settings?.world_settings ?? {},
             converterSettings: sessionData?.preloaded_settings?.converter_settings ?? {},
             dimensionMapping: dimensions,
-            pruningSettings: pruning
+            pruningSettings: pruning,
+            biomeMapping: biomeMapping,
+            customDimensions: customDimensions
         });
     };
 

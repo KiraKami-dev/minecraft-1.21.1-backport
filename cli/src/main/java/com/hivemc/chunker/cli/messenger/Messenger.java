@@ -17,9 +17,13 @@ import com.hivemc.chunker.conversion.encoding.base.reader.LevelReader;
 import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
 import com.hivemc.chunker.conversion.encoding.preview.PreviewLevelWriter;
 import com.hivemc.chunker.conversion.encoding.settings.SettingsLevelWriter;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerCustomBiome;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
+import com.hivemc.chunker.mapping.DimensionMapping;
+import com.hivemc.chunker.mapping.DimensionMappingList;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.pruning.PruningConfig;
@@ -192,7 +196,20 @@ public class Messenger {
                             }
                         }
                         worldConverter.setChangedSettings(convertRequest.getNbtSettings());
+
+                        // Apply dimension registry
                         DimensionRegistry registry = worldConverter.getDimensionRegistry();
+                        JsonObject customDimensions = convertRequest.getCustomDimensions();
+                        if (customDimensions != null && !customDimensions.isEmpty()) {
+                            DimensionMappingList dimensionMapping = GSON.fromJson(customDimensions, DimensionMappingList.class);
+                            if (dimensionMapping.getMappings() != null) {
+                                List<DimensionMapping> mappings = dimensionMapping.getMappings();
+                                for (int i = 0, id = 1000; i < mappings.size(); id++, i++) {
+                                    DimensionMapping mapping = mappings.get(i);
+                                    registry.register(mapping.identifier(), mapping.toDimension(id));
+                                }
+                            }
+                        }
 
                         // Convert identifiers to Dimension types
                         Map<String, String> rawDimensionMapping = convertRequest.getInputToOutputDimension();
@@ -206,6 +223,43 @@ public class Messenger {
                                 }
                             }
                             worldConverter.setDimensionMapping(dimensionMapping);
+                        }
+
+                        // Apply biome mappings
+                        Map<String, String> rawBiomeMapping = convertRequest.getBiomeMappings();
+                        if (rawBiomeMapping != null && !rawBiomeMapping.isEmpty()) {
+                            Map<ChunkerBiome, ChunkerBiome> biomeMapping = new Object2ObjectOpenHashMap<>(rawBiomeMapping.size());
+                            for (Map.Entry<String, String> entry : rawBiomeMapping.entrySet()) {
+                                Optional<? extends ChunkerBiome> src = entry.getKey().startsWith("minecraft:")
+                                        ? ChunkerBiome.ChunkerVanillaBiome.find(entry.getKey())
+                                        : Optional.of(new ChunkerCustomBiome(entry.getKey()));
+                                Optional<? extends ChunkerBiome> dst = entry.getValue().startsWith("minecraft:")
+                                        ? ChunkerBiome.ChunkerVanillaBiome.find(entry.getValue())
+                                        : Optional.of(new ChunkerCustomBiome(entry.getValue()));
+                                if (src.isPresent() && dst.isPresent()) {
+                                    biomeMapping.put(src.get(), dst.get());
+                                } else {
+                                    removeWorldConverter(convertRequest.getAnonymousId(), convertRequest.getRequestId());
+                                    String error;
+                                    if (dst.isPresent()) {
+                                        error = "Unknown input biome for mapping \"" + entry.getKey() + "\": \"" + entry.getValue() + "\"";
+                                    } else if (src.isPresent()) {
+                                        error = "Unknown output biome for mapping \"" + entry.getKey() + "\": \"" + entry.getValue() + "\"";
+                                    } else {
+                                        error = "Unknown input and output biome for mapping \"" + entry.getKey() + "\": \"" + entry.getValue() + "\"";
+                                    }
+                                    write(new ErrorResponse(
+                                            convertRequest.getRequestId(),
+                                            false,
+                                            error,
+                                            null,
+                                            null,
+                                            null
+                                    ));
+                                    return;
+                                }
+                            }
+                            worldConverter.setBiomeMapping(biomeMapping);
                         }
 
                         // Turn the identifier based pruning map into a dimension map
