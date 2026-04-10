@@ -40,8 +40,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * <p/>
  * Mappings can be put in the world folder and by default these are loaded from if there is no parameter, these are done
  * for the following:
+ * - biome_mappings.chunker.json
  * - block_mappings.chunker.json
  * - converter_settings.chunker.json
+ * - custom_dimensions.chunker.json
  * - dimension_mappings.chunker.json
  * - pruning.chunker.json
  * - world_settings.chunker.json
@@ -365,6 +367,7 @@ public class CLI implements Runnable {
                     boolean enableCompact = !parsedConverterSettings.has("enableCompact") || parsedConverterSettings.get("enableCompact").getAsBoolean();
                     boolean discardEmptyChunks = parsedConverterSettings.has("discardEmptyChunks") && parsedConverterSettings.get("discardEmptyChunks").getAsBoolean();
                     boolean preventYBiomeBlending = parsedConverterSettings.has("preventYBiomeBlending") && parsedConverterSettings.get("preventYBiomeBlending").getAsBoolean();
+                    boolean customIdentifiers = !parsedConverterSettings.has("customIdentifiers") || parsedConverterSettings.get("customIdentifiers").getAsBoolean();
 
                     // Apply the settings
                     worldConverter.setProcessMaps(!skipMaps);
@@ -374,6 +377,7 @@ public class CLI implements Runnable {
                     worldConverter.setLevelDBCompaction(enableCompact);
                     worldConverter.setDiscardEmptyChunks(discardEmptyChunks);
                     worldConverter.setPreventYBiomeBlending(preventYBiomeBlending);
+                    worldConverter.setCustomIdentifiers(customIdentifiers);
                 } catch (Exception e) {
                     System.err.println("Failed to parse converter settings.");
                     throw new RuntimeException(e);
