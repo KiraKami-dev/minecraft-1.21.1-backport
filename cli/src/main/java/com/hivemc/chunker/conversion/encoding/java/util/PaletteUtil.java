@@ -57,7 +57,7 @@ public class PaletteUtil {
 
         int valuesPerPalette = dimensionSize * dimensionSize * dimensionSize;
         int dimensionBitMask = dimensionSize - 1;
-        int zDimensionBitShift = dimensionSize >> 2;
+        int zDimensionBitShift = Integer.numberOfTrailingZeros(dimensionSize);
         int yDimensionBitShift = zDimensionBitShift + zDimensionBitShift;
 
         // Based on code from https://github.com/ViaVersion/ViaVersion/blob/9ea6c34543d6052f1e91b5035e87b756cb2358b8/common/src/main/java/us/myles/ViaVersion/util/CompactArrayUtil.java
@@ -102,7 +102,7 @@ public class PaletteUtil {
 
         int valuesPerPalette = dimensionSize * dimensionSize * dimensionSize;
         int dimensionBitMask = dimensionSize - 1;
-        int zDimensionBitShift = dimensionSize >> 2;
+        int zDimensionBitShift = Integer.numberOfTrailingZeros(dimensionSize);
         int yDimensionBitShift = zDimensionBitShift + zDimensionBitShift;
 
         // Calculate magic value (based on Minecraft)
@@ -170,7 +170,7 @@ public class PaletteUtil {
         short[][][] output = new short[dimensionSize][dimensionSize][dimensionSize];
         int valuesPerPalette = dimensionSize * dimensionSize * dimensionSize;
         int dimensionBitMask = dimensionSize - 1;
-        int zDimensionBitShift = dimensionSize >> 2;
+        int zDimensionBitShift = Integer.numberOfTrailingZeros(dimensionSize);
         int yDimensionBitShift = zDimensionBitShift + zDimensionBitShift;
 
         // Based on code from https://github.com/ViaVersion/ViaVersion/blob/9ea6c34543d6052f1e91b5035e87b756cb2358b8/common/src/main/java/us/myles/ViaVersion/util/CompactArrayUtil.java
@@ -210,7 +210,7 @@ public class PaletteUtil {
         short[][][] output = new short[dimensionSize][dimensionSize][dimensionSize];
         int valuesPerPalette = dimensionSize * dimensionSize * dimensionSize;
         int dimensionBitMask = dimensionSize - 1;
-        int zDimensionBitShift = dimensionSize >> 2;
+        int zDimensionBitShift = Integer.numberOfTrailingZeros(dimensionSize);
         int yDimensionBitShift = zDimensionBitShift + zDimensionBitShift;
 
         // Use maxEntryValue for bitmask
