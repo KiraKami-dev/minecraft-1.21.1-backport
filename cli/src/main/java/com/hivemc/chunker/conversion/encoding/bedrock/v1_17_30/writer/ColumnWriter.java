@@ -39,7 +39,7 @@ public class ColumnWriter extends com.hivemc.chunker.conversion.encoding.bedrock
 
         // Write Data3D (3d biomes)
         byte[] bytes;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
              DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
             Writer writer = Writer.toBedrockWriter(dataOutputStream);
             short[][] heightMapValues = heightMap.getHeightMap();
