@@ -138,7 +138,7 @@ public class JavaLevelWriter implements LevelWriter, JavaReaderWriter {
         CompoundTag mapData = chunkerMap.getOriginalNBT() != null ? chunkerMap.getOriginalNBT() : new CompoundTag(11);
 
         // Copy over the other settings
-        mapData.put("dimension", chunkerMap.getDimension().getJavaID());
+        mapData.put("dimension", (byte) chunkerMap.getDimension().getJavaID());
         mapData.put("width", (short) chunkerMap.getWidth());
         mapData.put("height", (short) chunkerMap.getHeight());
         mapData.put("xCenter", chunkerMap.getXCenter());
@@ -188,6 +188,11 @@ public class JavaLevelWriter implements LevelWriter, JavaReaderWriter {
     @Override
     public void writeCustomLevelSetting(ChunkerLevelSettings chunkerLevelSettings, CompoundTag output, String targetName, Object value) {
         // Check for next update
+        if (targetName.equals("SummerDrop2026")) {
+            // Not supported
+            return;
+        }
+
         if (targetName.equals("AutumnDrop2025")) {
             // Not supported
             return;

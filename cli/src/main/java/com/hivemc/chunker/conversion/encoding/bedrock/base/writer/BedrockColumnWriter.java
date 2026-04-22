@@ -229,7 +229,7 @@ public class BedrockColumnWriter implements ColumnWriter {
 
         // Write Data2D
         byte[] bytes;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
              DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
             Writer writer = Writer.toBedrockWriter(dataOutputStream);
             short[][] heightMapValues = heightMap.getHeightMap();

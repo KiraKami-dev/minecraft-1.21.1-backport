@@ -251,6 +251,9 @@ public class JavaEntityTypeResolver implements Resolver<String, ChunkerEntityTyp
             mapping.put(ChunkerVanillaEntityType.PARCHED, "minecraft:parched");
             mapping.put(ChunkerVanillaEntityType.ZOMBIE_NAUTILUS, "minecraft:zombie_nautilus");
         }
+        if (version.isGreaterThanOrEqual(26, 2, 0)) {
+            mapping.put(ChunkerVanillaEntityType.SULFUR_CUBE, "minecraft:sulfur_cube");
+        }
     }
 
     @Override

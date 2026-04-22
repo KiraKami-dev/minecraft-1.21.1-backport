@@ -8,6 +8,8 @@ export class CLIExportTab extends Component {
         let worldSettings = JSON.stringify(JSON.stringify(this.app.state.editedSettings));
         let pruningSettings = JSON.stringify(this.app.getPruningJSON());
         let dimensionMappings = JSON.stringify(this.app.getDimensionMappingsJSON());
+        let customDimensions = JSON.stringify(this.app.getCustomDimensionsJSON());
+        let biomeMappings = JSON.stringify(this.app.getBiomeMappingsJSON());
         let blockMappings = JSON.stringify(this.app.getBlockMappingsJSON());
         let converterSettings = JSON.stringify(JSON.stringify(this.app.state.converterSettings));
 
@@ -17,9 +19,11 @@ export class CLIExportTab extends Component {
             " --outputFormat " + outputType +
             (converterSettings.length === 4 ? "" : " --converterSettings " + converterSettings) +
             (worldSettings.length === 4 ? "" : " --worldSettings " + worldSettings) +
+            (customDimensions.length === 4 ? "" : " --dimensionRegistry " + customDimensions) +
             (dimensionMappings.length === 4 ? "" : " --dimensionMappings " + dimensionMappings) +
+            (biomeMappings.length === 4 ? "" : " --biomeMappings " + biomeMappings) +
             (blockMappings.length === 4 ? "" : " --blockMappings " + blockMappings) +
-            (blockMappings.length === 4 ? "" : " --pruning " + pruningSettings) +
+            (pruningSettings.length === 4 ? "" : " --pruning " + pruningSettings) +
             (outputType === this.app.state.inputType.id ? " --keepOriginalNBT" : "");
     };
 
@@ -80,6 +84,18 @@ export class CLIExportTab extends Component {
                                 <span className="tooltip">These are the mappings on how it should prune dimensions from the Dimensions tab.</span>--pruning
                             </label>
                             <input type="text" value={this.app.getPruningJSON()} readOnly={true}/>
+                        </div>
+                        <div className="white_box">
+                            <label className="legend" htmlFor="name">
+                                <span className="tooltip">These are definitions for the custom dimensions to be used in the input/output.</span>--dimensionRegistry
+                            </label>
+                            <input type="text" value={this.app.getCustomDimensionsJSON()} readOnly={true}/>
+                        </div>
+                        <div className="white_box">
+                            <label className="legend" htmlFor="name">
+                                <span className="tooltip">These are the biome mappings which define how they should be changed from input to output.</span>--biomeMappings
+                            </label>
+                            <input type="text" value={this.app.getBiomeMappingsJSON()} readOnly={true}/>
                         </div>
                         <div className="white_box">
                             <label className="legend" htmlFor="name">

@@ -1,10 +1,12 @@
 package com.hivemc.chunker.conversion.encoding.base;
 
 import com.google.common.base.CaseFormat;
+import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.RegionCoordPair;
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,6 +136,13 @@ public interface Converter {
     MappingsFileResolvers getBlockMappings();
 
     /**
+     * Get the dimension register, by default populated with Vanilla dimensions
+     *
+     * @return the dimension registry
+     */
+    DimensionRegistry getDimensionRegistry();
+
+    /**
      * Log a non-fatal exception.
      *
      * @param throwable the exception.
@@ -173,6 +182,14 @@ public interface Converter {
      * @return the new dimension or absent if the dimension should be removed.
      */
     Optional<Dimension> getNewDimension(Dimension dimension);
+
+    /**
+     * Get the biome mapping given an input.
+     *
+     * @param biome the input biome.
+     * @return the new biome.
+     */
+    ChunkerBiome getNewBiome(ChunkerBiome biome);
 
     /**
      * Get the main level data.

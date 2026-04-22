@@ -213,9 +213,10 @@ public class JavaResolversBuilder {
 
             @Override
             public int writeBiomeID(ChunkerBiome biome, Dimension dimension) {
-                return biomeIDResolver.from(biome).orElseGet(() -> {
+                ChunkerBiome mapped = converter.getNewBiome(biome);
+                return biomeIDResolver.from(mapped).orElseGet(() -> {
                     // Report the error
-                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(biome));
+                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(mapped));
 
                     // Return fallback
                     return biomeIDResolver.from(getFallbackBiome(dimension)).orElseThrow();
@@ -224,9 +225,10 @@ public class JavaResolversBuilder {
 
             @Override
             public String writeBiome(ChunkerBiome biome, Dimension dimension) {
-                return biomeNameResolver.from(biome).orElseGet(() -> {
+                ChunkerBiome mapped = converter.getNewBiome(biome);
+                return biomeNameResolver.from(mapped).orElseGet(() -> {
                     // Report the error
-                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(biome));
+                    converter.logMissingMapping(Converter.MissingMappingType.BIOME, String.valueOf(mapped));
 
                     // Return fallback
                     return biomeNameResolver.from(getFallbackBiome(dimension)).orElseThrow();
@@ -460,11 +462,7 @@ public class JavaResolversBuilder {
 
             @Override
             public ChunkerBiome getFallbackBiome(Dimension dimension) {
-                return switch (dimension) {
-                    case OVERWORLD -> ChunkerBiome.ChunkerVanillaBiome.PLAINS;
-                    case NETHER -> ChunkerBiome.ChunkerVanillaBiome.NETHER_WASTES;
-                    case THE_END -> ChunkerBiome.ChunkerVanillaBiome.THE_END;
-                };
+                return dimension.getFallbackBiome();
             }
         };
     }

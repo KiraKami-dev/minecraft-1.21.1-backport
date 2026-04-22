@@ -67,23 +67,41 @@ export class ProcessingScreen extends BaseScreen {
                 console.info("Failed to set settings: " + message.error);
                 self.app.showError("Failed to set world settings", message.error, message.errorId, message.stackTrace, false);
             } else {
-                self.convertSetDimensions();
+                self.convertSetDimensionRegistry();
             }
         });
     };
 
-    convertSetDimensions = () => {
+    convertSetDimensionRegistry = () => {
         let self = this;
 
-        // Set dimensions
+        // Set dimension registry
+        api.send({
+            type: "settings",
+            method: "set_dimension_registry",
+            dimensions: self.app.state.customDimensions
+        }, function (message) {
+            if (message.type === "error") {
+                console.info("Failed to set custom dimensions: " + message.error);
+                self.app.showError("Failed to set custom dimensions", message.error, message.errorId, message.stackTrace, false);
+            } else {
+                self.convertSetDimensionMappings();
+            }
+        });
+    };
+
+    convertSetDimensionMappings = () => {
+        let self = this;
+
+        // Set dimension mappings
         api.send({
             type: "mappings",
             method: "set_dimension_mappings",
             dimensions: self.app.state.dimensionMapping
         }, function (message) {
             if (message.type === "error") {
-                console.info("Failed to set dimensions: " + message.error);
-                self.app.showError("Failed to set dimension settings", message.error, message.errorId, message.stackTrace, false);
+                console.info("Failed to set dimension mappings: " + message.error);
+                self.app.showError("Failed to set dimension mappings", message.error, message.errorId, message.stackTrace, false);
             } else {
                 self.convertSetPruning();
             }
@@ -130,7 +148,24 @@ export class ProcessingScreen extends BaseScreen {
                 console.info("Failed to set mappings: " + message.error);
                 self.app.showError("Failed to set mappings", message.error, message.errorId, message.stackTrace, false);
             } else {
-                // Call convert
+                self.convertSetBiomeMappings();
+            }
+        });
+    };
+
+    convertSetBiomeMappings = () => {
+        let self = this;
+
+        // Set biome mappings
+        api.send({
+            type: "mappings",
+            method: "set_biome_mappings",
+            biomes: self.app.state.biomeMapping
+        }, function (message) {
+            if (message.type === "error") {
+                console.info("Failed to set biome mappings: " + message.error);
+                self.app.showError("Failed to set biome mappings", message.error, message.errorId, message.stackTrace, false);
+            } else {
                 self.convertStartConversion();
             }
         });

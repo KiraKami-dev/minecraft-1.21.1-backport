@@ -1,4 +1,4 @@
-package com.hivemc.chunker.conversion.encoding.java.v1_26_1.reader;
+package com.hivemc.chunker.conversion.encoding.java.v26_1.reader;
 
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolvers;

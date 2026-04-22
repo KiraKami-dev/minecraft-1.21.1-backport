@@ -30,7 +30,9 @@ public class JavaBiomeNameResolverTests {
     public static final Set<ChunkerBiome> BIOMES_ID_NOT_SUPPORTED = Set.of(
             ChunkerBiome.ChunkerVanillaBiome.DEEP_DARK,
             ChunkerBiome.ChunkerVanillaBiome.MANGROVE_SWAMP,
-            ChunkerBiome.ChunkerVanillaBiome.CHERRY_GROVE
+            ChunkerBiome.ChunkerVanillaBiome.CHERRY_GROVE,
+            ChunkerBiome.ChunkerVanillaBiome.PALE_GARDEN,
+            ChunkerBiome.ChunkerVanillaBiome.SULFUR_CAVES
     );
 
     public static Stream<Arguments> biomeList() throws IOException {
@@ -99,5 +101,19 @@ public class JavaBiomeNameResolverTests {
         // Now convert to ID and ensure it's present
         boolean shouldBePresent = !BIOMES_ID_NOT_SUPPORTED.contains(mappedNameValue.get());
         assertEquals(shouldBePresent, biomeIDResolver.from(mappedNameValue.get()).isPresent());
+    }
+
+    @ParameterizedTest
+    @MethodSource("biomeList")
+    public void checkBiomeParsingExists(String biome) {
+        Optional<ChunkerBiome.ChunkerVanillaBiome> mappedBiome = ChunkerBiome.ChunkerVanillaBiome.find(biome);
+        JavaNamedBiomeResolver biomeNameResolver = new JavaNamedBiomeResolver(Version.LATEST, false);
+
+        // Ensure there is a value
+        assertFalse(mappedBiome.isEmpty());
+
+        Optional<String> mappedNameValue = biomeNameResolver.from(mappedBiome.get());
+        assertTrue(mappedNameValue.isPresent());
+        assertEquals(biome, mappedNameValue.get());
     }
 }

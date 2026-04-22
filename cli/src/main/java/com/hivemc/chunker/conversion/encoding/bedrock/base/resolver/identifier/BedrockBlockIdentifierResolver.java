@@ -3033,5 +3033,45 @@ public class BedrockBlockIdentifierResolver extends ChunkerBlockIdentifierResolv
         if (version.isGreaterThanOrEqual(1, 26, 10)) {
             register(BlockMapping.of("minecraft:golden_dandelion", ChunkerVanillaBlockType.GOLDEN_DANDELION));
         }
+
+        // R26U2
+        if (version.isGreaterThanOrEqual(1, 26, 20)) {
+            // Cinnabar blocks
+            register(BlockMapping.of("minecraft:cinnabar", ChunkerVanillaBlockType.CINNABAR));
+            register(BlockMapping.of("minecraft:chiseled_cinnabar", ChunkerVanillaBlockType.CHISELED_CINNABAR));
+            register(BlockMapping.of("minecraft:polished_cinnabar", ChunkerVanillaBlockType.POLISHED_CINNABAR));
+            register(BlockMapping.of("minecraft:cinnabar_bricks", ChunkerVanillaBlockType.CINNABAR_BRICKS));
+            register(BlockMapping.of("minecraft:cinnabar_slab", ChunkerVanillaBlockType.CINNABAR_SLAB, BedrockStateGroups.SLAB_HALF));
+            register(BlockMapping.of("minecraft:cinnabar_double_slab", ChunkerVanillaBlockType.CINNABAR_SLAB, BedrockStateGroups.SLAB_DOUBLE, VanillaBlockStates.SLAB_TYPE, SlabType.DOUBLE));
+            register(BlockMapping.of("minecraft:cinnabar_stairs", ChunkerVanillaBlockType.CINNABAR_STAIRS, BedrockStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:cinnabar_wall", ChunkerVanillaBlockType.CINNABAR_WALL, BedrockStateGroups.WALL));
+            register(BlockMapping.of("minecraft:polished_cinnabar_slab", ChunkerVanillaBlockType.POLISHED_CINNABAR_SLAB, BedrockStateGroups.SLAB_HALF));
+            register(BlockMapping.of("minecraft:polished_cinnabar_double_slab", ChunkerVanillaBlockType.POLISHED_CINNABAR_SLAB, BedrockStateGroups.SLAB_DOUBLE, VanillaBlockStates.SLAB_TYPE, SlabType.DOUBLE));
+            register(BlockMapping.of("minecraft:polished_cinnabar_stairs", ChunkerVanillaBlockType.POLISHED_CINNABAR_STAIRS, BedrockStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:polished_cinnabar_wall", ChunkerVanillaBlockType.POLISHED_CINNABAR_WALL, BedrockStateGroups.WALL));
+            register(BlockMapping.of("minecraft:cinnabar_brick_slab", ChunkerVanillaBlockType.CINNABAR_BRICK_SLAB, BedrockStateGroups.SLAB_HALF));
+            register(BlockMapping.of("minecraft:cinnabar_brick_double_slab", ChunkerVanillaBlockType.CINNABAR_BRICK_SLAB, BedrockStateGroups.SLAB_DOUBLE, VanillaBlockStates.SLAB_TYPE, SlabType.DOUBLE));
+            register(BlockMapping.of("minecraft:cinnabar_brick_stairs", ChunkerVanillaBlockType.CINNABAR_BRICK_STAIRS, BedrockStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:cinnabar_brick_wall", ChunkerVanillaBlockType.CINNABAR_BRICK_WALL, BedrockStateGroups.WALL));
+
+            // Sulfur blocks
+            register(BlockMapping.of("minecraft:sulfur", ChunkerVanillaBlockType.SULFUR));
+            register(BlockMapping.of("minecraft:potent_sulfur", ChunkerVanillaBlockType.POTENT_SULFUR));
+            register(BlockMapping.of("minecraft:chiseled_sulfur", ChunkerVanillaBlockType.CHISELED_SULFUR));
+            register(BlockMapping.of("minecraft:polished_sulfur", ChunkerVanillaBlockType.POLISHED_SULFUR));
+            register(BlockMapping.of("minecraft:sulfur_bricks", ChunkerVanillaBlockType.SULFUR_BRICKS));
+            register(BlockMapping.of("minecraft:sulfur_slab", ChunkerVanillaBlockType.SULFUR_SLAB, BedrockStateGroups.SLAB_HALF));
+            register(BlockMapping.of("minecraft:sulfur_double_slab", ChunkerVanillaBlockType.SULFUR_SLAB, BedrockStateGroups.SLAB_DOUBLE, VanillaBlockStates.SLAB_TYPE, SlabType.DOUBLE));
+            register(BlockMapping.of("minecraft:sulfur_stairs", ChunkerVanillaBlockType.SULFUR_STAIRS, BedrockStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:sulfur_wall", ChunkerVanillaBlockType.SULFUR_WALL, BedrockStateGroups.WALL));
+            register(BlockMapping.of("minecraft:polished_sulfur_slab", ChunkerVanillaBlockType.POLISHED_SULFUR_SLAB, BedrockStateGroups.SLAB_HALF));
+            register(BlockMapping.of("minecraft:polished_sulfur_double_slab", ChunkerVanillaBlockType.POLISHED_SULFUR_SLAB, BedrockStateGroups.SLAB_DOUBLE, VanillaBlockStates.SLAB_TYPE, SlabType.DOUBLE));
+            register(BlockMapping.of("minecraft:polished_sulfur_stairs", ChunkerVanillaBlockType.POLISHED_SULFUR_STAIRS, BedrockStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:polished_sulfur_wall", ChunkerVanillaBlockType.POLISHED_SULFUR_WALL, BedrockStateGroups.WALL));
+            register(BlockMapping.of("minecraft:sulfur_brick_slab", ChunkerVanillaBlockType.SULFUR_BRICK_SLAB, BedrockStateGroups.SLAB_HALF));
+            register(BlockMapping.of("minecraft:sulfur_brick_double_slab", ChunkerVanillaBlockType.SULFUR_BRICK_SLAB, BedrockStateGroups.SLAB_DOUBLE, VanillaBlockStates.SLAB_TYPE, SlabType.DOUBLE));
+            register(BlockMapping.of("minecraft:sulfur_brick_stairs", ChunkerVanillaBlockType.SULFUR_BRICK_STAIRS, BedrockStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:sulfur_brick_wall", ChunkerVanillaBlockType.SULFUR_BRICK_WALL, BedrockStateGroups.WALL));
+        }
     }
 }

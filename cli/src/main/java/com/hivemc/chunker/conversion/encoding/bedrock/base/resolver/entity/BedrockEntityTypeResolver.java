@@ -209,6 +209,9 @@ public class BedrockEntityTypeResolver implements Resolver<String, ChunkerEntity
             mapping.put(ChunkerVanillaEntityType.PARCHED, "minecraft:parched");
             mapping.put(ChunkerVanillaEntityType.ZOMBIE_NAUTILUS, "minecraft:zombie_nautilus");
         }
+        if (bedrockVersion.isGreaterThanOrEqual(1, 26, 20)) {
+            mapping.put(ChunkerVanillaEntityType.SULFUR_CUBE, "minecraft:sulfur_cube");
+        }
     }
 
     @Override

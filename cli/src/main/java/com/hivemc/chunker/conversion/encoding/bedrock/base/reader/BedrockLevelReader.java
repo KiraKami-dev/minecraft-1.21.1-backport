@@ -16,6 +16,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.Chunker
 import com.hivemc.chunker.conversion.intermediate.level.*;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
@@ -117,10 +118,11 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
         // Collect level data
         FutureTask<WorldConversionHandler> levelDataCollection = Task.asyncUnwrap("Collecting Level Data", TaskWeight.MEDIUM, this::collectLevelData, levelConversionHandler);
 
-        Task<EnumMap<Dimension, Map<RegionCoordPair, Set<ChunkCoordPair>>>> usedRegions = Task.async("Collecting Used Regions", TaskWeight.MEDIUM, () -> {
+        Task<Map<Dimension, Map<RegionCoordPair, Set<ChunkCoordPair>>>> usedRegions = Task.async("Collecting Used Regions", TaskWeight.MEDIUM, () -> {
             // Create a lookup for each dimension and region present
-            EnumMap<Dimension, Map<RegionCoordPair, Set<ChunkCoordPair>>> dimensionLookup = new EnumMap<>(Dimension.class);
+            Map<Dimension, Map<RegionCoordPair, Set<ChunkCoordPair>>> dimensionLookup = new HashMap<>();
             // Scan the database for valid chunks
+            DimensionRegistry dimensionRegistry = converter.getDimensionRegistry();
             try (DBIterator iterator = database.iterator()) {
                 while (iterator.hasNext()) {
                     Map.Entry<byte[], byte[]> entry = iterator.next();
@@ -150,7 +152,7 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
                     Dimension dimension = Dimension.OVERWORLD;
                     if (containsDimension) {
                         int dimensionID = buffer.getInt();
-                        dimension = Dimension.fromBedrock((byte) dimensionID, null);
+                        dimension = dimensionRegistry.fromBedrock(dimensionID, null);
 
                         // If unknown report an issue
                         if (dimension == null) {
@@ -225,9 +227,10 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
         ProgressiveTask<Void> parseLocalPlayer = Task.asyncConsume("Parsing Local Player", TaskWeight.NORMAL, this::parseLocalPlayer, output);
         ProgressiveTask<Void> parseMaps = Task.asyncConsume("Parsing Saved Maps", TaskWeight.NORMAL, this::parseMaps, output);
         ProgressiveTask<Void> parsePortals = Task.asyncConsume("Parsing Portals", TaskWeight.NORMAL, this::parsePortals, output);
+        ProgressiveTask<Void> parseCustomBiomes = Task.asyncConsume("Parsing Biome List", TaskWeight.NORMAL, this::parseBiomeList, output);
 
         // When those tasks are done we can convert the level
-        return Task.join(parseLevelSettings, parseLocalPlayer, parseMaps, parsePortals)
+        return Task.join(parseLevelSettings, parseLocalPlayer, parseMaps, parsePortals, parseCustomBiomes)
                 .thenUnwrap("Converting Level", TaskWeight.LOW, levelConversionHandler::convertLevel, output);
     }
 
@@ -245,6 +248,11 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
 
     @Override
     public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
+        // Check for SummerDrop2026 support
+        if (targetName.equals("SummerDrop2026")) {
+            return false;
+        }
+
         // Check for AutumnDrop2025 support
         if (targetName.equals("AutumnDrop2025")) {
             return false;
@@ -388,8 +396,9 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
                     index++;
                 }
             }
+            DimensionRegistry dimensionRegistry = converter.getDimensionRegistry();
             output.setPlayer(new ChunkerLevelPlayer(
-                    Dimension.fromBedrockNBT(player.get("DimensionId"), Dimension.OVERWORLD),
+                    dimensionRegistry.fromBedrockNBT(player.get("DimensionId"), Dimension.OVERWORLD),
                     positions.get(0),
                     positions.get(1) - PLAYER_HEIGHT, // Offset in Bedrock
                     positions.get(2),
@@ -473,6 +482,8 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
             // Read the data
             CompoundTag mapCompound = Objects.requireNonNull(Tag.readBedrockNBT(data));
 
+            DimensionRegistry dimensionRegistry = converter.getDimensionRegistry();
+            Dimension overworld = Dimension.OVERWORLD;
             // Create a nice ChunkerMap with all the properties we need (and defaults)
             return new ChunkerMap(
                     id,
@@ -480,7 +491,7 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
                     mapCompound.getShort("height", (short) 128),
                     mapCompound.getShort("width", (short) 128),
                     mapCompound.getByte("scale", (byte) 0),
-                    Dimension.fromBedrockNBT(mapCompound.get("dimension"), Dimension.OVERWORLD),
+                    dimensionRegistry.fromBedrockNBT(mapCompound.get("dimension"), overworld),
                     mapCompound.getInt("xCenter", 0),
                     mapCompound.getInt("zCenter", 0),
                     mapCompound.getByte("unlimitedTracking", (byte) 0) != 0,
@@ -506,6 +517,9 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
             byte[] value = database.get(LevelDBKey.PORTALS);
             if (value == null) return;
 
+            DimensionRegistry dimensionRegistry = converter.getDimensionRegistry();
+            Dimension overworld = Dimension.OVERWORLD;
+
             // Read the data
             CompoundTag wrappedData = Objects.requireNonNull(Tag.readBedrockNBT(value));
             CompoundTag data = wrappedData.getCompound("data");
@@ -516,7 +530,7 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
             if (portalRecords == null) return;
             for (CompoundTag portalRecord : portalRecords) {
                 output.getPortals().add(new ChunkerPortal(
-                        Dimension.fromBedrock((byte) portalRecord.getInt("DimId", 0), Dimension.OVERWORLD),
+                        dimensionRegistry.fromBedrock(portalRecord.getInt("DimId", 0), overworld),
                         portalRecord.getInt("TpX", 0),
                         portalRecord.getInt("TpY", 0),
                         portalRecord.getInt("TpZ", 0),
@@ -528,6 +542,15 @@ public class BedrockLevelReader implements LevelReader, BedrockReaderWriter {
         } catch (Exception e) {
             converter.logNonFatalException(e);
         }
+    }
+
+    /**
+     * Parse all the biome data in the world.
+     *
+     * @param output the output to add the biome data to.
+     */
+    protected void parseBiomeList(ChunkerLevel output) {
+        // Support for custom biomes was added in 1.21.110
     }
 
     @Override

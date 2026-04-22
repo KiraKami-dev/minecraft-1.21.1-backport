@@ -4,6 +4,7 @@ import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.resolver.blockentity.BlockEntityResolver;
 import com.hivemc.chunker.conversion.encoding.base.resolver.entity.EntityResolver;
 import com.hivemc.chunker.conversion.encoding.bedrock.BedrockDataVersion;
+import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.biome.BedrockBiomeIDResolver;
 import com.hivemc.chunker.conversion.encoding.bedrock.base.resolver.identifier.BedrockBlockCompoundTag;
 import com.hivemc.chunker.conversion.handlers.pretransform.manager.PreTransformManager;
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
@@ -171,6 +172,13 @@ public interface BedrockResolvers {
      * @return the resolver mapping Identifier to ChunkerItemStack.
      */
     Resolver<Identifier, ChunkerItemStack> chunkerItemIdentifierResolver();
+
+    /**
+     * Get the biome id resolver used to map biomes.
+     *
+     * @return the Biome resolver.
+     */
+    BedrockBiomeIDResolver biomeIdResolver();
 
     /**
      * Read a potion type from an ID.

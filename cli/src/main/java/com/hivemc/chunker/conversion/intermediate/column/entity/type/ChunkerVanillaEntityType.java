@@ -164,7 +164,8 @@ public enum ChunkerVanillaEntityType implements ChunkerEntityType {
     DARK_OAK_CHEST_BOAT,
     PALE_OAK_CHEST_BOAT,
     MANGROVE_CHEST_BOAT,
-    BAMBOO_CHEST_RAFT;
+    BAMBOO_CHEST_RAFT,
+    SULFUR_CUBE(true);
 
     private final boolean vanillaSpawnEgg;
 

@@ -42,7 +42,7 @@ public class BedrockBiomeIDResolverTests {
     @Test
     public void checkBiomeObjectUniqueness() throws IOException {
         List<Arguments> biomeIds = biomeList().toList();
-        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST);
+        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST, true);
         Set<ChunkerBiome> loadedBiomes = new ObjectOpenHashSet<>();
         Set<Integer> loadedBiomeIDs = new ObjectOpenHashSet<>();
 
@@ -64,7 +64,7 @@ public class BedrockBiomeIDResolverTests {
     @MethodSource("biomeList")
     public void checkBiome(String biome, int biomeId) {
         // Use a high version to ensure every biome is used
-        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST);
+        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST, true);
 
         // Convert value
         Optional<ChunkerBiome> mappedValue = biomeResolver.to(biomeId);
@@ -75,5 +75,19 @@ public class BedrockBiomeIDResolverTests {
         // Ensure there is a symmetrical mapping
         assertFalse(biomeResolver.from(mappedValue.get()).isEmpty());
         assertEquals(biomeId, biomeResolver.from(mappedValue.get()).get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("biomeList")
+    public void checkBiomeParsingExists(String biome, int biomeId) {
+        BedrockBiomeIDResolver biomeResolver = new BedrockBiomeIDResolver(Version.LATEST, true);
+        Optional<ChunkerBiome.ChunkerVanillaBiome> mappedBiome = ChunkerBiome.ChunkerVanillaBiome.find("minecraft:" + biome);
+
+        // Ensure there is a value
+        assertFalse(mappedBiome.isEmpty());
+
+        final Optional<Integer> value = biomeResolver.from(mappedBiome.get());
+        assertFalse(value.isEmpty());
+        assertEquals(biomeId, value.get());
     }
 }

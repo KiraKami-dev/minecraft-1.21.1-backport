@@ -41,7 +41,7 @@ export class App extends Component {
         worldSettingsTab: "World Settings",
         dimensionSettingsTab: undefined,
         editedSettings: {},
-        pruningSettings: [null, null, null],
+        pruningSettings: {},
         mappings: {
             identifiers: []
         },
@@ -49,17 +49,21 @@ export class App extends Component {
         inputBlockSuggestions: [],
         outputBlockSuggestions: [],
         dimensionMapping: {
-            "OVERWORLD": "OVERWORLD",
-            "NETHER": "NETHER",
-            "THE_END": "THE_END"
+            "minecraft:overworld": "minecraft:overworld",
+            "minecraft:the_nether": "minecraft:the_nether",
+            "minecraft:the_end": "minecraft:the_end"
         },
+        biomeMapping: {},
+        customDimensions: {},
         converterSettings: {}
     };
 
     getDimensionMappingsJSON = () => {
-        if (Object.keys(this.state.dimensionMapping).length !== 3 ||
-            Object.keys(this.state.dimensionMapping).filter(key => this.state.dimensionMapping[key] !== key).length > 0) {
-            return JSON.stringify(this.state.dimensionMapping);
+        const mapping = this.state.dimensionMapping;
+        const keys = Object.keys(mapping);
+        const defaultCount = this.state.settings?.dimensions?.length ?? 3;
+        if (keys.length !== defaultCount || keys.some(key => mapping[key] !== key)) {
+            return JSON.stringify(mapping);
         } else {
             return "{}";
         }
@@ -75,9 +79,22 @@ export class App extends Component {
         return mappings.length === 18 ? "{}" : mappings;
     };
 
+    getCustomDimensionsJSON = () => {
+        const json = this.state.customDimensions;
+        const dimensions = json?.dimensions;
+        if (!dimensions || dimensions.length === 0) return "{}";
+        return JSON.stringify(json);
+    };
+
+    getBiomeMappingsJSON = () => {
+        const mappings = this.state.biomeMapping;
+        if (Object.keys(mappings).length === 0) return "{}";
+        return JSON.stringify(mappings);
+    };
+
     getPruningJSON = () => {
         let pruningSettings = this.state.pruningSettings;
-        if (!pruningSettings || pruningSettings.filter(a => a !== null).length === 0) return "{}";
+        if (!pruningSettings || Object.values(pruningSettings).filter(a => a !== null).length === 0) return "{}";
         return JSON.stringify({configs: pruningSettings});
     };
 
@@ -95,9 +112,9 @@ export class App extends Component {
         let dimensions = sessionData?.preloaded_settings?.dimension_mappings ?? {};
         if (Object.keys(dimensions).length === 0) {
             dimensions = {
-                "OVERWORLD": "OVERWORLD",
-                "NETHER": "NETHER",
-                "THE_END": "THE_END"
+                "minecraft:overworld": "minecraft:overworld",
+                "minecraft:the_nether": "minecraft:the_nether",
+                "minecraft:the_end": "minecraft:the_end"
             };
         }
 
@@ -108,10 +125,13 @@ export class App extends Component {
             mappings.identifiers = [];
         }
 
-        let pruning = sessionData?.preloaded_settings?.pruning?.configs ?? [];
-        if (!pruning || pruning.filter(a => a !== null).length === 0) {
-            pruning = [null, null, null];
+        let pruning = sessionData?.preloaded_settings?.pruning?.configs ?? {};
+        if (!pruning || Object.values(pruning).filter(a => a !== null).length === 0) {
+            pruning = {};
         }
+
+        let biomeMapping = sessionData?.preloaded_settings?.biome_mappings ?? {};
+        let customDimensions = sessionData?.preloaded_settings?.custom_dimensions ?? {};
 
         this.setState({
             sessionData: sessionData,
@@ -120,7 +140,9 @@ export class App extends Component {
             editedSettings: sessionData?.preloaded_settings?.world_settings ?? {},
             converterSettings: sessionData?.preloaded_settings?.converter_settings ?? {},
             dimensionMapping: dimensions,
-            pruningSettings: pruning
+            pruningSettings: pruning,
+            biomeMapping: biomeMapping,
+            customDimensions: customDimensions
         });
     };
 
@@ -188,8 +210,8 @@ export class App extends Component {
                     bufferIndex += 4;
 
                     for (let i = 0; i < worldCount; i++) {
-                        let worldIndex = dataView.getUint8(bufferIndex);
-                        bufferIndex += 1;
+                        let worldIndex = dataView.getInt32(bufferIndex, true);
+                        bufferIndex += 4;
 
                         // World Index
                         worlds[worldIndex] = {};

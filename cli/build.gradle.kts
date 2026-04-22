@@ -36,7 +36,7 @@ dependencies {
 }
 
 group = "com.hivemc.chunker"
-version = "1.16.0"
+version = "1.17.0"
 description = "chunker"
 base.archivesName = "chunker-cli"
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -149,6 +149,8 @@ tasks.jar {
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Xlint:unchecked")
     options.encoding = "UTF-8"
+    options.isFork = true
+    options.forkOptions.jvmArgs = (options.forkOptions.jvmArgs ?: mutableListOf()) + "-Xss4m"
 }
 
 tasks.withType<Javadoc> {

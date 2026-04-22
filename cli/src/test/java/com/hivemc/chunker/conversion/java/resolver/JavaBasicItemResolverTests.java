@@ -37,6 +37,7 @@ import com.hivemc.chunker.conversion.intermediate.column.entity.type.ChunkerVani
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.resolver.property.Property;
 import com.hivemc.chunker.util.JsonTextUtil;
@@ -112,7 +113,10 @@ public class JavaBasicItemResolverTests {
                     ChunkerVanillaEntityType.CAMEL_HUSK,
                     ChunkerVanillaEntityType.NAUTILUS,
                     ChunkerVanillaEntityType.PARCHED,
-                    ChunkerVanillaEntityType.ZOMBIE_NAUTILUS
+                    ChunkerVanillaEntityType.ZOMBIE_NAUTILUS,
+
+                    // Summer Drop
+                    ChunkerVanillaEntityType.SULFUR_CUBE
 
             ),
             ChunkerPotionType.class, Set.of(
@@ -363,7 +367,8 @@ public class JavaBasicItemResolverTests {
             return (T[]) trims.toArray();
         } else if (asClass.equals(ChunkerLodestoneData.class)) {
             List<ChunkerLodestoneData> chunkerLodestoneDatas = new ArrayList<>();
-            for (Dimension dimension : Dimension.values()) {
+            DimensionRegistry dimensionRegistry = converter.getDimensionRegistry();
+            for (Dimension dimension : dimensionRegistry.getDimensions()) {
                 chunkerLodestoneDatas.add(new ChunkerLodestoneData(
                         dimension,
                         10,

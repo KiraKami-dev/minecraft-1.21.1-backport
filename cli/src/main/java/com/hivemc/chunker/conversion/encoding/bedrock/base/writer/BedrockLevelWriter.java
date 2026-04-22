@@ -17,6 +17,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.Chunker
 import com.hivemc.chunker.conversion.intermediate.level.*;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
@@ -113,6 +114,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
     protected void remapExistingDB() throws IOException {
         List<byte[]> removals = new ArrayList<>();
         try (DBIterator iterator = database.iterator()) {
+            DimensionRegistry dimensionRegistry = converter.getDimensionRegistry();
             while (iterator.hasNext()) {
                 Map.Entry<byte[], byte[]> entry = iterator.next();
                 byte[] key = entry.getKey();
@@ -142,7 +144,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
                 Dimension dimension = Dimension.OVERWORLD;
                 if (containsDimension) {
                     int dimensionID = buffer.getInt();
-                    dimension = Dimension.fromBedrock((byte) dimensionID, null);
+                    dimension = dimensionRegistry.fromBedrock(dimensionID, null);
 
                     // If unknown report an issue
                     if (dimension == null) {
@@ -205,6 +207,12 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
 
     @Override
     public void flushLevel() {
+        try {
+            writeBiomeList();
+        } catch (Exception e) {
+            converter.logNonFatalException(e);
+        }
+
         // Compact database
         if (converter.shouldLevelDBCompaction()) {
             // Signal the converter to indicate compaction has started
@@ -225,6 +233,23 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
 
         // Save level data
         Task.asyncConsume("Writing Level Data", TaskWeight.NORMAL, this::writeLevelData, chunkerLevel);
+
+        if (version.isGreaterThan(1, 26, 10)) {
+            CompoundTag dimensionTable = new CompoundTag(1);
+            CompoundTag entries = new CompoundTag(4);
+
+            for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
+                if (dimension.getBedrockID() < 1000) continue;
+                entries.put(dimension.getIdentifier(), dimension.getBedrockID());
+            }
+
+            if (entries.size() > 0) {
+                dimensionTable.put("entries", entries);
+                byte[] value = Tag.writeBedrockNBT(dimensionTable);
+
+                database.put(LevelDBKey.DIMENSION_NAME_ID_TABLE, value);
+            }
+        }
 
         // Create a new world writer with the created worldData
         return createWorldWriter();
@@ -281,8 +306,14 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         // Scale requires 4 when it's not the parent map
         mapData.put("scale", mapData.getLong("parentMapId", -1L) == -1L ? (byte) 4 : chunkerMap.getScale());
 
+        boolean dimensionShouldUseByte = getVersion().isLessThanOrEqual(1, 26, 10);
         // Copy over the other settings
-        mapData.put("dimension", chunkerMap.getDimension().getBedrockID());
+        if (dimensionShouldUseByte) {
+            mapData.put("dimension", (byte) chunkerMap.getDimension().getBedrockID());
+        }
+        else {
+            mapData.put("dimension", chunkerMap.getDimension().getBedrockID());
+        }
         mapData.put("width", (short) chunkerMap.getWidth());
         mapData.put("height", (short) chunkerMap.getHeight());
         mapData.put("xCenter", chunkerMap.getXCenter());
@@ -325,7 +356,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         ListTag<CompoundTag, Map<String, Tag<?>>> portalRecords = new ListTag<>(TagType.COMPOUND, chunkerLevel.getPortals().size());
         for (ChunkerPortal portal : chunkerLevel.getPortals()) {
             CompoundTag record = new CompoundTag(7);
-            record.put("DimId", (int) portal.getDimension().getBedrockID());
+            record.put("DimId", portal.getDimension().getBedrockID());
             record.put("Span", portal.getWidth());
             record.put("TpX", portal.getX());
             record.put("TpY", portal.getY());
@@ -348,6 +379,11 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
     @Override
     public void writeCustomLevelSetting(ChunkerLevelSettings chunkerLevelSettings, CompoundTag output, String targetName, Object value) {
         // Check for next update
+        if (targetName.equals("SummerDrop2026")) {
+            // Not supported
+            return;
+        }
+
         if (targetName.equals("AutumnDrop2025")) {
             // Not supported
             return;
@@ -591,7 +627,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         playerTag.put("Offhand", offhand);
 
         // Write dimension / gamemode
-        playerTag.put("DimensionId", (int) player.getDimension().getBedrockID());
+        playerTag.put("DimensionId", player.getDimension().getBedrockID());
 
         // Handle specific game types
         if (player.getGameType() == 3 || player.getGameType() == 4 || player.getGameType() == 6) {
@@ -615,6 +651,15 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
         // Write to field
         byte[] value = Tag.writeBedrockNBT(playerTag);
         database.put(LevelDBKey.LOCAL_PLAYER, value);
+    }
+
+    /**
+     * Write the custom biome table
+     *
+     * @throws Exception if it fails to write the table
+     */
+    protected void writeBiomeList() throws Exception {
+        // Support for custom biomes was added in 1.21.110
     }
 
     @Override

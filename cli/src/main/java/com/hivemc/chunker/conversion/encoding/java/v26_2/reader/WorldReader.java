@@ -1,4 +1,4 @@
-package com.hivemc.chunker.conversion.encoding.java.v1_26_1.reader;
+package com.hivemc.chunker.conversion.encoding.java.v26_2.reader;
 
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.java.base.reader.JavaColumnReader;
@@ -9,7 +9,7 @@ import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 
 import java.io.File;
 
-public class WorldReader extends com.hivemc.chunker.conversion.encoding.java.v1_21_11.reader.WorldReader {
+public class WorldReader extends com.hivemc.chunker.conversion.encoding.java.v26_1.reader.WorldReader {
     public WorldReader(Converter converter, JavaResolvers resolvers, File regionFolder, Dimension dimension) {
         super(converter, resolvers, regionFolder, dimension);
     }

@@ -3,6 +3,7 @@ package com.hivemc.chunker.conversion.encoding.bedrock.util;
 import com.google.common.primitives.Bytes;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.ChunkCoordPair;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,7 +14,9 @@ import java.nio.charset.StandardCharsets;
  */
 public class LevelDBKey {
     public static final byte[] ACTOR_PREFIX = "actorprefix".getBytes(StandardCharsets.UTF_8);
+    public static final byte[] BIOME_IDS_TABLE = "BiomeIdsTable".getBytes(StandardCharsets.UTF_8);
     public static final byte[] DIGP_PREFIX = "digp".getBytes(StandardCharsets.UTF_8);
+    public static final byte[] DIMENSION_NAME_ID_TABLE = "DimensionNameIdTable".getBytes(StandardCharsets.UTF_8);
     public static final byte[] LOCAL_PLAYER = "~local_player".getBytes(StandardCharsets.UTF_8);
     public static final byte[] MAP_PREFIX = "map_".getBytes(StandardCharsets.UTF_8);
     public static final byte[] PORTALS = "portals".getBytes(StandardCharsets.UTF_8);
@@ -70,7 +73,7 @@ public class LevelDBKey {
      * @param type           the type of the chunk key.
      * @return the composed key.
      */
-    public static byte[] key(Dimension dimension, ChunkCoordPair chunkCoordPair, byte y, byte type) {
+    public static byte[] key(@NotNull Dimension dimension, ChunkCoordPair chunkCoordPair, byte y, byte type) {
         // Dimension is absent from the key if it's overworld
         ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + (dimension == Dimension.OVERWORLD ? 0 : 4) + 2);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -112,7 +115,7 @@ public class LevelDBKey {
      * @param type           the type of the chunk key.
      * @return the composed key.
      */
-    public static byte[] key(Dimension dimension, ChunkCoordPair chunkCoordPair, byte type) {
+    public static byte[] key(@NotNull Dimension dimension, ChunkCoordPair chunkCoordPair, byte type) {
         // Dimension is absent from the key if it's overworld
         ByteBuffer buffer = ByteBuffer.allocate(4 + 4 + (dimension == Dimension.OVERWORLD ? 0 : 4) + 1);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -141,7 +144,7 @@ public class LevelDBKey {
      * @param chunkCoordPair the co-ordinates of the column.
      * @return the composed key.
      */
-    public static byte[] key(byte[] prefix, Dimension dimension, ChunkCoordPair chunkCoordPair) {
+    public static byte[] key(byte[] prefix, @NotNull Dimension dimension, ChunkCoordPair chunkCoordPair) {
         // Dimension is absent from the key if it's overworld
         ByteBuffer buffer = ByteBuffer.allocate(prefix.length + 4 + 4 + (dimension == Dimension.OVERWORLD ? 0 : 4));
         buffer.order(ByteOrder.LITTLE_ENDIAN);

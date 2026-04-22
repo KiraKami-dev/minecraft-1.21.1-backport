@@ -64,6 +64,16 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
         resolvers = buildResolvers(converter).build();
     }
 
+    /**
+     * Get the base directory used for a dimension.
+     *
+     * @param dimension the dimension.
+     * @return the folder which the dimension data resides in.
+     */
+    public File getDimensionBaseDirectory(Dimension dimension) {
+        return resolvers.javaLevelDirectoryResolver().getDimensionBaseDirectory(dimension);
+    }
+
     @Override
     public void readLevel(LevelConversionHandler levelConversionHandler) {
         // Collect level data
@@ -72,10 +82,9 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
         // When we've collected the level data, go through each world and call the reading process
         ProgressiveTask<Void> worldReading = levelDataCollection.thenConsume("Reading Worlds", TaskWeight.HIGHEST, (worldConversionHandler) -> {
             if (worldConversionHandler == null) return; // This can be null if the worlds aren't handled by the reader
-
             // Read worlds
             List<Task<Void>> worlds = new ArrayList<>(3);
-            for (Dimension dimension : Dimension.values()) {
+            for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
                 File dimensionBaseDirectory = resolvers.javaLevelDirectoryResolver().getDimensionBaseDirectory(dimension);
 
                 // Create a world reader if the dimension is present
@@ -120,8 +129,8 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
         output.setPortals(Collections.synchronizedList(new ArrayList<>()));
 
         // Loop through dimensions and parse the POI
-        for (Dimension dimension : Dimension.values()) {
-            File poiBaseDirectory = resolvers.javaLevelDirectoryResolver().getDimensionPOIDirectory(dimension);
+        for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
+            File poiBaseDirectory = resolvers.javaLevelDirectoryResolver().getDimensionPOIDirectory(dimension);;
 
             // Don't parse if it doesn't exist / it shouldn't be processed
             if (!poiBaseDirectory.exists() || !converter.shouldProcessDimension(dimension)) continue;
@@ -390,7 +399,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
 
         // Create the local player
         return new ChunkerLevelPlayer(
-                Dimension.fromJavaNBT(player.get("Dimension"), Dimension.OVERWORLD),
+                converter.getDimensionRegistry().fromJavaNBT(player.get("Dimension"), Dimension.OVERWORLD),
                 positions.get(0),
                 positions.get(1),
                 positions.get(2),
@@ -407,6 +416,10 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
     @Override
     public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull ChunkerLevelSettings chunkerLevelSettings, @NotNull String targetName, @NotNull Class<?> type) {
         // Check for next update
+        if (targetName.equals("SummerDrop2026")) {
+            return false;
+        }
+
         if (targetName.equals("AutumnDrop2025")) {
             return false;
         }
@@ -558,7 +571,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
                     mapCompound.getShort("height", (short) 128),
                     mapCompound.getShort("width", (short) 128),
                     mapCompound.getByte("scale", (byte) 0),
-                    Dimension.fromJavaNBT(mapCompound.get("dimension"), Dimension.OVERWORLD),
+                    converter.getDimensionRegistry().fromJavaNBT(mapCompound.get("dimension"), Dimension.OVERWORLD),
                     mapCompound.getInt("xCenter", 0),
                     mapCompound.getInt("zCenter", 0),
                     mapCompound.getByte("unlimitedTracking", (byte) 0) != 0,

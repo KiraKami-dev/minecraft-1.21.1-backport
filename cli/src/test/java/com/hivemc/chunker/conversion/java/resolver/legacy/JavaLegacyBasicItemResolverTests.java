@@ -152,7 +152,8 @@ public class JavaLegacyBasicItemResolverTests {
                     ChunkerVanillaEntityType.CAMEL_HUSK,
                     ChunkerVanillaEntityType.NAUTILUS,
                     ChunkerVanillaEntityType.PARCHED,
-                    ChunkerVanillaEntityType.ZOMBIE_NAUTILUS
+                    ChunkerVanillaEntityType.ZOMBIE_NAUTILUS,
+                    ChunkerVanillaEntityType.SULFUR_CUBE
             ),
             ChunkerPotionType.class, Set.of(
                     ChunkerPotionType.EMPTY,

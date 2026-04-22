@@ -28,6 +28,7 @@ import com.hivemc.chunker.conversion.intermediate.column.entity.type.ChunkerEnti
 import com.hivemc.chunker.conversion.intermediate.level.ChunkerLevel;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
+import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
@@ -942,7 +943,8 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
                 // Check if there's a target
                 CompoundTag target = lodestoneTracker.getCompound("target");
                 if (target == null) return Optional.empty();
-                Dimension dimension = Dimension.fromJavaNBT(target.get("dimension"), Dimension.OVERWORLD);
+                DimensionRegistry dimensionRegistry = resolvers.converter().getDimensionRegistry();
+                Dimension dimension = dimensionRegistry.fromJavaNBT(target.get("dimension"), Dimension.OVERWORLD);
 
                 // Check if the position is valid
                 int[] position = target.getIntArray("pos", null);

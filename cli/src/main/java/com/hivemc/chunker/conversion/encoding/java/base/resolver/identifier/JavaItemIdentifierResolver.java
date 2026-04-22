@@ -743,5 +743,11 @@ public class JavaItemIdentifierResolver extends ChunkerItemIdentifierResolver {
             register(ItemMapping.of("minecraft:parched_spawn_egg", ChunkerVanillaItemType.SPAWN_EGG, ChunkerItemProperty.SPAWN_EGG_MOB, ChunkerVanillaEntityType.PARCHED));
             register(ItemMapping.of("minecraft:zombie_nautilus_spawn_egg", ChunkerVanillaItemType.SPAWN_EGG, ChunkerItemProperty.SPAWN_EGG_MOB, ChunkerVanillaEntityType.ZOMBIE_NAUTILUS));
         }
+
+        // 26.2
+        if (version.isGreaterThanOrEqual(26, 2, 0)) {
+            register(ItemMapping.of("minecraft:sulfur_cube_bucket", ChunkerVanillaItemType.SULFUR_CUBE_BUCKET));
+            register(ItemMapping.of("minecraft:sulfur_cube_spawn_egg", ChunkerVanillaItemType.SPAWN_EGG, ChunkerItemProperty.SPAWN_EGG_MOB, ChunkerVanillaEntityType.SULFUR_CUBE));
+        }
     }
 }

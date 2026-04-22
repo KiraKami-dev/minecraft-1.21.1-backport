@@ -104,6 +104,6 @@ public class ChunkerChunk {
         if (palette.isEmpty()) return true;
 
         // If the palette contains a not air block, it's not empty
-        return !palette.containsValue(block -> !block.isAir());
+        return !palette.containsKey(block -> !block.isAir());
     }
 }
