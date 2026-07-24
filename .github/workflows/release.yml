@@ -24,7 +24,7 @@ jobs:
         include:
           - os: ubuntu-latest
             gradle-args: 'build'
-          - os: ubuntu-24.04-arm
+          - os: blacksmith-4vcpu-ubuntu-2404-arm
             gradle-args: 'build -x test'
     runs-on: ${{ matrix.os }}
     steps:
@@ -169,7 +169,7 @@ jobs:
           path: build/libs/mac/
 
   publish:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     needs: [ build_test_linux, build_windows, build_mac ]
 
     steps:
