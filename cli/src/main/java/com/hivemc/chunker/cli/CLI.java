@@ -67,7 +67,7 @@ public class CLI implements Runnable {
     @CommandLine.Option(
             names = {"--outputFormat", "-f"},
             required = true,
-            description = "The format to convert the world to.",
+            description = "The format to convert the world to. Use INPUT to match the detected input format (with --keepOriginalNBT to keep retain NBT where possible).",
             converter = EncodingTypeValidator.class
     )
     private String format;
@@ -387,17 +387,26 @@ public class CLI implements Runnable {
             // Check for the original NBT option
             worldConverter.setAllowNBTCopying(keepOriginalNBT);
 
-            // Create the reader / writer (note: converter settings cannot be set after this point)
+            // Create the reader (note: converter settings cannot be set after this point)
             Optional<? extends LevelReader> reader = EncodingType.findReader(inputDirectory, worldConverter);
-            Optional<? extends LevelWriter> writer = Messenger.findWriter(format, worldConverter, outputDirectory);
             if (reader.isEmpty()) {
                 System.err.println("Failed to find suitable reader for the world.");
                 return;
             }
+
+            // Create the writer, resolving INPUT to the detected input format now that the reader is known
+            Optional<? extends LevelWriter> writer;
+            if (format.equalsIgnoreCase("INPUT")) {
+                writer = reader.get().getEncodingType().createWriter(outputDirectory, reader.get().getVersion(), worldConverter);
+            } else {
+                writer = Messenger.findWriter(format, worldConverter, outputDirectory);
+            }
+
             if (writer.isEmpty()) {
                 System.err.println("Failed to find suitable writer for the world.");
                 return;
             }
+            
             System.out.println(MessageFormat.format(
                     "Converting from {0} {1} to {2} {3}",
                     reader.get().getEncodingType().getName(),

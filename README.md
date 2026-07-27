@@ -72,7 +72,7 @@ The following parameters are required:
 - `-i` / `--inputDirectory` - the path relative to the application which should be used as the input directory.
 - `-o` / `--outputDirectory` - the path relative to the application which should be used as the output directory.
 - `-f` / `--outputFormat` - the output format to convert the world to in the form `EDITION_X_Y_Z`,
-  e.g. `JAVA_1_20_5`, `JAVA_1_20`, `BEDROCK_1_19_30`.
+  e.g. `JAVA_1_20_5`, `JAVA_1_20`, `BEDROCK_1_19_30`, `INPUT` to match the input version.
 
 Additionally, the following parameters are supported:
 
