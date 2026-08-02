@@ -79,7 +79,7 @@ export class ProcessingScreen extends BaseScreen {
         api.send({
             type: "settings",
             method: "set_dimension_registry",
-            dimensions: self.app.state.customDimensions
+            dimensions: self.app.getCustomDimensions()
         }, function (message) {
             if (message.type === "error") {
                 console.info("Failed to set custom dimensions: " + message.error);
@@ -97,7 +97,7 @@ export class ProcessingScreen extends BaseScreen {
         api.send({
             type: "mappings",
             method: "set_dimension_mappings",
-            dimensions: self.app.state.dimensionMapping
+            dimensions: self.app.getDimensionMappings()
         }, function (message) {
             if (message.type === "error") {
                 console.info("Failed to set dimension mappings: " + message.error);

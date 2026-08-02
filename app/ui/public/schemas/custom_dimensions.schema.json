@@ -53,10 +53,9 @@
         "description": "Sets which custom dimensions should exist in this world",
         "required": [
           "identifier",
-          "biomeHeight",
-          "fallbackBiome"
+          "biomeHeight"
         ],
-        "additionalItems": false,
+        "additionalProperties": false,
         "properties": {
           "identifier": {
             "type": "string",
@@ -66,7 +65,7 @@
           "biomeHeight": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 24,
+            "maximum": 256,
             "description": "The number of biome sections in this dimension"
           },
           "fallbackBiome": {

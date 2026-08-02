@@ -268,7 +268,9 @@ public class CLI implements Runnable {
             if (dimensionMappings != null) {
                 try {
                     Map<String, String> rawDimensionMapping = GSON.fromJson(dimensionMappings.getJSONObjectString(), DIMENSION_INPUT_TO_OUTPUT_TYPE);
-                    worldConverter.setDimensionMapping(rawDimensionMapping);
+                    if (rawDimensionMapping != null && !rawDimensionMapping.isEmpty()) {
+                        worldConverter.setDimensionMapping(rawDimensionMapping);
+                    }
                 } catch (Exception e) {
                     System.err.println("Failed to parse dimension mappings.");
                     throw new RuntimeException(e);
