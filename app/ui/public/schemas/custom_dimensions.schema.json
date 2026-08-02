@@ -14,7 +14,7 @@
           "identifier": "my:custom_dim",
           "javaID": 1000,
           "biomeHeight": 24,
-          "fallbackBiome": "PLAINS"
+          "fallbackBiome": "minecraft:plains"
         }
       ]
     },
@@ -24,13 +24,13 @@
           "identifier": "my:custom_dim1",
           "javaID": 1000,
           "biomeHeight": 24,
-          "fallbackBiome": "PLAINS"
+          "fallbackBiome": "minecraft:plains"
         },
         {
           "identifier": "my:custom_dim2",
           "javaID": 1001,
           "biomeHeight": 24,
-          "fallbackBiome": "PLAINS"
+          "fallbackBiome": "minecraft:plains"
         }
       ]
     }
@@ -47,7 +47,7 @@
             "identifier": "my:custom_dim",
             "javaID": 1000,
             "biomeHeight": 24,
-            "fallbackBiome": "PLAINS"
+            "fallbackBiome": "minecraft:plains"
           }
         ]
       ],
@@ -81,7 +81,7 @@
           },
           "fallbackBiome": {
             "type": "string",
-            "description": "The fallback when biomes are not found (Accepted values can be found in ChunkerBiome.ChunkerVanillaBiome)"
+            "description": "The namespaced biome used when a biome can't be written. Defaults to minecraft:plains."
           }
         }
       }
