@@ -80,7 +80,9 @@ Additionally, the following parameters are supported:
 - `-s` / `--worldSettings` - a path to a json file or a json object containing world settings.
 - `-p` / `--pruning` - a path to a json file or a json object containing pruning settings.
 - `-c` / `--converterSettings` - a path to a json file or a json object containing converter settings.
+- `-r` / `--dimensionRegistry` - a path to a json file or a json object containing custom dimension definitions.
 - `-d` / `--dimensionMappings` - a path to a json file or a json object containing dimension mappings.
+- `-b` / `--biomeMappings` - a path to a json file or a json object containing biome mappings.
 - `-k` / `--keepOriginalNBT` - indicates that NBT should be copied from the input to output where processed by Chunker,
   this is only supported where the output format is the same as the input and for optimal results you will want to copy
   the input world to the output folder prior to conversion.

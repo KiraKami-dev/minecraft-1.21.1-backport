@@ -245,7 +245,7 @@ public class BedrockLevelWriter implements LevelWriter, BedrockReaderWriter {
             CompoundTag entries = new CompoundTag(4);
 
             for (Dimension dimension : converter.getDimensionRegistry().getDimensions()) {
-                if (dimension.getBedrockID() < 1000) continue;
+                if (dimension.getBedrockID() < DimensionRegistry.BEDROCK_CUSTOM_DIMENSION_ID_START) continue;
                 entries.put(dimension.getIdentifier(), dimension.getBedrockID());
             }
 

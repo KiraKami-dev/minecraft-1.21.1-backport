@@ -20,13 +20,11 @@ import com.hivemc.chunker.conversion.encoding.settings.SettingsLevelWriter;
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerCustomBiome;
 import com.hivemc.chunker.conversion.intermediate.level.map.ChunkerMap;
-import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.conversion.intermediate.world.DimensionRegistry;
 import com.hivemc.chunker.mapping.DimensionMapping;
 import com.hivemc.chunker.mapping.DimensionMappingList;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
-import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.LoggedException;
 import com.hivemc.chunker.scheduling.TaskMonitorThread;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
@@ -142,17 +140,9 @@ public class Messenger {
 
                         worldConverter.setDimensionMapping(previewRequest.getInputToOutputDimension());
 
-                        // Turn the String identifiers into a Dimension based map
+                        // Set pruning configs if they're present
                         if (previewRequest.getPruningList() != null && previewRequest.getPruningList().getConfigs() != null && !previewRequest.getPruningList().getConfigs().isEmpty()) {
-                            DimensionRegistry registry = worldConverter.getDimensionRegistry();
-                            Map<String, PruningConfig> pruning = previewRequest.getPruningList().getConfigs();
-
-                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
-                            for (String key : pruning.keySet()) {
-                                pruningConfigs.put(registry.getByIdentifier(key), pruning.get(key));
-                            }
-
-                            worldConverter.setPruningConfigs(pruningConfigs);
+                            worldConverter.setPruningConfigs(previewRequest.getPruningList().getConfigs());
                         }
 
                         // Turn off certain features for preview
@@ -203,28 +193,31 @@ public class Messenger {
                         DimensionRegistry registry = worldConverter.getDimensionRegistry();
                         JsonObject customDimensions = convertRequest.getCustomDimensions();
                         if (customDimensions != null && !customDimensions.isEmpty()) {
-                            DimensionMappingList dimensionMapping = GSON.fromJson(customDimensions, DimensionMappingList.class);
-                            if (dimensionMapping.getMappings() != null) {
-                                List<DimensionMapping> mappings = dimensionMapping.getMappings();
-                                for (int i = 0, id = 1000; i < mappings.size(); id++, i++) {
-                                    DimensionMapping mapping = mappings.get(i);
-                                    registry.register(mapping.identifier(), mapping.toDimension(id));
+                            try {
+                                DimensionMappingList dimensionMapping = GSON.fromJson(customDimensions, DimensionMappingList.class);
+                                if (dimensionMapping.getMappings() != null) {
+                                    for (DimensionMapping mapping : dimensionMapping.getMappings()) {
+                                        registry.register(mapping.identifier(), mapping.toDimension(registry.getNextCustomBedrockID()));
+                                    }
                                 }
+                            } catch (Exception e) {
+                                removeWorldConverter(convertRequest.getAnonymousId(), convertRequest.getRequestId());
+                                write(new ErrorResponse(
+                                        convertRequest.getRequestId(),
+                                        false,
+                                        "Failed to parse custom dimensions.",
+                                        null,
+                                        e.getMessage(),
+                                        printStackTrace(e)
+                                ));
+                                return;
                             }
                         }
 
-                        // Convert identifiers to Dimension types
+                        // Apply dimension mappings
                         Map<String, String> rawDimensionMapping = convertRequest.getInputToOutputDimension();
                         if (rawDimensionMapping != null) {
-                            Map<Dimension, Dimension> dimensionMapping = new Object2ObjectOpenHashMap<>(rawDimensionMapping.size());
-                            for (String key : rawDimensionMapping.keySet()) {
-                                Dimension src = registry.getByIdentifier(key);
-                                Dimension dst = registry.getByIdentifier(rawDimensionMapping.get(key));
-                                if (src != null && dst != null) {
-                                    dimensionMapping.put(src, dst);
-                                }
-                            }
-                            worldConverter.setDimensionMapping(dimensionMapping);
+                            worldConverter.setDimensionMapping(rawDimensionMapping);
                         }
 
                         // Apply biome mappings
@@ -264,16 +257,9 @@ public class Messenger {
                             worldConverter.setBiomeMapping(biomeMapping);
                         }
 
-                        // Turn the identifier based pruning map into a dimension map
+                        // Apply pruning configs
                         if (convertRequest.getPruningList() != null && convertRequest.getPruningList().getConfigs() != null && !convertRequest.getPruningList().getConfigs().isEmpty()) {
-                            Map<String, PruningConfig> pruning = convertRequest.getPruningList().getConfigs();
-
-                            Map<Dimension, PruningConfig> pruningConfigs = new Object2ObjectOpenHashMap<>(pruning.size());
-                            for (String key : pruning.keySet()) {
-                                pruningConfigs.put(registry.getByIdentifier(key), pruning.get(key));
-                            }
-
-                            worldConverter.setPruningConfigs(pruningConfigs);
+                            worldConverter.setPruningConfigs(convertRequest.getPruningList().getConfigs());
                         }
 
                         // Load the in-game map data
