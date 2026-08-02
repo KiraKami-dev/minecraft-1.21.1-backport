@@ -10,7 +10,6 @@ import java.util.Locale;
  */
 public record DimensionMapping(
         String identifier,
-        int javaID,
         int biomeHeight,
         String fallbackBiome
 ) {
@@ -20,7 +19,7 @@ public record DimensionMapping(
      * @throws IllegalArgumentException if the fallback biome isn't a vanilla biome.
      */
     public Dimension toDimension(int bedrockID) {
-        return new Dimension(javaID, bedrockID, identifier, resolveFallbackBiome(), biomeHeight);
+        return new Dimension(null, bedrockID, identifier, resolveFallbackBiome(), biomeHeight);
     }
 
     private ChunkerBiome.ChunkerVanillaBiome resolveFallbackBiome() {

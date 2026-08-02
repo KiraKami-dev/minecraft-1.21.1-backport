@@ -46,7 +46,7 @@ public class DimensionRegistry {
     public void register(String identifier, Dimension dimension) {
         this.dimensionByIdentifier.put(identifier, dimension);
         this.dimensionByBedrockId.put(dimension.getBedrockID(), dimension);
-        this.dimensionByJavaId.put(dimension.getJavaID(), dimension);
+        dimension.getJavaID().ifPresent(javaID -> this.dimensionByJavaId.put(javaID, dimension));
     }
 
     /**

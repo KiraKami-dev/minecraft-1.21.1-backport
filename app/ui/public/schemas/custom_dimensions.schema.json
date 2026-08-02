@@ -12,7 +12,6 @@
       "dimensions": [
         {
           "identifier": "my:custom_dim",
-          "javaID": 1000,
           "biomeHeight": 24,
           "fallbackBiome": "minecraft:plains"
         }
@@ -22,13 +21,11 @@
       "dimensions": [
         {
           "identifier": "my:custom_dim1",
-          "javaID": 1000,
           "biomeHeight": 24,
           "fallbackBiome": "minecraft:plains"
         },
         {
           "identifier": "my:custom_dim2",
-          "javaID": 1001,
           "biomeHeight": 24,
           "fallbackBiome": "minecraft:plains"
         }
@@ -45,7 +42,6 @@
         [
           {
             "identifier": "my:custom_dim",
-            "javaID": 1000,
             "biomeHeight": 24,
             "fallbackBiome": "minecraft:plains"
           }
@@ -57,7 +53,6 @@
         "description": "Sets which custom dimensions should exist in this world",
         "required": [
           "identifier",
-          "javaID",
           "biomeHeight",
           "fallbackBiome"
         ],
@@ -67,11 +62,6 @@
             "type": "string",
             "pattern": "^[\\w-]+:[\\w-]+$",
             "description": "Namespaced identifier in the format namespace:id"
-          },
-          "javaID": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Java numeric identifier"
           },
           "biomeHeight": {
             "type": "integer",
