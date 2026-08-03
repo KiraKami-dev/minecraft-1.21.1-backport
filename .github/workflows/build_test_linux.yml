@@ -9,7 +9,7 @@ on:
 
 jobs:
   build_test_linux:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event_name == 'pull_request_review' && github.event.review.state == 'approved')
     steps:
       - uses: actions/checkout@v7
