@@ -97,6 +97,8 @@ public class BedrockItemIdentifierValidationTests {
             "minecraft:compound",
             "minecraft:ice_bomb",
             "minecraft:medicine",
+            "minecraft:photo_item",
+            "minecraft:portfolio",
             "minecraft:rapid_fertilizer",
             "minecraft:sparkler"
     );
