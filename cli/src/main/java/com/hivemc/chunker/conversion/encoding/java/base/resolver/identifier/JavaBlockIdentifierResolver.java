@@ -554,6 +554,9 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
                         .put("minecraft:fire_coral_wall_fan", ChunkerVanillaBlockType.FIRE_CORAL_WALL_FAN)
                         .put("minecraft:horn_coral_wall_fan", ChunkerVanillaBlockType.HORN_CORAL_WALL_FAN)
                         .put("minecraft:tube_coral_wall_fan", ChunkerVanillaBlockType.TUBE_CORAL_WALL_FAN)
+                        .build(),
+                JavaStateGroups.CORAL_WALL_FAN));
+        register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
                         .put("minecraft:ladder", ChunkerVanillaBlockType.LADDER)
                         .put("minecraft:ender_chest", ChunkerVanillaBlockType.ENDER_CHEST)
                         .build(),
@@ -591,13 +594,13 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
                         .put("minecraft:stone_pressure_plate", ChunkerVanillaBlockType.STONE_PRESSURE_PLATE)
                         .build(),
                 JavaStateGroups.POWERED));
+        register(BlockMapping.of("minecraft:chorus_plant", ChunkerVanillaBlockType.CHORUS_PLANT, JavaStateGroups.CONNECTABLE));
         register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
                         .put("minecraft:brown_mushroom_block", ChunkerVanillaBlockType.BROWN_MUSHROOM_BLOCK)
-                        .put("minecraft:chorus_plant", ChunkerVanillaBlockType.CHORUS_PLANT)
                         .put("minecraft:mushroom_stem", ChunkerVanillaBlockType.MUSHROOM_STEM)
                         .put("minecraft:red_mushroom_block", ChunkerVanillaBlockType.RED_MUSHROOM_BLOCK)
                         .build(),
-                JavaStateGroups.CONNECTABLE));
+                JavaStateGroups.MUSHROOM_BLOCK));
         register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
                         .put("minecraft:frosted_ice", ChunkerVanillaBlockType.FROSTED_ICE)
                         .put("minecraft:nether_wart", ChunkerVanillaBlockType.NETHER_WART)
@@ -708,11 +711,8 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
                         .put("minecraft:stripped_spruce_wood", ChunkerVanillaBlockType.STRIPPED_SPRUCE_WOOD)
                         .build(),
                 JavaStateGroups.AXIS));
-        register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
-                        .put("minecraft:furnace", ChunkerVanillaBlockType.FURNACE)
-                        .put("minecraft:redstone_wall_torch", ChunkerVanillaBlockType.REDSTONE_WALL_TORCH)
-                        .build(),
-                JavaStateGroups.FACING_HORIZONTAL_LIT));
+        register(BlockMapping.of("minecraft:furnace", ChunkerVanillaBlockType.FURNACE, JavaStateGroups.FACING_HORIZONTAL_LIT));
+        register(BlockMapping.of("minecraft:redstone_wall_torch", ChunkerVanillaBlockType.REDSTONE_WALL_TORCH, JavaStateGroups.REDSTONE_WALL_TORCH));
         register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
                         .put("minecraft:large_fern", ChunkerVanillaBlockType.LARGE_FERN)
                         .put("minecraft:lilac", ChunkerVanillaBlockType.LILAC)
@@ -829,7 +829,7 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
                             .put("minecraft:dead_horn_coral", ChunkerVanillaBlockType.DEAD_HORN_CORAL)
                             .put("minecraft:dead_tube_coral", ChunkerVanillaBlockType.DEAD_TUBE_CORAL)
                             .build(),
-                    JavaStateGroups.WATERLOGGED));
+                    JavaStateGroups.CORAL));
         }
 
         // 1.14
