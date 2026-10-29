@@ -37,10 +37,10 @@ public final class BlockBackport {
         rule("minecraft:iron_chain", "minecraft:chain", true);
 
         // --- Biomes O' Plenty: blocks added after the 1.21.1 release ---
-        // Maple leaf litter (BOP 1.21.1 has maple_leaf_pile, a different block, so these are removed)
-        rule("biomesoplenty:red_maple_leaf_litter", AIR, false);
-        rule("biomesoplenty:orange_maple_leaf_litter", AIR, false);
-        rule("biomesoplenty:yellow_maple_leaf_litter", AIR, false);
+        // Maple leaf litter -> the 1.21.1 maple_leaf_pile (stateless single block, so facing/segment_amount can't carry over)
+        rule("biomesoplenty:red_maple_leaf_litter", "biomesoplenty:red_maple_leaf_pile", false);
+        rule("biomesoplenty:orange_maple_leaf_litter", "biomesoplenty:orange_maple_leaf_pile", false);
+        rule("biomesoplenty:yellow_maple_leaf_litter", "biomesoplenty:yellow_maple_leaf_pile", false);
         rule("biomesoplenty:purple_wildflowers", "biomesoplenty:violet", false);
         rule("biomesoplenty:flower_stem", AIR, false);
         rule("biomesoplenty:flower_bud", AIR, false);
