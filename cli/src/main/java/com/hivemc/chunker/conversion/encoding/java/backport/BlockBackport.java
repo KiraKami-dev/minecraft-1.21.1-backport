@@ -77,6 +77,12 @@ public final class BlockBackport {
         }
     }
 
+    // Modded biomes that don't exist in the 1.21.1 version of the mod -> nearest biome there.
+    private static final Map<String, String> BIOME_MAP = Map.of(
+            "biomesoplenty:subtropics", "biomesoplenty:tropics",
+            "biomesoplenty:end_flats", "minecraft:the_end"
+    );
+
     private static volatile Set<String> vbBlocks;
 
     private BlockBackport() {
@@ -114,6 +120,13 @@ public final class BlockBackport {
         StateValue<?> waterlogged = input.getStates().get("waterlogged");
         if (waterlogged != null) out.put("waterlogged", waterlogged);
         return new Identifier("minecraft:chest", out);
+    }
+
+    /**
+     * Map a modded biome id to one which exists in the target mod version.
+     */
+    public static String remapBiome(String id) {
+        return BIOME_MAP.getOrDefault(id, id);
     }
 
     /**
