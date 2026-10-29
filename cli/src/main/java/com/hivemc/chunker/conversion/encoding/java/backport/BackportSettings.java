@@ -33,6 +33,18 @@ public final class BackportSettings {
     private BackportSettings() {
     }
 
+    static {
+        // Enabled by pointing -Dchunker.backport at the settings JSON
+        String path = System.getProperty("chunker.backport");
+        if (path != null && !path.isEmpty()) {
+            try {
+                load(new File(path));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read backport settings " + path, e);
+            }
+        }
+    }
+
     public static void load(File file) throws IOException {
         JsonObject root;
         try (FileReader reader = new FileReader(file)) {
@@ -71,7 +83,7 @@ public final class BackportSettings {
         if (!enabled || !file.isFile()) return;
         try {
             CompoundTag root = Tag.readGZipJavaNBT(file);
-            CompoundTag data = root.getCompound("data");
+            CompoundTag data = root.getCompound("data") != null ? root.getCompound("data") : root;
             ListTag<CompoundTag, Map<String, Tag<?>>> list = data == null ? null : data.getList("Graves", CompoundTag.class, null);
             if (list == null) return;
             for (CompoundTag grave : list) {

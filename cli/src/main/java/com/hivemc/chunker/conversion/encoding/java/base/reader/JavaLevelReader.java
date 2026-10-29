@@ -64,6 +64,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
         this.inputVersion = inputVersion;
         this.converter = converter;
         resolvers = buildResolvers(converter).build();
+        com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.loadGraves(inputDirectory);
     }
 
     @Override

@@ -108,6 +108,10 @@ public class JavaBlockEntityResolver extends BlockEntityResolver<JavaResolvers, 
         if (version.isGreaterThanOrEqual(1, 21, 2)) {
             register(new EmptyBlockEntityHandler<>("minecraft:creaking_heart", CreakingHeartBlockEntity.class, CreakingHeartBlockEntity::new));
         }
+        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled() && version.isLessThan(1, 21, 9)) {
+            // Backport: provided by Vanilla Backport on the target
+            register(new EmptyBlockEntityHandler<>("minecraft:copper_golem_statue", CopperGolemStatueBlockEntity.class, CopperGolemStatueBlockEntity::new));
+        }
         if (version.isGreaterThanOrEqual(1, 21, 9)) {
             register(new JavaShelfBlockEntityHandler());
             register(new EmptyBlockEntityHandler<>("minecraft:copper_golem_statue", CopperGolemStatueBlockEntity.class, CopperGolemStatueBlockEntity::new));
@@ -121,6 +125,25 @@ public class JavaBlockEntityResolver extends BlockEntityResolver<JavaResolvers, 
             // Register the empty block entity handler for older versions
             register(new EmptyBlockEntityHandler<>("minecraft:bed", BedBlockEntity.class, BedBlockEntity::new));
         }
+    }
+
+    @Override
+    public Optional<BlockEntity> to(CompoundTag input) {
+        // Backport: Universal Graves graves are read as chests
+        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()) {
+            com.hivemc.chunker.conversion.encoding.java.backport.GraveMapping.Chests chests = com.hivemc.chunker.conversion.encoding.java.backport.GraveMapping.convert(input);
+            if (chests != null) {
+                Optional<BlockEntity> main = super.to(chests.main());
+                if (main.isPresent()) {
+                    main.get().setGrave(true);
+                    if (chests.overflow() != null) {
+                        main.get().setGraveOverflow(super.to(chests.overflow()).orElse(null));
+                    }
+                    return main;
+                }
+            }
+        }
+        return super.to(input);
     }
 
     @Override

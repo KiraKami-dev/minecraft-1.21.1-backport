@@ -226,6 +226,10 @@ public class JavaColumnWriter implements ColumnWriter {
     protected CompoundTag writeEntity(ChunkerColumn chunkerColumn, Entity entity) {
         Optional<CompoundTag> compoundTag = resolvers.entityResolver().from(entity);
         if (compoundTag.isPresent()) {
+            if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled() && entity.getSourceDataVersion() != null) {
+                // Backport: fields that changed shape since the target version
+                com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.entity(compoundTag.get(), entity.getSourceDataVersion(), resolvers.dataVersion());
+            }
             return compoundTag.get();
         } else {
             // Log as missing
@@ -271,6 +275,10 @@ public class JavaColumnWriter implements ColumnWriter {
     protected CompoundTag writeBlockEntity(ChunkerColumn chunkerColumn, BlockEntity blockEntity) {
         Optional<CompoundTag> compoundTag = resolvers.blockEntityResolver().from(blockEntity);
         if (compoundTag.isPresent()) {
+            if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled() && blockEntity.getSourceDataVersion() != null) {
+                // Backport: text components and entities inside the block entity changed shape since the target version
+                com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.blockEntity(resolvers, compoundTag.get(), blockEntity.getSourceDataVersion());
+            }
             return compoundTag.get();
         } else {
             // Log as missing
@@ -317,6 +325,11 @@ public class JavaColumnWriter implements ColumnWriter {
      * @param columnNBT the output NBT for the column.
      */
     protected void preProcessColumn(ChunkerColumn column, CompoundTag columnNBT) {
+        // Backport: graves become chests (and their overflow chests)
+        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()) {
+            com.hivemc.chunker.conversion.encoding.java.backport.GraveMapping.placeBeforeWrite(column);
+        }
+
         // Create any block entities / entities which are based on blocks
         for (ChunkerChunk chunk : column.getChunks().values()) {
             resolvers.blockEntityResolver().generateBeforeWriteBlockEntities(column, chunk);

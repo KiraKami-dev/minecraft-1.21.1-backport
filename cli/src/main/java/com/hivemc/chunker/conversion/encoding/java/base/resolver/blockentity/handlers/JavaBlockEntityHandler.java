@@ -46,13 +46,6 @@ public class JavaBlockEntityHandler extends BlockEntityHandler<JavaResolvers, Co
             }
         }
 
-        // Backport: text components were NBT from 1.21.5, JSON strings before
-        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()
-                && com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.applies(blockEntity.getSourceDataVersion(), resolvers.dataVersion())
-                && output.contains("CustomName")) {
-            com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.textToJson(output, "CustomName");
-        }
-
         // Position
         output.put("x", blockEntity.getX());
         output.put("y", blockEntity.getY());

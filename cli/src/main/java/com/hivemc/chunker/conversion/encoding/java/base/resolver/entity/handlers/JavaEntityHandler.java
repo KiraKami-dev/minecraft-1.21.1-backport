@@ -88,10 +88,5 @@ public class JavaEntityHandler extends EntityHandler<JavaResolvers, CompoundTag,
         rotation.add(new FloatTag(entity.getYaw()));
         rotation.add(new FloatTag(entity.getPitch()));
         output.put("Rotation", rotation);
-
-        // Backport: fields that changed shape since the target version
-        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled() && entity.getOriginalNBT() != null) {
-            com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.entity(output, entity.getSourceDataVersion(), resolvers.dataVersion());
-        }
     }
 }

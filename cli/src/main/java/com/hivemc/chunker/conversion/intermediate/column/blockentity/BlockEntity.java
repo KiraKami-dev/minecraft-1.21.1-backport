@@ -114,6 +114,26 @@ public abstract class BlockEntity {
     private java.util.Map<com.hivemc.chunker.nbt.tags.Tag<?>, Object> embeddedNBT = java.util.Map.of();
     private com.hivemc.chunker.conversion.encoding.java.JavaDataVersion sourceDataVersion;
 
+    // Backport: a Universal Graves grave read as a chest, and the chest for the items which did not fit
+    private boolean grave;
+    private BlockEntity graveOverflow;
+
+    public boolean isGrave() {
+        return grave;
+    }
+
+    public void setGrave(boolean grave) {
+        this.grave = grave;
+    }
+
+    public BlockEntity getGraveOverflow() {
+        return graveOverflow;
+    }
+
+    public void setGraveOverflow(BlockEntity graveOverflow) {
+        this.graveOverflow = graveOverflow;
+    }
+
     public java.util.Map<com.hivemc.chunker.nbt.tags.Tag<?>, Object> getEmbeddedNBT() {
         return embeddedNBT;
     }
