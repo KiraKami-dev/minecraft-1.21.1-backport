@@ -95,7 +95,8 @@ public class JavaNamedBiomeResolver extends ChunkerBiomeResolver<String> {
             mapping.put(ChunkerBiome.ChunkerVanillaBiome.CHERRY_GROVE, "minecraft:cherry_grove");
         }
 
-        if (javaVersion.isGreaterThanOrEqual(1, 21, 2)) {
+        // Vanilla Backport registers the pale garden biome on older versions
+        if (javaVersion.isGreaterThanOrEqual(1, 21, 2) || com.hivemc.chunker.conversion.encoding.java.backport.BlockBackport.active()) {
             mapping.put(ChunkerBiome.ChunkerVanillaBiome.PALE_GARDEN, "minecraft:pale_garden");
         }
 
@@ -114,7 +115,11 @@ public class JavaNamedBiomeResolver extends ChunkerBiomeResolver<String> {
             return from(chunkerVanillaBiome);
         } else if (input instanceof ChunkerCustomBiome customIdentifierBiome) {
             if (customIdentifierSupported) {
-                return Optional.ofNullable(customIdentifierBiome.getIdentifier());
+                String customIdentifier = customIdentifierBiome.getIdentifier();
+                if (customIdentifier != null && com.hivemc.chunker.conversion.encoding.java.backport.BlockBackport.active()) {
+                    return Optional.of(com.hivemc.chunker.conversion.encoding.java.backport.BlockBackport.remapBiome(customIdentifier));
+                }
+                return Optional.ofNullable(customIdentifier);
             } else {
                 // If they're not supported check for a fallback
                 ChunkerBiome.ChunkerVanillaBiome fallback = input.getFallback();

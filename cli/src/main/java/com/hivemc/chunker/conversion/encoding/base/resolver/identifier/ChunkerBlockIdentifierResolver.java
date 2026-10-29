@@ -457,7 +457,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
 
     @Override
     public Optional<Identifier> from(ChunkerBlockIdentifier input) {
-        return handleConverterMapping(input, resolveFrom(input));
+        return backportFrom(input, handleConverterMapping(input, resolveFrom(input)));
+    }
+
+    /**
+     * Hook for the modded-world backport to substitute written blocks, does nothing by default.
+     *
+     * @param input  the chunker block.
+     * @param output the identifier which was resolved for it.
+     * @return the identifier to write.
+     */
+    protected Optional<Identifier> backportFrom(ChunkerBlockIdentifier input, Optional<Identifier> output) {
+        return output;
     }
 
     /**
