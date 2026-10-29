@@ -131,7 +131,13 @@ public final class GraveMapping {
             BlockEntity overflow = blockEntity.getGraveOverflow();
             if (overflow == null) continue;
             blockEntity.setGraveOverflow(null);
-            int[][] directions = {{0, 1, 0}, {1, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 0, -1}, {0, -1, 0}};
+            int[][] directions = new int[6 + 32][];
+            int[][] near = {{0, 1, 0}, {1, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 0, -1}, {0, -1, 0}};
+            System.arraycopy(near, 0, directions, 0, 6);
+            for (int i = 0; i < 16; i++) { // nothing adjacent is free: nearest air in the same column
+                directions[6 + i * 2] = new int[]{0, i + 2, 0};
+                directions[7 + i * 2] = new int[]{0, -(i + 2), 0};
+            }
             boolean placed = false;
             for (int[] d : directions) {
                 int nx = x + d[0], ny = y + d[1], nz = z + d[2];

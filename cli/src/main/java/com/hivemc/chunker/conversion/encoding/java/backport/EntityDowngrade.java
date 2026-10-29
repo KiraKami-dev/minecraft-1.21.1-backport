@@ -379,10 +379,14 @@ public final class EntityDowngrade {
         if (components != null) {
             tag.remove("components");
             if (components.size() > 0) {
-                CompoundTag holder = new CompoundTag(1);
-                ComponentDowngrade.apply(writer, new ExtraComponents(components, Map.of(), source), holder);
-                CompoundTag converted = holder.getCompound("components");
-                if (converted != null && converted.size() > 0) tag.put("components", converted);
+                // Run the components through the item downgrade on a stand-in item
+                CompoundTag stand = new CompoundTag(3);
+                stand.put("id", "minecraft:stone");
+                stand.put("count", 1);
+                stand.put("components", components);
+                CompoundTag converted = ItemDowngrade.item(stand, source, target);
+                CompoundTag result = converted == null ? null : converted.getCompound("components");
+                if (result != null && result.size() > 0) tag.put("components", result);
             }
         }
 
