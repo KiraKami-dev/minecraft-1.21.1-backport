@@ -131,6 +131,18 @@ public class CLI implements Runnable {
     )
     private boolean keepOriginalNBT;
 
+    @CommandLine.Option(
+            names = {"--backport"},
+            description = "A JSON file with settings for downgrading a modded world to an older Java server (optional, defaults are built in)."
+    )
+    private File backportSettings;
+
+    @CommandLine.Option(
+            names = {"--backportLog"},
+            description = "Directory to write the backport substitution log and report to."
+    )
+    private File backportLog;
+
     /**
      * Main entry point for the CLI
      *
@@ -367,6 +379,17 @@ public class CLI implements Runnable {
             // Check for the original NBT option
             worldConverter.setAllowNBTCopying(keepOriginalNBT);
 
+            // Backport mode
+            if (backportSettings != null) {
+                try {
+                    com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.load(backportSettings);
+                    com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.loadGraves(inputDirectory);
+                } catch (Exception e) {
+                    System.err.println("Failed to load backport settings.");
+                    throw new RuntimeException(e);
+                }
+            }
+
             // Create the reader (note: converter settings cannot be set after this point)
             Optional<? extends LevelReader> reader = EncodingType.findReader(inputDirectory, worldConverter);
             if (reader.isEmpty()) {
@@ -444,6 +467,25 @@ public class CLI implements Runnable {
                 failed.get().printStackTrace();
                 System.exit(1);
             } else {
+                // Backport: per player files aren't part of the Chunker model, convert them separately
+                if (backportSettings != null) {
+                    try {
+                        com.hivemc.chunker.conversion.encoding.java.backport.PlayerDataConverter.convertWorld(
+                                inputDirectory, outputDirectory,
+                                com.hivemc.chunker.conversion.encoding.java.JavaDataVersion.getNearestVersion(writer.get().getVersion()));
+                        File logDirectory = backportLog != null ? backportLog : outputDirectory.getParentFile();
+                        if (logDirectory != null) {
+                            logDirectory.mkdirs();
+                            com.hivemc.chunker.conversion.encoding.java.backport.ItemSubstitutions.writeLog(
+                                    new File(logDirectory, "backport-items.log"));
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Failed to convert player data.");
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                }
+
                 Duration duration = stopwatch.elapsed();
                 System.out.println("Conversion complete! Took " + String.format("%sh %sm %ss %sms",
                         duration.toHoursPart(),

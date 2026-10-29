@@ -9,6 +9,7 @@ import com.hivemc.chunker.conversion.handlers.pretransform.manager.PreTransformM
 import com.hivemc.chunker.conversion.intermediate.column.biome.ChunkerBiome;
 import com.hivemc.chunker.conversion.encoding.base.resolver.biome.ChunkerBiomeResolver;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemProperty;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.ChunkerItemStack;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.banner.ChunkerBannerPattern;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.itemstack.enchantment.ChunkerEnchantmentType;
@@ -138,6 +139,15 @@ public class JavaResolversBuilder {
                 // Don't process item if not enabled
                 if (!converter.shouldProcessItems()) return new ChunkerItemStack(ChunkerBlockIdentifier.AIR);
 
+                // Backport: keep the item NBT as it is (unknown / modded ids and components included)
+                if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()
+                        && input.get("id") instanceof com.hivemc.chunker.nbt.tags.primitive.StringTag id
+                        && id.getValue().indexOf(':') > 0 && !id.getValue().equals("minecraft:air")) {
+                    ChunkerItemStack raw = new ChunkerItemStack(ChunkerBlockIdentifier.custom(id.getValue(), java.util.Map.of()));
+                    raw.put(ChunkerItemProperty.BACKPORT_RAW, new com.hivemc.chunker.conversion.encoding.java.backport.RawItem(input.clone(), dataVersion));
+                    return raw;
+                }
+
                 return itemStackResolver.to(input).orElseGet(() -> {
                     // Report the error
                     converter.logMissingMapping(Converter.MissingMappingType.ITEM, input.toSNBT());
@@ -161,6 +171,18 @@ public class JavaResolversBuilder {
 
             @Override
             public Optional<CompoundTag> writeItem(ChunkerItemStack chunkerItemStack) {
+                // Backport: convert the original item NBT
+                com.hivemc.chunker.conversion.encoding.java.backport.RawItem raw = chunkerItemStack.get(ChunkerItemProperty.BACKPORT_RAW);
+                if (raw != null) {
+                    CompoundTag converted = com.hivemc.chunker.conversion.encoding.java.backport.ItemDowngrade.item(raw.tag(), raw.source(), dataVersion);
+                    if (converted == null) return Optional.empty();
+                    CompoundTag output = new CompoundTag(3);
+                    for (String key : new String[]{"id", "count", "components"}) {
+                        if (converted.contains(key)) output.put(key, converted.get(key));
+                    }
+                    return Optional.of(output);
+                }
+
                 return Optional.ofNullable(itemStackResolver.from(chunkerItemStack).orElseGet(() -> {
                     // Report the error
                     converter.logMissingMapping(Converter.MissingMappingType.ITEM, String.valueOf(chunkerItemStack));
