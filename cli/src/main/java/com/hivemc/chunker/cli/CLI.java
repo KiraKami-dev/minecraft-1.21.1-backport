@@ -474,6 +474,9 @@ public class CLI implements Runnable {
                         com.hivemc.chunker.conversion.encoding.java.backport.PlayerDataConverter.convertWorld(
                                 inputDirectory, outputDirectory,
                                 com.hivemc.chunker.conversion.encoding.java.JavaDataVersion.getNearestVersion(writer.get().getVersion()));
+                        com.hivemc.chunker.conversion.encoding.java.backport.ModWorldData.convertWorld(
+                                inputDirectory, outputDirectory,
+                                com.hivemc.chunker.conversion.encoding.java.JavaDataVersion.getNearestVersion(writer.get().getVersion()));
                         File logDirectory = backportLog != null ? backportLog : outputDirectory.getParentFile();
                         if (logDirectory != null) {
                             logDirectory.mkdirs();

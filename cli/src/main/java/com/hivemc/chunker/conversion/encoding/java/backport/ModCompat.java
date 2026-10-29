@@ -143,14 +143,21 @@ public final class ModCompat {
             BackportSettings.count("create:bracketed_kinetic -> simple_kinetic");
         } else if (id.equals("create:track") && tag.get("Connections") instanceof ListTag<?, ?> connections) {
             for (Object o : connections) {
-                if (!(o instanceof CompoundTag connection)) continue;
-                wrap(connection, "Positions", "Pos");
-                for (String key : new String[]{"Starts", "Axes", "Normals"}) wrap(connection, key, "V");
-                wrap(connection, "Smoothing", "V");
+                if (o instanceof CompoundTag connection) bezier(connection);
             }
             BackportSettings.count("create:track connections converted");
         }
         clean(tag);
+    }
+
+    /**
+     * A Create BezierConnection compound (track block entity connection, or the edge of a train graph): the Couples of
+     * positions / vectors / smoothing have compound elements in 6.0.10.
+     */
+    public static void bezier(CompoundTag connection) {
+        wrap(connection, "Positions", "Pos");
+        for (String key : new String[]{"Starts", "Axes", "Normals"}) wrap(connection, key, "V");
+        wrap(connection, "Smoothing", "V");
     }
 
     // The elements of a Couple are compounds with the value under a key in 6.0.10

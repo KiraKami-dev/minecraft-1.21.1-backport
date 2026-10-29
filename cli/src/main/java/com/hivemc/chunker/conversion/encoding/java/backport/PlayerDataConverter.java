@@ -39,6 +39,7 @@ public final class PlayerDataConverter {
                 BackportSettings.count("playerdata files converted");
             }
         }
+        convertBackpacks(input, output, target);
         for (String directory : new String[]{"advancements", "stats"}) {
             File[] copies = new File(input, directory).listFiles(File::isFile);
             if (copies == null) continue;
@@ -47,6 +48,37 @@ public final class PlayerDataConverter {
             for (File file : copies) {
                 Files.copy(file.toPath(), new File(out, file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 BackportSettings.count(directory + " files copied");
+            }
+        }
+    }
+
+    /**
+     * Traveler's Backpack keeps a copy of every backpack that is dropped / destroyed in backpacks/<player uuid>/*.dat (an item stack
+     * written as plain NBT); the 1.21.1 build reads the same folder (BackpackManager, "/tb restore"). The stacks are downgraded.
+     */
+    private static void convertBackpacks(File input, File output, JavaDataVersion target) throws IOException {
+        File[] players = new File(input, "backpacks").listFiles(File::isDirectory);
+        if (players == null) return;
+        JavaDataVersion source = target;
+        File level = new File(input, "level.dat");
+        if (level.isFile()) {
+            CompoundTag data = Tag.readGZipJavaNBT(level); // the "Data" tag
+            if (data != null) source = JavaDataVersion.getNearestVersion(data.getInt("DataVersion", target.getDataVersion()));
+        }
+        for (File player : players) {
+            File[] files = player.listFiles((dir, name) -> name.endsWith(".dat"));
+            if (files == null) continue;
+            File out = new File(output, "backpacks/" + player.getName());
+            Files.createDirectories(out.toPath());
+            for (File file : files) {
+                CompoundTag stack = Tag.readPossibleGZipJavaNBT(file);
+                CompoundTag converted = ItemDowngrade.item(stack, source, target);
+                if (converted == null) {
+                    BackportSettings.count("backpack backups dropped (no equivalent item)");
+                    continue;
+                }
+                Tag.writeUncompressedJavaNBT(new File(out, file.getName()), converted);
+                BackportSettings.count("backpack backups converted");
             }
         }
     }
@@ -120,6 +152,17 @@ public final class PlayerDataConverter {
             if (vehicle != null && vehicle.getCompound("Entity") != null) {
                 EntityDowngrade.entity(vehicle.getCompound("Entity"), source, target);
             }
+        }
+        // Balm (Waystones: activated waystones, sorting) keeps its data in the persistent data of the player
+        CompoundTag balm = player.getCompound("BalmData");
+        if (balm != null && !player.contains("NeoForgeData")) {
+            player.remove("BalmData");
+            CompoundTag persisted = new CompoundTag();
+            persisted.put("BalmData", balm);
+            CompoundTag neoForge = new CompoundTag();
+            neoForge.put("PlayerPersisted", persisted);
+            player.put("NeoForgeData", neoForge);
+            BackportSettings.count("balm player data moved to NeoForgeData");
         }
         player.put("DataVersion", target.getDataVersion());
         BackportSettings.count("players converted");

@@ -108,6 +108,10 @@ public class JavaBlockEntityResolver extends BlockEntityResolver<JavaResolvers, 
         if (version.isGreaterThanOrEqual(1, 21, 2)) {
             register(new EmptyBlockEntityHandler<>("minecraft:creaking_heart", CreakingHeartBlockEntity.class, CreakingHeartBlockEntity::new));
         }
+        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled() && version.isLessThan(1, 21, 2)) {
+            // Backport: Vanilla Backport registers minecraft:creaking_heart (its linked creaking is found again by the heart)
+            register(new EmptyBlockEntityHandler<>("minecraft:creaking_heart", CreakingHeartBlockEntity.class, CreakingHeartBlockEntity::new));
+        }
         if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled() && version.isLessThan(1, 21, 9)) {
             // Backport: provided by Vanilla Backport on the target
             register(new EmptyBlockEntityHandler<>("minecraft:copper_golem_statue", CopperGolemStatueBlockEntity.class, CopperGolemStatueBlockEntity::new));

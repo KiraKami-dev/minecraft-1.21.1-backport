@@ -81,6 +81,7 @@ public final class EntityDowngrade {
         }
 
         ModCompat.clean(tag);
+        ModWorldData.entityContraption(tag, source, target);
         if (applies(source, target)) {
             common(tag);
             equipment(tag, id);
