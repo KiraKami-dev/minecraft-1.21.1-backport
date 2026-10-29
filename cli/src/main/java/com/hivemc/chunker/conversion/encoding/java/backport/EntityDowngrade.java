@@ -341,6 +341,10 @@ public final class EntityDowngrade {
                 if (data != null && data.getCompound("entity") != null) entity(data.getCompound("entity"), source, target);
             }
         }
+        // Trial spawner configs (inline once inlined)
+        for (String key : new String[]{"normal_config", "ominous_config"}) {
+            if (tag.get(key) instanceof CompoundTag config) spawner(config, source, target);
+        }
     }
 
     /**
@@ -389,6 +393,9 @@ public final class EntityDowngrade {
                 if (result != null && result.size() > 0) tag.put("components", result);
             }
         }
+
+        // Trial spawners: the configs are inline in 1.21.1
+        if (id.equals("minecraft:trial_spawner")) TrialSpawnerConfigs.inline(tag);
 
         // Lock was a plain string
         if (tag.get("lock") instanceof CompoundTag) tag.remove("lock");

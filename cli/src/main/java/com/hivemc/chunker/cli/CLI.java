@@ -377,7 +377,8 @@ public class CLI implements Runnable {
             }
 
             // Check for the original NBT option
-            worldConverter.setAllowNBTCopying(keepOriginalNBT);
+            // The backport keeps unmapped modded entities / block entities as raw NBT
+            worldConverter.setAllowNBTCopying(keepOriginalNBT || backportSettings != null);
 
             // Backport mode
             if (backportSettings != null) {
