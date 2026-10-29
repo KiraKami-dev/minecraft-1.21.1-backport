@@ -80,6 +80,7 @@ public final class EntityDowngrade {
             }
         }
 
+        ModCompat.clean(tag);
         if (applies(source, target)) {
             common(tag);
             equipment(tag, id);
@@ -354,6 +355,10 @@ public final class EntityDowngrade {
         if (!applies(source, writer.dataVersion())) return;
         JavaDataVersion target = writer.dataVersion();
         String id = tag.getString("id", "");
+
+        // Mod formats (Create tracks, fluids, ...)
+        ModCompat.blockEntity(tag);
+        id = tag.getString("id", "");
 
         // Copper chests become plain chests (the block is mapped to minecraft:chest), Items are kept
         if (id.matches("minecraft:(waxed_)?(exposed_|weathered_|oxidized_)?copper_chest")) {

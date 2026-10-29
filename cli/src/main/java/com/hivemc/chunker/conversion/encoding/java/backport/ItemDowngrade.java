@@ -132,7 +132,13 @@ public final class ItemDowngrade {
             if (base.equals("minecraft:tooltip_display")) continue;
             if (!base.startsWith("minecraft:")) {
                 // Modded component: kept as is, with any item inside converted
-                out.put(key, removal ? value.clone() : walkCopy(value, source, target));
+                if (removal) {
+                    out.put(key, value.clone());
+                } else {
+                    for (java.util.Map.Entry<String, Tag<?>> entry : ModCompat.component(key, value.clone()).entrySet()) {
+                        out.put(entry.getKey(), walkCopy(entry.getValue(), source, target));
+                    }
+                }
                 continue;
             }
             if (removal) {
