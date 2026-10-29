@@ -24,6 +24,10 @@ public class JavaBlockEntityHandler extends BlockEntityHandler<JavaResolvers, Co
         // Save original NBT
         if (resolvers.converter().shouldAllowNBTCopying()) {
             blockEntity.setOriginalNBT(input);
+            if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()) {
+                blockEntity.setEmbeddedNBT(com.hivemc.chunker.conversion.encoding.java.backport.EmbeddedNBT.read(resolvers, input));
+                blockEntity.setSourceDataVersion(resolvers.dataVersion());
+            }
         }
 
         // Position
@@ -38,8 +42,15 @@ public class JavaBlockEntityHandler extends BlockEntityHandler<JavaResolvers, Co
         if (resolvers.converter().shouldAllowNBTCopying() && blockEntity.getOriginalNBT() != null) {
             // Copy all the original tags
             for (Map.Entry<String, Tag<?>> namedPair : blockEntity.getOriginalNBT()) {
-                output.put(namedPair.getKey(), namedPair.getValue().clone());
+                output.put(namedPair.getKey(), com.hivemc.chunker.conversion.encoding.java.backport.EmbeddedNBT.rewrite(resolvers, namedPair.getValue(), blockEntity.getEmbeddedNBT()));
             }
+        }
+
+        // Backport: text components were NBT from 1.21.5, JSON strings before
+        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()
+                && com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.applies(blockEntity.getSourceDataVersion(), resolvers.dataVersion())
+                && output.contains("CustomName")) {
+            com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.textToJson(output, "CustomName");
         }
 
         // Position

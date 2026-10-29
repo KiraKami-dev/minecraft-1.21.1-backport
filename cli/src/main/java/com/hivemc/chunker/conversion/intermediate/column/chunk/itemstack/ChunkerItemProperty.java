@@ -38,6 +38,10 @@ public class ChunkerItemProperty<V> extends Property<ChunkerItemStack, V> implem
     /**
      * The block entity attached to the item (can happen when it's not a block e.g. shields having banners).
      */
+    public static final ChunkerItemProperty<com.hivemc.chunker.conversion.encoding.java.backport.ExtraComponents> EXTRA_COMPONENTS = new ChunkerItemProperty<>(
+            "extra_components",
+            com.hivemc.chunker.conversion.encoding.java.backport.ExtraComponents.class
+    );
     public static final ChunkerItemProperty<BlockEntity> BLOCK_ENTITY = new ChunkerItemProperty<>(
             "block_entity",
             BlockEntity.class

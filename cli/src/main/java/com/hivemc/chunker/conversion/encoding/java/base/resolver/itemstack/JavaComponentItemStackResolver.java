@@ -1152,6 +1152,27 @@ public class JavaComponentItemStackResolver extends ItemStackResolver<JavaResolv
                 }
             }
         });
+
+        // Backport: keep every component Chunker didn't write (modded ones, unmodelled vanilla ones)
+        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()) {
+            registerHandler(ChunkerItemProperty.EXTRA_COMPONENTS, new PropertyHandler<>() {
+                @Override
+                public Optional<com.hivemc.chunker.conversion.encoding.java.backport.ExtraComponents> read(@NotNull CompoundTag value) {
+                    CompoundTag components = value.getCompound("components");
+                    if (components == null || components.size() == 0) return Optional.empty();
+                    return Optional.of(new com.hivemc.chunker.conversion.encoding.java.backport.ExtraComponents(
+                            components,
+                            com.hivemc.chunker.conversion.encoding.java.backport.EmbeddedNBT.read(resolvers, components),
+                            resolvers.dataVersion()
+                    ));
+                }
+
+                @Override
+                public void write(@NotNull CompoundTag value, @NotNull com.hivemc.chunker.conversion.encoding.java.backport.ExtraComponents extra) {
+                    com.hivemc.chunker.conversion.encoding.java.backport.ComponentDowngrade.apply(resolvers, extra, value);
+                }
+            });
+        }
     }
 
     @Override

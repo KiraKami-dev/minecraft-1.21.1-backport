@@ -110,6 +110,26 @@ public abstract class BlockEntity {
         this.customName = customName;
     }
 
+    // Backport: items / block states found inside the original NBT, and the version it was read from
+    private java.util.Map<com.hivemc.chunker.nbt.tags.Tag<?>, Object> embeddedNBT = java.util.Map.of();
+    private com.hivemc.chunker.conversion.encoding.java.JavaDataVersion sourceDataVersion;
+
+    public java.util.Map<com.hivemc.chunker.nbt.tags.Tag<?>, Object> getEmbeddedNBT() {
+        return embeddedNBT;
+    }
+
+    public void setEmbeddedNBT(java.util.Map<com.hivemc.chunker.nbt.tags.Tag<?>, Object> embeddedNBT) {
+        this.embeddedNBT = embeddedNBT;
+    }
+
+    public com.hivemc.chunker.conversion.encoding.java.JavaDataVersion getSourceDataVersion() {
+        return sourceDataVersion;
+    }
+
+    public void setSourceDataVersion(com.hivemc.chunker.conversion.encoding.java.JavaDataVersion sourceDataVersion) {
+        this.sourceDataVersion = sourceDataVersion;
+    }
+
     /**
      * Get the original NBT tag for the block entity.
      *

@@ -284,7 +284,12 @@ public class JavaEntityTypeResolver implements Resolver<String, ChunkerEntityTyp
         // Ensure namespace is present
         if (!input.contains(":")) {
             input = "minecraft:" + input;
-        } else if (!input.startsWith("minecraft:") && customIdentifierSupported) {
+        }
+        if (customIdentifierSupported && com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isPassthroughEntity(input)) {
+            // Backport: written back verbatim (a mod provides it on the target, or EntityDowngrade renames it)
+            return Optional.of(new ChunkerCustomEntityType(input));
+        }
+        if (!input.startsWith("minecraft:") && customIdentifierSupported) {
             // Custom entity type if it's supported
             return Optional.of(new ChunkerCustomEntityType(input));
         }

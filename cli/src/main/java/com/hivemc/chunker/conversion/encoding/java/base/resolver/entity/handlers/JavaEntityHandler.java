@@ -29,6 +29,10 @@ public class JavaEntityHandler extends EntityHandler<JavaResolvers, CompoundTag,
         // Save original NBT
         if (resolvers.converter().shouldAllowNBTCopying()) {
             entity.setOriginalNBT(input);
+            if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled()) {
+                entity.setEmbeddedNBT(com.hivemc.chunker.conversion.encoding.java.backport.EmbeddedNBT.read(resolvers, input));
+                entity.setSourceDataVersion(resolvers.dataVersion());
+            }
         }
 
         // Position
@@ -61,7 +65,7 @@ public class JavaEntityHandler extends EntityHandler<JavaResolvers, CompoundTag,
         if (resolvers.converter().shouldAllowNBTCopying() && entity.getOriginalNBT() != null) {
             // Copy all the original tags
             for (Map.Entry<String, Tag<?>> namedPair : entity.getOriginalNBT()) {
-                output.put(namedPair.getKey(), namedPair.getValue().clone());
+                output.put(namedPair.getKey(), com.hivemc.chunker.conversion.encoding.java.backport.EmbeddedNBT.rewrite(resolvers, namedPair.getValue(), entity.getEmbeddedNBT()));
             }
         }
 
@@ -84,5 +88,10 @@ public class JavaEntityHandler extends EntityHandler<JavaResolvers, CompoundTag,
         rotation.add(new FloatTag(entity.getYaw()));
         rotation.add(new FloatTag(entity.getPitch()));
         output.put("Rotation", rotation);
+
+        // Backport: fields that changed shape since the target version
+        if (com.hivemc.chunker.conversion.encoding.java.backport.BackportSettings.isEnabled() && entity.getOriginalNBT() != null) {
+            com.hivemc.chunker.conversion.encoding.java.backport.EntityDowngrade.entity(output, entity.getSourceDataVersion(), resolvers.dataVersion());
+        }
     }
 }
