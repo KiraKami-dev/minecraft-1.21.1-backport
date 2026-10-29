@@ -39,7 +39,11 @@ public final class BackportSettings {
             root = JsonParser.parseReader(reader).getAsJsonObject();
         }
         passthroughEntities = toSet(root.getAsJsonArray("passthrough_entities"));
-        targetComponents = toSet(root.getAsJsonArray("target_components"));
+        // Defaults to the vanilla 1.21.1 components, "extra_target_components" adds ones a mod (Vanilla Backport) registers
+        Set<String> components = root.has("target_components") ? toSet(root.getAsJsonArray("target_components")) : new HashSet<>(ItemDowngrade.TARGET_COMPONENTS);
+        components = new HashSet<>(components);
+        components.addAll(toSet(root.getAsJsonArray("extra_target_components")));
+        targetComponents = Collections.unmodifiableSet(components);
         enabled = true;
     }
 
