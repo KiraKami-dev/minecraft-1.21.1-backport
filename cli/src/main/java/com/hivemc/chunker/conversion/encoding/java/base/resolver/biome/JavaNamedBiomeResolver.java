@@ -95,7 +95,8 @@ public class JavaNamedBiomeResolver extends ChunkerBiomeResolver<String> {
             mapping.put(ChunkerBiome.ChunkerVanillaBiome.CHERRY_GROVE, "minecraft:cherry_grove");
         }
 
-        if (javaVersion.isGreaterThanOrEqual(1, 21, 2)) {
+        // Vanilla Backport registers the pale garden biome on older versions
+        if (javaVersion.isGreaterThanOrEqual(1, 21, 2) || com.hivemc.chunker.conversion.encoding.java.backport.BlockBackport.active()) {
             mapping.put(ChunkerBiome.ChunkerVanillaBiome.PALE_GARDEN, "minecraft:pale_garden");
         }
 

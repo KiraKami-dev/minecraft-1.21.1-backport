@@ -3,6 +3,8 @@ package com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier;
 import com.google.common.collect.ImmutableMultimap;
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
+import com.hivemc.chunker.conversion.encoding.java.backport.BlockBackport;
+import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.BlockMapping;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.ChunkerBlockIdentifierResolver;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.state.StateMappingGroup;
@@ -14,6 +16,7 @@ import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.identifier.states.StateValueString;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Resolver to convert between Java block identifiers and ChunkerBlockIdentifier.
@@ -36,6 +39,22 @@ public class JavaBlockIdentifierResolver extends ChunkerBlockIdentifierResolver 
      */
     public JavaBlockIdentifierResolver(Converter converter, Version version, boolean reader, boolean customIdentifiersAllowed) {
         super(converter, version, reader, customIdentifiersAllowed);
+    }
+
+    private JavaBlockIdentifierResolver newestResolver;
+
+    @Override
+    protected Optional<Identifier> backportFrom(ChunkerBlockIdentifier input, Optional<Identifier> output) {
+        if (reader || !BlockBackport.active()) return output;
+        if (output.isPresent()) return output.map(BlockBackport::remap);
+        if (input.getType() instanceof ChunkerVanillaBlockType) {
+            // A vanilla block this version doesn't have, write it the way the newest version would
+            if (newestResolver == null) {
+                newestResolver = new JavaBlockIdentifierResolver(converter, new Version(1, 21, 11), false, customIdentifiersAllowed);
+            }
+            return newestResolver.resolveFrom(input).flatMap(BlockBackport::remapNewerVanilla).map(BlockBackport::remap);
+        }
+        return output;
     }
 
     @Override
