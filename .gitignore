@@ -1,0 +1,39 @@
+# worlds, backups, conversion output
+/world/
+/world-*/
+/out/
+/output/
+/source/
+/eval/
+*.tar.gz
+*.tgz
+*.zip
+*.mca
+*.dat
+playerdata/
+
+# downloads and caches (mod jars are never committed, see mods/mods.lock.json)
+.cache/
+/downloads/
+*.jar
+*.log
+
+# server / client directories
+/server/
+/server-*/
+/client/
+/libraries/
+/logs/
+/crash-reports/
+
+# build output
+build/
+.gradle/
+__pycache__/
+*.pyc
+.idea/
+.DS_Store
+
+# secrets
+.env
+*.pem
